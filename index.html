@@ -1230,7 +1230,7 @@ function renderGroupDistribution() {
             </div>
             <div class="agent-tags">
                 ${groupAgents.map(a => `
-                    <span class="agent-tag-group ${cfg.color}" title="${a.name}">${a.name.split(' ').slice(-1)[0]}</span>
+                    <span class="agent-tag-group ${cfg.color}" title="${a.name}">${a.name.split(' ').split(' ')[0]}</span>
                 `).join('')}
             </div>`;
         container.appendChild(card);
@@ -1400,21 +1400,21 @@ function renderSchedule() {
             <div class="shift-section shift-morning">
                 <div class="shift-title"><span>☀️ Morning</span><span class="agent-count">${d.morning.length}</span></div>
                 <div class="agent-list-small">
-                    ${d.morning.slice(0,6).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}">${a.name.split(' ').slice(-1)[0]}</span>`).join('')}
+                    ${d.morning.slice(0,6).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}">${a.name.split(' ').split(' ')[0]}</span>`).join('')}
                     ${d.morning.length>6?`<span class="agent-tag">+${d.morning.length-6}</span>`:''}
                 </div>
             </div>
             <div class="shift-section shift-night">
                 <div class="shift-title"><span>🌙 Night</span><span class="agent-count">${d.night.length}</span></div>
                 <div class="agent-list-small">
-                    ${d.night.slice(0,6).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}">${a.name.split(' ').slice(-1)[0]}</span>`).join('')}
+                    ${d.night.slice(0,6).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}">${a.name.split(' ').split(' ')[0]}</span>`).join('')}
                     ${d.night.length>6?`<span class="agent-tag">+${d.night.length-6}</span>`:''}
                 </div>
             </div>
             <div class="shift-section shift-off">
                 <div class="shift-title"><span>😴 Off</span><span class="agent-count">${d.off.length}</span></div>
                 <div class="agent-list-small">
-                    ${d.off.slice(0,4).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}" style="opacity:.6">${a.name.split(' ').slice(-1)[0]}</span>`).join('')}
+                    ${d.off.slice(0,4).map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}" style="opacity:.6">${a.name.split(' ').split(' ')[0]}</span>`).join('')}
                     ${d.off.length>4?`<span class="agent-tag">+${d.off.length-4}</span>`:''}
                 </div>
             </div>`;
@@ -1560,7 +1560,7 @@ function renderTasks() {
                 ${assignees.slice(0,6).map((n,i)=>{
                     const ag = agents.find(a=>a.name===n);
                     const auto = assigned.some(t=>t.auto_assigned&&(t.assignees||[]).includes(n));
-                    return `<div class="avatar${auto?' auto-assigned':''}" title="${n}${ag?` (Group ${ag.group_name})`:''}${auto?' (Auto)':''}" style="z-index:${6-i}">${n.split(' ').slice(-1)[0]}</div>`;
+                    return `<div class="avatar${auto?' auto-assigned':''}" title="${n}${ag?` (Group ${ag.group_name})`:''}${auto?' (Auto)':''}" style="z-index:${6-i}">${n.split(' ').split(' ')[0]}</div>`;
                 }).join('')}
                 ${assignees.length>6?`<div class="avatar" style="background:var(--border)">+${assignees.length-6}</div>`:''}
                 ${assignees.length===0?'<span style="color:var(--text-muted);font-size:.9rem">No agents assigned</span>':''}
