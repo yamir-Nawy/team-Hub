@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Management Hub - Auto Distribution System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --morning: #f59e0b;
+            --night: #8b5cf6;
+            --off: #64748b;
+            --auto: #06b6d4;
+            --group-a: #3b82f6;
+            --group-b: #10b981;
+            --group-c: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 10px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            color: white;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .tab-btn.active::before {
+            opacity: 1;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-glow);
+        }
+
+        .btn-auto {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .btn-auto:hover {
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(6, 182, 212, 0.5); }
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .shift-legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.morning { background: var(--morning); box-shadow: 0 0 10px var(--morning); }
+        .dot.night { background: var(--night); box-shadow: 0 0 10px var(--night); }
+        .dot.off { background: var(--off); }
+        .dot.auto { background: var(--auto); box-shadow: 0 0 10px var(--auto); }
+        .dot.group-a { background: var(--group-a); box-shadow: 0 0 10px var(--group-a); }
+        .dot.group-b { background: var(--group-b); box-shadow: 0 0 10px var(--group-b); }
+        .dot.group-c { background: var(--group-c); box-shadow: 0 0 10px var(--group-c); }
+
+        /* Group Distribution Styles */
+        .group-distribution-panel {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .group-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .group-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid;
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .group-card.a { border-color: var(--group-a); }
+        .group-card.b { border-color: var(--group-b); }
+        .group-card.c { border-color: var(--group-c); }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .group-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-title.a { color: var(--group-a); }
+        .group-title.b { color: var(--group-b); }
+        .group-title.c { color: var(--group-c); }
+
+        .group-size {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .group-schedule {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+        .group-schedule strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .agent-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .agent-tag-group {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .agent-tag-group:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .agent-tag-group.a { border-color: var(--group-a); color: #60a5fa; }
+        .agent-tag-group.b { border-color: var(--group-b); color: #34d399; }
+        .agent-tag-group.c { border-color: var(--group-c); color: #fbbf24; }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .day-header {
+            text-align: center;
+            padding: 15px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+        }
+
+        .day-cell {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 280px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .day-cell:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .day-cell.auto-generated {
+            border-color: var(--auto);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        .auto-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--auto);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        .day-date {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .shift-section {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .shift-section:hover {
+            transform: translateX(5px);
+        }
+
+        .shift-morning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--morning);
+        }
+
+        .shift-night {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 3px solid var(--night);
+        }
+
+        .shift-off {
+            background: rgba(100, 116, 139, 0.1);
+            border-left: 3px solid var(--off);
+        }
+
+        .shift-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .agent-count {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .agent-list-small {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        .agent-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+
+        .agent-tag:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .agent-tag.group-a { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .agent-tag.group-b { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .agent-tag.group-c { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .month-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .month-btn {
+            padding: 10px 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .month-btn:hover, .month-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .agent-roster {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .agent-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .agent-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .agent-card.auto-assigned {
+            border-color: var(--auto);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .agent-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .agent-id {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .agent-group-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .agent-group-badge.a { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .agent-group-badge.b { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .agent-group-badge.c { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .agent-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+
+        .stat-pill {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            color: var(--text-muted);
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .week-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .week-day.morning { background: rgba(245, 158, 11, 0.2); color: var(--morning); }
+        .week-day.night { background: rgba(139, 92, 246, 0.2); color: var(--night); }
+        .week-day.off { background: rgba(100, 116, 139, 0.2); color: var(--off); }
+        .week-day:hover { transform: scale(1.2); z-index: 10; }
+
+        .week-day::after {
+            content: attr(data-shift);
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .week-day:hover::after {
+            opacity: 1;
+        }
+
+        .tasks-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .task-distribution-panel {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .distribution-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .task-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .task-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .task-card.auto-distributed {
+            border-color: var(--auto);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .priority-high { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .priority-medium { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .priority-low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+
+        .auto-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: var(--auto);
+            font-weight: 600;
+        }
+
+        .task-assignees {
+            display: flex;
+            gap: -8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 2px solid var(--secondary);
+            margin-left: -8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .avatar:first-child { margin-left: 0; }
+        .avatar:hover { 
+            transform: scale(1.2); 
+            z-index: 10;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .avatar.auto-assigned {
+            background: linear-gradient(135deg, var(--auto) 0%, #3b82f6 100%);
+            animation: pulse 2s infinite;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .range-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .warning-section {
+            display: grid;
+            gap: 15px;
+        }
+
+        .warning-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+
+        .warning-card:hover {
+            border-color: var(--danger);
+            transform: translateX(10px);
+        }
+
+        .warning-level {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .level-1 { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 2px solid var(--warning); }
+        .level-2 { background: rgba(249, 115, 22, 0.2); color: #f97316; border: 2px solid #f97316; }
+        .level-3 { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 2px solid var(--danger); animation: pulse 2s infinite; }
+
+        .pip-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { border-color: var(--success); }
+        .notification.error { border-color: var(--danger); }
+
+        @media (max-width: 968px) {
+            .schedule-grid { grid-template-columns: 1fr; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); }
+            h1 { font-size: 2rem; }
+            .agent-roster { grid-template-columns: 1fr; }
+            .group-grid { grid-template-columns: 1fr; }
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Team Management Hub</h1>
+            <p class="subtitle">Auto Distribution System • 28 Agents • 3 Groups • Smart Scheduling</p>
+        </header>
+
+        <nav class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('schedule')">
+                <span>📅</span> Yearly Schedule
+            </button>
+            <button class="tab-btn" onclick="switchTab('tasks')">
+                <span>✓</span> Daily Tasks
+            </button>
+            <button class="tab-btn" onclick="switchTab('team')">
+                <span>⚠️</span> Warnings & PIP
+            </button>
+        </nav>
+
+        <!-- Tab 1: Yearly Schedule -->
+        <div id="schedule" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">📅</span>Auto Shift Scheduler with Groups</h2>
+                    <div class="controls">
+                        <button class="btn btn-auto" onclick="openAutoScheduleModal()">
+                            <span>⚡</span> Auto Distribute
+                        </button>
+                        <button class="btn" onclick="generateSchedule()">
+                            <span>🔄</span> Regenerate
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportSchedule()">
+                            <span>📥</span> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: var(--group-a);">9/10</div>
+                        <div class="stat-label">Group A (Fri-Sat Off)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: var(--group-b);">9/10</div>
+                        <div class="stat-label">Group B (Sun-Mon Off)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: var(--group-c);">9/10</div>
+                        <div class="stat-label">Group C (Tue-Wed Off)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: var(--success);">28</div>
+                        <div class="stat-label">Total Agents</div>
+                    </div>
+                </div>
+
+                <div class="shift-legend">
+                    <div class="legend-item">
+                        <div class="dot group-a"></div>
+                        <span>Group A (Fri-Sat Off)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot group-b"></div>
+                        <span>Group B (Sun-Mon Off)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot group-c"></div>
+                        <span>Group C (Tue-Wed Off)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot morning"></div>
+                        <span>Morning Shift</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="dot night"></div>
+                        <span>Night Shift</span>
+                    </div>
+                </div>
+
+                <!-- Group Distribution Panel -->
+                <div class="group-distribution-panel">
+                    <h3 style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <span>👥</span> Group Distribution (28 Agents)
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+                        Agents rotate between groups monthly. Each group has specific days off and works 5 days per week.
+                    </p>
+                    
+                    <div class="group-grid" id="groupDistribution">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <div class="month-selector" id="monthSelector"></div>
+
+                <div class="schedule-grid" id="scheduleGrid"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">👥</span>Agent Workload Overview</h2>
+                    <div style="color: var(--text-muted); font-size: 0.9rem;">
+                        <span id="autoStatus">Last auto-distribution: Never</span>
+                    </div>
+                </div>
+                <div class="agent-roster" id="agentRoster"></div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Daily Tasks -->
+        <div id="tasks" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">✓</span>Task Auto Distributor</h2>
+                    <div class="controls">
+                        <button class="btn btn-auto" onclick="autoDistributeTasks()">
+                            <span>🤖</span> Auto Distribute All Tasks
+                        </button>
+                        <button class="btn btn-success" onclick="openTaskModal()">
+                            <span>+</span> Manual Assign
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearAllTasks()">
+                            <span>🗑️</span> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="task-distribution-panel">
+                    <h3 style="margin-bottom: 15px; color: var(--text);">Distribution Settings</h3>
+                    <div class="distribution-controls">
+                        <div style="flex: 1; min-width: 200px;">
+                            <label>Max Tasks per Agent</label>
+                            <input type="range" min="1" max="5" value="3" class="range-slider" id="maxTasksPerAgent" oninput="updateSliderLabel(this)">
+                            <div class="slider-labels">
+                                <span>1</span>
+                                <span id="sliderValue">3</span>
+                                <span>5</span>
+                            </div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <label>Priority Weight</label>
+                            <select id="priorityWeight" style="width: 100%;">
+                                <option value="balanced">Balanced Distribution</option>
+                                <option value="skill">Skill-Based</option>
+                                <option value="workload">Low Workload First</option>
+                                <option value="random">Random Fair</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <label>Shift Preference</label>
+                            <select id="shiftPreference" style="width: 100%;">
+                                <option value="any">Any Shift</option>
+                                <option value="morning">Morning Only</option>
+                                <option value="night">Night Only</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tasks-grid" id="tasksGrid"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Warnings & PIP -->
+        <div id="team" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⚠️</span>Performance Management</h2>
+                    <button class="btn" onclick="addWarning()">+ Add Warning</button>
+                </div>
+                <div class="warning-section" id="warningList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto Schedule Modal -->
+    <div class="modal" id="autoScheduleModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">⚡ Auto Schedule Configuration</h3>
+            
+            <div class="form-group">
+                <label>Distribution Method</label>
+                <select id="scheduleMethod">
+                    <option value="fair">Fair Rotation (Recommended)</option>
+                    <option value="seniority">Seniority Based</option>
+                    <option value="performance">Performance Based</option>
+                    <option value="random">Random Fair</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Group Rotation</label>
+                <select id="groupRotation">
+                    <option value="monthly">Monthly Rotation (A→B→C)</option>
+                    <option value="biweekly">Bi-Weekly Rotation</option>
+                    <option value="quarterly">Quarterly Rotation</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Consecutive Days Off Required</label>
+                <select id="consecutiveOff">
+                    <option value="2">2 Days (Standard)</option>
+                    <option value="3">3 Days</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Agents to Exclude (Vacation/Leave)</label>
+                <div class="checkbox-group" id="excludeAgents"></div>
+            </div>
+
+            <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid var(--auto); border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                <div style="font-weight: 700; color: var(--auto); margin-bottom: 5px;">🤖 AI Distribution Logic</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">
+                    • Groups rotate monthly: A→B→C→A<br>
+                    • Group A: Fri-Sat Off | Group B: Sun-Mon Off | Group C: Tue-Wed Off<br>
+                    • 9 Morning + 9 Night shifts per day (within available agents)<br>
+                    • Ensures 5 working days max per week with 2 consecutive days off
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeModal('autoScheduleModal')">Cancel</button>
+                <button class="btn btn-auto" onclick="executeAutoSchedule()">
+                    <span>⚡</span> Generate Schedule
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px;">Assign Task</h3>
+            
+            <div class="form-group">
+                <label>Task Type</label>
+                <select id="taskType">
+                    <option value="Calls">Calls</option>
+                    <option value="Support Calls">Support Calls</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="FB Group">FB Group</option>
+                    <option value="Respond">Respond</option>
+                    <option value="Forms">Forms</option>
+                    <option value="New Partner">New Partner</option>
+                    <option value="Unlocked Rentals">Unlocked Rentals</option>
+                    <option value="Unknown">Unknown</option>
+                    <option value="AI (Bot)">AI (Bot)</option>
+                    <option value="Repricing">Repricing</option>
+                    <option value="Freelancer">Freelancer</option>
+                    <option value="Inventory">Inventory</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Priority</label>
+                <select id="taskPriority">
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Required Agents</label>
+                <input type="number" id="requiredAgents" min="1" max="10" value="3">
+            </div>
+
+            <div class="form-group">
+                <label>Assign Specific Agents (Optional)</label>
+                <div class="checkbox-group" id="manualAgentSelect"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeModal('taskModal')">Cancel</button>
+                <button class="btn" onclick="saveManualTask()">Save Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div style="font-weight: 700; margin-bottom: 5px;" id="notifTitle">Success</div>
+        <div style="font-size: 0.9rem; color: var(--text-muted);" id="notifMessage">Operation completed</div>
+    </div>
+
+    <script>
+        // Data Management
+        let agents = JSON.parse(localStorage.getItem('agents')) || [];
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let warnings = JSON.parse(localStorage.getItem('warnings')) || [];
+        let scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || {};
+        let selectedMonth = new Date().getMonth();
+        let lastAutoDistribution = null;
+
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const taskTypes = ['Calls', 'Support Calls', 'Facebook', 'FB Group', 'Respond', 
+                          'Forms', 'New Partner', 'Unlocked Rentals', 'Unknown', 
+                          'AI (Bot)', 'Repricing', 'Freelancer', 'Inventory'];
+
+        // Group configuration
+        const groupConfig = {
+            A: { name: 'Group A', offDays: [5, 6], color: 'a', workDays: [0, 1, 2, 3, 4] }, // Fri-Sat off
+            B: { name: 'Group B', offDays: [0, 1], color: 'b', workDays: [2, 3, 4, 5, 6] }, // Sun-Mon off
+            C: { name: 'Group C', offDays: [2, 3], color: 'c', workDays: [4, 5, 6, 0, 1] }  // Tue-Wed off
+        };
+
+        // Initialize 28 agents with group assignment
+        if (agents.length === 0) {
+            for (let i = 1; i <= 28; i++) {
+                const group = i <= 9 ? 'A' : i <= 19 ? 'B' : 'C';
+                agents.push({
+                    id: i,
+                    name: `Agent ${i}`,
+                    group: group,
+                    shift: 'morning',
+                    consecutiveOff: 0,
+                    workDays: 0,
+                    totalWorkDays: 0,
+                    morningShifts: 0,
+                    nightShifts: 0,
+                    tasksAssigned: 0,
+                    warnings: 0,
+                    pip: false,
+                    seniority: Math.floor(Math.random() * 5) + 1,
+                    performance: Math.floor(Math.random() * 40) + 60,
+                    preferredShift: ['morning', 'night', 'any'][Math.floor(Math.random() * 3)]
+                });
+            }
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('agents', JSON.stringify(agents));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('warnings', JSON.stringify(warnings));
+            localStorage.setItem('scheduleData', JSON.stringify(scheduleData));
+        }
+
+        function showNotification(title, message, type = 'success') {
+            const notif = document.getElementById('notification');
+            document.getElementById('notifTitle').textContent = title;
+            document.getElementById('notifMessage').textContent = message;
+            notif.className = `notification ${type} show`;
+            setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.closest('.tab-btn').classList.add('active');
+            
+            if (tabName === 'schedule') {
+                renderGroupDistribution();
+                renderSchedule();
+            }
+            if (tabName === 'tasks') renderTasks();
+            if (tabName === 'team') renderWarnings();
+        }
+
+        // Render Group Distribution
+        function renderGroupDistribution() {
+            const container = document.getElementById('groupDistribution');
+            container.innerHTML = '';
+            
+            ['A', 'B', 'C'].forEach(groupKey => {
+                const groupAgents = agents.filter(a => a.group === groupKey);
+                const config = groupConfig[groupKey];
+                
+                const card = document.createElement('div');
+                card.className = `group-card ${config.color}`;
+                
+                const offDayNames = config.offDays.map(d => days[d]).join(' & ');
+                const workDayNames = config.workDays.map(d => days[d]).join(', ');
+                
+                card.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-title ${config.color}">
+                            <span style="font-size: 1.8rem;">${groupKey}</span>
+                            ${config.name}
+                        </div>
+                        <span class="group-size">${groupAgents.length} agents</span>
+                    </div>
+                    <div class="group-schedule">
+                        <strong>🗓️ Schedule:</strong>
+                        <div style="margin-top: 5px;">Off: ${offDayNames}</div>
+                        <div>Work: ${workDayNames}</div>
+                    </div>
+                    <div class="agent-tags">
+                        ${groupAgents.map(a => `
+                            <span class="agent-tag-group ${config.color}" onclick="highlightAgent('${a.name}')" title="${a.name} - ${a.preferredShift}">
+                                ${a.name.split(' ')[1]}
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // AUTO SCHEDULE DISTRIBUTION LOGIC
+        function openAutoScheduleModal() {
+            const excludeContainer = document.getElementById('excludeAgents');
+            excludeContainer.innerHTML = agents.map(a => `
+                <label class="checkbox-item">
+                    <input type="checkbox" value="${a.id}" id="exclude_${a.id}">
+                    <span>${a.name} (Group ${a.group})</span>
+                </label>
+            `).join('');
+            
+            document.getElementById('autoScheduleModal').classList.add('active');
+        }
+
+        function executeAutoSchedule() {
+            const method = document.getElementById('scheduleMethod').value;
+            const groupRotation = document.getElementById('groupRotation').value;
+            const consecutiveOffReq = parseInt(document.getElementById('consecutiveOff').value) || 2;
+            
+            const excludedIds = Array.from(document.querySelectorAll('#excludeAgents input:checked'))
+                .map(cb => parseInt(cb.value));
+            
+            let availableAgents = agents.filter(a => !excludedIds.includes(a.id));
+            
+            if (availableAgents.length < 18) {
+                showNotification('Error', 'Need at least 18 available agents for 9 morning + 9 night shifts', 'error');
+                return;
+            }
+
+            // Reset stats
+            availableAgents.forEach(a => {
+                a.workDays = 0;
+                a.consecutiveOff = 0;
+                a.morningShifts = 0;
+                a.nightShifts = 0;
+            });
+
+            const yearSchedule = {};
+            const weeksInYear = 52;
+            
+            for (let week = 0; week < weeksInYear; week++) {
+                const weekKey = `week_${week}`;
+                yearSchedule[weekKey] = {};
+                
+                // Determine group rotation for this week
+                let rotationOffset = 0;
+                if (groupRotation === 'monthly') {
+                    rotationOffset = Math.floor(week / 4.33) % 3;
+                } else if (groupRotation === 'biweekly') {
+                    rotationOffset = Math.floor(week / 2) % 3;
+                } else if (groupRotation === 'quarterly') {
+                    rotationOffset = Math.floor(week / 13) % 3;
+                }
+                
+                // Rotate groups: A->B->C->A
+                const getRotatedGroup = (originalGroup) => {
+                    const groups = ['A', 'B', 'C'];
+                    const idx = groups.indexOf(originalGroup);
+                    return groups[(idx + rotationOffset) % 3];
+                };
+                
+                // Assign effective groups for this week
+                availableAgents.forEach(a => {
+                    a.effectiveGroup = getRotatedGroup(a.group);
+                });
+
+                for (let day = 0; day < 7; day++) {
+                    const dayShifts = { morning: [], night: [], off: [], auto: true };
+                    
+                    // Get agents who should be off (based on their effective group)
+                    const offAgents = availableAgents.filter(a => {
+                        const config = groupConfig[a.effectiveGroup];
+                        return config.offDays.includes(day);
+                    });
+                    
+                    // Get available agents (not off)
+                    let workingAgents = availableAgents.filter(a => !offAgents.includes(a));
+                    
+                    // Sort by shift preference and balance
+                    workingAgents.sort((a, b) => {
+                        const aDiff = a.morningShifts - a.nightShifts;
+                        const bDiff = b.morningShifts - b.nightShifts;
+                        return aDiff - bDiff;
+                    });
+                    
+                    // Split into morning and night (9 each)
+                    const morningAgents = workingAgents.slice(0, 9);
+                    const nightAgents = workingAgents.slice(9, 18);
+                    const extraOff = workingAgents.slice(18);
+                    
+                    // Update stats
+                    morningAgents.forEach(a => {
+                        a.workDays++;
+                        a.morningShifts++;
+                        a.consecutiveOff = 0;
+                    });
+                    nightAgents.forEach(a => {
+                        a.workDays++;
+                        a.nightShifts++;
+                        a.consecutiveOff = 0;
+                    });
+                    [...offAgents, ...extraOff].forEach(a => {
+                        a.consecutiveOff++;
+                    });
+                    
+                    dayShifts.morning = morningAgents.map(a => ({ name: a.name, group: a.effectiveGroup }));
+                    dayShifts.night = nightAgents.map(a => ({ name: a.name, group: a.effectiveGroup }));
+                    dayShifts.off = [...offAgents, ...extraOff].map(a => ({ name: a.name, group: a.effectiveGroup }));
+                    
+                    yearSchedule[weekKey][day] = dayShifts;
+                }
+                
+                // Reset weekly counters
+                availableAgents.forEach(a => {
+                    a.totalWorkDays += a.workDays;
+                    a.workDays = 0;
+                    a.consecutiveOff = 0;
+                });
+            }
+            
+            scheduleData = yearSchedule;
+            lastAutoDistribution = new Date().toLocaleString();
+            saveData();
+            closeModal('autoScheduleModal');
+            renderSchedule();
+            renderAgentRoster();
+            showNotification('Success', `Auto-generated schedule for 52 weeks with group rotation`);
+        }
+
+        // TASK AUTO DISTRIBUTION
+        function autoDistributeTasks() {
+            const maxTasks = parseInt(document.getElementById('maxTasksPerAgent').value);
+            const weight = document.getElementById('priorityWeight').value;
+            const shiftPref = document.getElementById('shiftPreference').value;
+            
+            tasks = tasks.filter(t => !t.autoAssigned);
+            
+            const currentWeek = scheduleData[`week_${Math.floor(selectedMonth * 4.33)}`] || {};
+            
+            taskTypes.forEach(taskType => {
+                const priority = ['Calls', 'Support Calls'].includes(taskType) ? 'high' : 
+                                ['Facebook', 'Respond', 'Forms'].includes(taskType) ? 'medium' : 'low';
+                const agentsNeeded = priority === 'high' ? 4 : priority === 'medium' ? 3 : 2;
+                
+                let availableAgents = agents.filter(a => {
+                    if (a.pip) return false;
+                    if (a.tasksAssigned >= maxTasks) return false;
+                    if (shiftPref !== 'any' && currentWeek[0]) {
+                        const day0 = currentWeek[0];
+                        const isWorking = day0.morning.some(x => x.name === a.name) || 
+                                         day0.night.some(x => x.name === a.name);
+                        if (!isWorking) return false;
+                    }
+                    return true;
+                });
+
+                if (weight === 'workload') {
+                    availableAgents.sort((a, b) => a.tasksAssigned - b.tasksAssigned);
+                } else if (weight === 'skill') {
+                    availableAgents.sort((a, b) => b.performance - a.performance);
+                } else if (weight === 'random') {
+                    availableAgents.sort(() => Math.random() - 0.5);
+                } else {
+                    availableAgents.sort((a, b) => (a.tasksAssigned - b.tasksAssigned) + (b.performance - a.performance) * 0.1);
+                }
+
+                const selected = availableAgents.slice(0, agentsNeeded);
+                
+                if (selected.length > 0) {
+                    tasks.push({
+                        type: taskType,
+                        priority: priority,
+                        assignees: selected.map(a => a.name),
+                        autoAssigned: true,
+                        date: new Date().toISOString(),
+                        shift: shiftPref
+                    });
+                    
+                    selected.forEach(a => a.tasksAssigned++);
+                }
+            });
+            
+            saveData();
+            renderTasks();
+            showNotification('Auto Distribution Complete', `Distributed ${taskTypes.length} tasks to ${new Set(tasks.flatMap(t => t.assignees)).size} agents`);
+        }
+
+        function updateSliderLabel(slider) {
+            document.getElementById('sliderValue').textContent = slider.value;
+        }
+
+        // RENDER FUNCTIONS
+        function renderSchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            grid.innerHTML = '';
+            
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+            
+            const weekKey = `week_${Math.floor(selectedMonth * 4.33)}`;
+            const weekData = scheduleData[weekKey];
+            
+            if (!weekData) {
+                grid.innerHTML += '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No schedule generated yet. Click "Auto Distribute" to generate.</div>';
+                return;
+            }
+            
+            for (let day = 0; day < 7; day++) {
+                const dayData = weekData[day] || { morning: [], night: [], off: [] };
+                const cell = document.createElement('div');
+                cell.className = `day-cell ${dayData.auto ? 'auto-generated' : ''}`;
+                
+                if (dayData.auto) {
+                    cell.innerHTML = '<span class="auto-badge">AUTO</span>';
+                }
+                
+                cell.innerHTML += `
+                    <div class="day-date">${days[day]} - ${months[selectedMonth]}</div>
+                    
+                    <div class="shift-section shift-morning">
+                        <div class="shift-title">
+                            <span>☀️ Morning (9AM-5:30PM)</span>
+                            <span class="agent-count">${dayData.morning.length}</span>
+                        </div>
+                        <div class="agent-list-small">
+                            ${dayData.morning.slice(0, 6).map(a => `
+                                <span class="agent-tag group-${a.group.toLowerCase()}" onclick="highlightAgent('${a.name}')" title="Group ${a.group}">
+                                    ${a.name.split(' ')[1]}
+                                </span>
+                            `).join('')}
+                            ${dayData.morning.length > 6 ? `<span class="agent-tag">+${dayData.morning.length - 6}</span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="shift-section shift-night">
+                        <div class="shift-title">
+                            <span>🌙 Night (3PM-11PM)</span>
+                            <span class="agent-count">${dayData.night.length}</span>
+                        </div>
+                        <div class="agent-list-small">
+                            ${dayData.night.slice(0, 6).map(a => `
+                                <span class="agent-tag group-${a.group.toLowerCase()}" onclick="highlightAgent('${a.name}')" title="Group ${a.group}">
+                                    ${a.name.split(' ')[1]}
+                                </span>
+                            `).join('')}
+                            ${dayData.night.length > 6 ? `<span class="agent-tag">+${dayData.night.length - 6}</span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="shift-section shift-off">
+                        <div class="shift-title">
+                            <span>😴 Off Duty</span>
+                            <span class="agent-count">${dayData.off.length}</span>
+                        </div>
+                        <div class="agent-list-small">
+                            ${dayData.off.slice(0, 4).map(a => `
+                                <span class="agent-tag group-${a.group.toLowerCase()}" style="opacity: 0.6;" title="Group ${a.group}">
+                                    ${a.name.split(' ')[1]}
+                                </span>
+                            `).join('')}
+                            ${dayData.off.length > 4 ? `<span class="agent-tag">+${dayData.off.length - 4}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(cell);
+            }
+            
+            if (lastAutoDistribution) {
+                document.getElementById('autoStatus').textContent = `Last auto-distribution: ${lastAutoDistribution}`;
+            }
+        }
+
+        function renderAgentRoster() {
+            const roster = document.getElementById('agentRoster');
+            roster.innerHTML = '';
+            
+            const sortedAgents = [...agents].sort((a, b) => b.totalWorkDays - a.totalWorkDays);
+            
+            sortedAgents.forEach(agent => {
+                const card = document.createElement('div');
+                card.className = `agent-card ${agent.tasksAssigned > 0 ? 'auto-assigned' : ''}`;
+                
+                const weekData = scheduleData[`week_${Math.floor(selectedMonth * 4.33)}`] || {};
+                const agentShifts = [];
+                
+                for (let day = 0; day < 7; day++) {
+                    const dayData = weekData[day];
+                    if (!dayData) {
+                        agentShifts.push('off');
+                        continue;
+                    }
+                    if (dayData.morning.some(x => x.name === agent.name)) agentShifts.push('morning');
+                    else if (dayData.night.some(x => x.name === agent.name)) agentShifts.push('night');
+                    else agentShifts.push('off');
+                }
+                
+                card.innerHTML = `
+                    <div class="agent-header">
+                        <div>
+                            <div class="agent-name">${agent.name}</div>
+                            <div class="agent-id">Seniority: ${agent.seniority}y • Performance: ${agent.performance}%</div>
+                        </div>
+                        <span class="agent-group-badge ${agent.group.toLowerCase()}">Group ${agent.group}</span>
+                    </div>
+                    
+                    <div class="agent-stats">
+                        <span class="stat-pill" style="color: var(--morning);">☀️ ${agent.morningShifts}</span>
+                        <span class="stat-pill" style="color: var(--night);">🌙 ${agent.nightShifts}</span>
+                        <span class="stat-pill" style="color: var(--success);">Tasks: ${agent.tasksAssigned}</span>
+                        ${agent.preferredShift !== 'any' ? `<span class="stat-pill" style="color: var(--auto);">Pref: ${agent.preferredShift}</span>` : ''}
+                    </div>
+                    
+                    <div class="week-grid">
+                        ${agentShifts.map((shift, i) => `
+                            <div class="week-day ${shift}" data-shift="${shift}" title="${shift}">
+                                ${['M','T','W','T','F','S','S'][i]}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${Math.min((agent.totalWorkDays / 260) * 100, 100)}%;"></div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                        Yearly workload: ${agent.totalWorkDays} days
+                    </div>
+                `;
+                
+                roster.appendChild(card);
+            });
+        }
+
+        function renderTasks() {
+            const grid = document.getElementById('tasksGrid');
+            grid.innerHTML = '';
+            
+            taskTypes.forEach(type => {
+                const taskAssignments = tasks.filter(t => t.type === type);
+                const allAssignees = taskAssignments.flatMap(t => t.assignees || []);
+                const uniqueAssignees = [...new Set(allAssignees)];
+                const isAuto = taskAssignments.some(t => t.autoAssigned);
+                
+                const card = document.createElement('div');
+                card.className = `task-card ${isAuto ? 'auto-distributed' : ''}`;
+                
+                const priority = taskAssignments[0]?.priority || 'medium';
+                
+                card.innerHTML = `
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${type}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">
+                                ${uniqueAssignees.length} agents assigned
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            ${isAuto ? '<div class="auto-indicator"><span>⚡</span> AUTO</div>' : ''}
+                            <span class="priority-badge priority-${priority}">${priority}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="task-assignees">
+                        ${uniqueAssignees.slice(0, 6).map((name, i) => {
+                            const agent = agents.find(a => a.name === name);
+                            const isAutoAssigned = taskAssignments.some(t => t.autoAssigned && t.assignees.includes(name));
+                            return `<div class="avatar ${isAutoAssigned ? 'auto-assigned' : ''}" title="${name} (Group ${agent?.group}) ${isAutoAssigned ? '(Auto)' : ''}" style="z-index: ${6-i}">${name.split(' ')[1]}</div>`;
+                        }).join('')}
+                        ${uniqueAssignees.length > 6 ? `<div class="avatar" style="background: var(--border);">+${uniqueAssignees.length - 6}</div>` : ''}
+                        ${uniqueAssignees.length === 0 ? '<span style="color: var(--text-muted); font-size: 0.9rem;">No agents assigned</span>' : ''}
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 0.85rem;" onclick="editTask('${type}')">Edit</button>
+                        <button class="btn" style="flex: 1; padding: 8px; font-size: 0.85rem; background: var(--danger);" onclick="clearTask('${type}')">Clear</button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderWarnings() {
+            const list = document.getElementById('warningList');
+            list.innerHTML = '';
+            
+            const agentsWithIssues = agents.filter(a => a.warnings > 0 || a.pip);
+            
+            if (agentsWithIssues.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 60px; background: rgba(16, 185, 129, 0.05); border-radius: 16px; border: 1px dashed var(--success);"><div style="font-size: 3rem; margin-bottom: 10px;">🎉</div><div style="font-size: 1.2rem; font-weight: 700; color: var(--success);">All Clear!</div><div>No warnings or PIP cases. Great job team!</div></div>';
+                return;
+            }
+            
+            agentsWithIssues.forEach(agent => {
+                const card = document.createElement('div');
+                card.className = 'warning-card';
+                
+                let levelClass = 'level-1';
+                if (agent.warnings === 2) levelClass = 'level-2';
+                if (agent.warnings >= 3 || agent.pip) levelClass = 'level-3';
+                
+                card.innerHTML = `
+                    <div class="warning-level ${levelClass}">${agent.warnings}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">
+                            ${agent.name}
+                            <span class="agent-group-badge ${agent.group.toLowerCase()}" style="margin-left: 10px; font-size: 0.7rem;">Group ${agent.group}</span>
+                            ${agent.pip ? '<span class="pip-badge" style="margin-left: 10px;">PIP ACTIVE</span>' : ''}
+                        </div>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">
+                            ${agent.pip ? 'Performance Improvement Plan in progress. Auto-assignment restricted.' : `${agent.warnings} warning${agent.warnings > 1 ? 's' : ''} on record`}
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.85rem;">
+                            <span style="color: var(--text-muted);">Tasks: ${agent.tasksAssigned} • Shifts: ${agent.totalWorkDays} days</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="manageAgent(${agent.id})">Manage</button>
+                `;
+                
+                list.appendChild(card);
+            });
+        }
+
+        function renderMonthSelector() {
+            const selector = document.getElementById('monthSelector');
+            selector.innerHTML = '';
+            
+            months.forEach((month, index) => {
+                const btn = document.createElement('button');
+                btn.className = `month-btn ${index === selectedMonth ? 'active' : ''}`;
+                btn.textContent = month;
+                btn.onclick = () => {
+                    selectedMonth = index;
+                    renderMonthSelector();
+                    renderSchedule();
+                };
+                selector.appendChild(btn);
+            });
+        }
+
+        // HELPER FUNCTIONS
+        function highlightAgent(agentName) {
+            showNotification('Agent Selected', `Showing details for ${agentName}`);
+        }
+
+        function openTaskModal() {
+            const container = document.getElementById('manualAgentSelect');
+            container.innerHTML = agents.map(a => `
+                <label class="checkbox-item">
+                    <input type="checkbox" value="${a.name}">
+                    <span>${a.name} (Group ${a.group})</span>
+                </label>
+            `).join('');
+            
+            document.getElementById('taskModal').classList.add('active');
+        }
+
+        function saveManualTask() {
+            const type = document.getElementById('taskType').value;
+            const priority = document.getElementById('taskPriority').value;
+            const checked = document.querySelectorAll('#manualAgentSelect input:checked');
+            const assignees = Array.from(checked).map(cb => cb.value);
+            
+            if (assignees.length === 0) {
+                showNotification('Error', 'Please select at least one agent', 'error');
+                return;
+            }
+            
+            tasks.push({
+                type: type,
+                priority: priority,
+                assignees: assignees,
+                autoAssigned: false,
+                date: new Date().toISOString()
+            });
+            
+            assignees.forEach(name => {
+                const agent = agents.find(a => a.name === name);
+                if (agent) agent.tasksAssigned++;
+            });
+            
+            saveData();
+            closeModal('taskModal');
+            renderTasks();
+            showNotification('Success', `Task assigned to ${assignees.length} agents`);
+        }
+
+        function editTask(taskType) {
+            showNotification('Info', `Editing ${taskType}. Use Auto Distribute to reassign.`);
+        }
+
+        function clearTask(taskType) {
+            tasks = tasks.filter(t => t.type !== taskType);
+            agents.forEach(a => {
+                a.tasksAssigned = tasks.filter(t => t.assignees.includes(a.name)).length;
+            });
+            saveData();
+            renderTasks();
+            showNotification('Cleared', `Removed all assignments for ${taskType}`);
+        }
+
+        function clearAllTasks() {
+            if (confirm('Clear all task assignments?')) {
+                tasks = [];
+                agents.forEach(a => a.tasksAssigned = 0);
+                saveData();
+                renderTasks();
+                showNotification('Cleared', 'All task assignments removed');
+            }
+        }
+
+        function addWarning() {
+            const agentName = prompt('Enter agent name or ID:');
+            if (!agentName) return;
+            
+            const agent = agents.find(a => a.name === agentName || a.id === parseInt(agentName));
+            if (!agent) {
+                showNotification('Error', 'Agent not found', 'error');
+                return;
+            }
+            
+            const reason = prompt('Reason for warning:');
+            if (reason) {
+                agent.warnings++;
+                if (agent.warnings >= 3) {
+                    agent.pip = true;
+                    agent.tasksAssigned = Math.min(agent.tasksAssigned, 2);
+                }
+                
+                warnings.push({
+                    agentId: agent.id,
+                    date: new Date().toISOString(),
+                    reason: reason,
+                    level: agent.warnings
+                });
+                
+                saveData();
+                renderWarnings();
+                showNotification('Warning Added', `${agent.name} now has ${agent.warnings} warning(s)${agent.pip ? ' and is on PIP' : ''}`);
+            }
+        }
+
+        function manageAgent(id) {
+            const agent = agents.find(a => a.id === id);
+            if (!agent) return;
+            
+            const action = prompt(`Agent: ${agent.name} (Group ${agent.group})\nWarnings: ${agent.warnings}\nPIP: ${agent.pip ? 'Yes' : 'No'}\nTasks: ${agent.tasksAssigned}\n\n1. Add Warning\n2. Clear Warning\n3. Toggle PIP\n4. Reset Tasks\n5. Change Group (A/B/C)\n\nSelect action:`);
+            
+            switch(action) {
+                case '1':
+                    agent.warnings++;
+                    if (agent.warnings >= 3) agent.pip = true;
+                    showNotification('Updated', 'Warning added');
+                    break;
+                case '2':
+                    if (agent.warnings > 0) agent.warnings--;
+                    if (agent.warnings < 3) agent.pip = false;
+                    showNotification('Updated', 'Warning cleared');
+                    break;
+                case '3':
+                    agent.pip = !agent.pip;
+                    showNotification('Updated', `PIP ${agent.pip ? 'activated' : 'deactivated'}`);
+                    break;
+                case '4':
+                    agent.tasksAssigned = 0;
+                    showNotification('Updated', 'Task count reset');
+                    break;
+                case '5':
+                    const newGroup = prompt('Enter new group (A, B, or C):', agent.group);
+                    if (['A', 'B', 'C'].includes(newGroup?.toUpperCase())) {
+                        agent.group = newGroup.toUpperCase();
+                        showNotification('Updated', `Group changed to ${agent.group}`);
+                    }
+                    break;
+            }
+            
+            saveData();
+            renderWarnings();
+            renderTasks();
+            if (action === '5') {
+                renderGroupDistribution();
+                renderSchedule();
+                renderAgentRoster();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function exportSchedule() {
+            let csv = 'Week,Day,Group,Morning Agents (Group),Night Agents (Group),Off Agents (Group),Auto Generated\n';
+            
+            Object.keys(scheduleData).forEach(weekKey => {
+                const week = scheduleData[weekKey];
+                days.forEach((day, index) => {
+                    const dayData = week[index];
+                    if (dayData) {
+                        // Group by group
+                        const morningByGroup = { A: [], B: [], C: [] };
+                        const nightByGroup = { A: [], B: [], C: [] };
+                        const offByGroup = { A: [], B: [], C: [] };
+                        
+                        dayData.morning.forEach(a => morningByGroup[a.group].push(a.name));
+                        dayData.night.forEach(a => nightByGroup[a.group].push(a.name));
+                        dayData.off.forEach(a => offByGroup[a.group].push(a.name));
+                        
+                        ['A', 'B', 'C'].forEach(group => {
+                            csv += `${weekKey},${day},${group},"${morningByGroup[group].join('; ')}","${nightByGroup[group].join('; ')}","${offByGroup[group].join('; ')}",${dayData.auto ? 'Yes' : 'No'}\n`;
+                        });
+                    }
+                });
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `group_schedule_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            showNotification('Exported', 'Schedule with groups downloaded as CSV');
+        }
+
+        function generateSchedule() {
+            executeAutoSchedule();
+        }
+
+        // Initialize
+        window.onload = () => {
+            renderMonthSelector();
+            renderGroupDistribution();
+            renderSchedule();
+            renderAgentRoster();
+            renderTasks();
+        };
+
+        window.onclick = (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>
