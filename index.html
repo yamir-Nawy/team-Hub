@@ -2368,10 +2368,18 @@ window.onclick = e => { if(e.target.classList.contains('modal')) e.target.classL
 //  INIT — check if already logged in
 // ══════════════════════════════════════════════════════════════
 (async () => {
-    const { data: { session } } = await sb.auth.getSession();
-    if (session) {
-        currentUser = session.user;
-        await bootApp();
+    try {
+        const sessionPromise = sb.auth.getSession();
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+        const { data: { session } } = await Promise.race([sessionPromise, timeout]);
+        if (session) {
+            currentUser = session.user;
+            await bootApp();
+        } else {
+            hideLoading();
+        }
+    } catch(e) {
+        hideLoading();
     }
 })();
 </script>
