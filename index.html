@@ -788,6 +788,10 @@
             .agent-breaks-preview { grid-template-columns: 1fr; }
             .breaks-summary { grid-template-columns: 1fr; }
         }
+
+        /* Public agent portal page */
+        #agentPortalPage { display: none; }
+        #appPage { display: none; }
     </style>
 </head>
 <body>
@@ -795,53 +799,127 @@
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
-    <div class="loading-text" id="loadingText">Connecting to database...</div>
+    <div class="loading-text" id="loadingText">Loading...</div>
 </div>
 
-<!-- ══════════════════════════ LOGIN PAGE ══════════════════════════ -->
-<div id="loginPage">
-    <div class="login-box">
-        <div class="login-logo">
-            <h1>Team Management Hub</h1>
-            <p>Auto Distribution System • Secure Login</p>
-        </div>
-
-        <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="loginEmail" placeholder="you@company.com" />
-        </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••"
-                   onkeydown="if(event.key==='Enter') handleLogin()" />
-        </div>
-
-        <button class="login-btn" id="loginBtn" onclick="handleLogin()">
-            Sign In
-        </button>
-
-        <div class="login-error" id="loginError"></div>
-
-        <div class="login-footer">
-            Contact your admin to get access
-        </div>
-    </div>
-</div>
-
-<!-- ══════════════════════════ MAIN APP ══════════════════════════ -->
-<div id="appPage">
-    <!-- Top Bar -->
+<!-- ══════════════════════════ AGENT PORTAL PAGE (PUBLIC) ══════════════════════════ -->
+<div id="agentPortalPage">
+    <!-- Minimal top bar for agent portal -->
     <div class="topbar">
         <div class="topbar-left">
             <h1>Team Management Hub</h1>
         </div>
         <div class="topbar-right">
             <div class="sync-status">
+                <div class="sync-dot" id="publicSyncDot"></div>
+                <span id="publicSyncText">Live</span>
+            </div>
+            <button class="btn" style="padding:8px 18px;font-size:0.85rem;background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="openAdminLoginModal()">🔐 Admin Login</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2><span class="icon">👤</span> Agent Portal</h2>
+                <div id="publicPortalAgentName" style="color:var(--text-muted);font-size:0.95rem;font-weight:600"></div>
+            </div>
+            <!-- Agent Selection -->
+            <div id="publicAgentSelectPanel">
+                <div class="agent-portal-select">
+                    <h3>👋 Who are you? Select your name to check in</h3>
+                    <div class="agent-select-grid" id="publicAgentSelectGrid"></div>
+                </div>
+            </div>
+            <!-- Agent Dashboard -->
+            <div id="publicAgentDashboard" style="display:none">
+                <div class="agent-dashboard">
+                    <div class="agent-info-card">
+                        <h3 style="margin-bottom:20px;font-size:1.1rem;color:var(--text-muted)">⏱️ Attendance</h3>
+                        <div class="checkin-status checked-out" id="publicCheckinStatus">
+                            <span id="publicCheckinIcon">😴</span>
+                            <span id="publicCheckinLabel">Not Checked In</span>
+                        </div>
+                        <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;margin-bottom:15px" id="publicCheckinTime"></div>
+                        <button class="checkin-btn check-in" id="publicCheckinBtn" onclick="publicToggleCheckIn()">✅ Check In</button>
+                        <button class="btn btn-secondary" style="width:100%;margin-top:10px;padding:12px" onclick="publicDeselectAgent()">← Switch Agent</button>
+                    </div>
+                    <div class="today-shift-card">
+                        <h3 style="margin-bottom:20px;font-size:1.1rem;color:var(--text-muted)">📅 Today's Shift</h3>
+                        <div class="shift-time-display off" id="publicShiftDisplay">
+                            <span id="publicShiftIcon">😴</span>
+                            <div>
+                                <div id="publicShiftLabel">Day Off</div>
+                                <div style="font-size:0.85rem;opacity:0.7" id="publicShiftTime"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;font-weight:600">
+                            ☕ Your Breaks Today
+                            <span style="font-weight:400;margin-left:8px;color:var(--auto);font-size:0.8rem">Auto-assigned · max 2 at a time</span>
+                        </div>
+                        <div class="agent-breaks-preview" id="publicBreaksPreview">
+                            <div class="break-preview-item">
+                                <div class="break-type">☕ Break 1</div>
+                                <div class="break-time" id="publicBreak1">—</div>
+                                <div class="break-duration">15 min</div>
+                            </div>
+                            <div class="break-preview-item">
+                                <div class="break-type">🍽️ Lunch</div>
+                                <div class="break-time" id="publicBreak2">—</div>
+                                <div class="break-duration">30 min</div>
+                            </div>
+                            <div class="break-preview-item">
+                                <div class="break-type">☕ Break 2</div>
+                                <div class="break-time" id="publicBreak3">—</div>
+                                <div class="break-duration">15 min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════ ADMIN LOGIN MODAL ══════════════════════════ -->
+<div class="modal" id="adminLoginModal">
+    <div class="modal-content" style="max-width:420px">
+        <div style="text-align:center;margin-bottom:25px">
+            <div style="font-size:2.5rem;margin-bottom:10px">🔐</div>
+            <h3 style="font-size:1.4rem;background:linear-gradient(135deg,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Admin Access</h3>
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-top:5px">Management dashboard login</p>
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="admin@company.com" />
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter') handleLogin()" />
+        </div>
+        <button class="login-btn" id="loginBtn" onclick="handleLogin()" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+            Sign In as Admin
+        </button>
+        <div class="login-error" id="loginError"></div>
+        <button class="btn btn-secondary" style="width:100%;margin-top:12px" onclick="closeModal('adminLoginModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════ MAIN APP ══════════════════════════ -->
+<div id="appPage">
+    <!-- Top Bar (Admin) -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1>Team Management Hub</h1>
+            <span style="background:linear-gradient(135deg,#f59e0b,#d97706);color:white;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700">ADMIN</span>
+        </div>
+        <div class="topbar-right">
+            <div class="sync-status">
                 <div class="sync-dot" id="syncDot"></div>
                 <span id="syncText">Live</span>
             </div>
-            <div class="user-pill" id="userEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="423731273002272f232b2e6c212d2f">[email&#160;protected]</a></div>
+            <div class="user-pill" id="userEmail">admin</div>
+            <button class="btn btn-secondary" style="padding:8px 16px;font-size:0.85rem" onclick="exportAgentYTD()">📊 Export YTD</button>
             <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
         </div>
     </div>
@@ -1315,6 +1393,15 @@ function showNotification(title, message, type = 'success') {
 // ══════════════════════════════════════════════════════════════
 //  AUTH
 // ══════════════════════════════════════════════════════════════
+function openAdminLoginModal() {
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'Sign In as Admin';
+    document.getElementById('adminLoginModal').classList.add('active');
+}
+
 async function handleLogin() {
     const email    = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -1337,11 +1424,13 @@ async function handleLogin() {
         errEl.style.display = 'block';
         errEl.textContent = error.message;
         btn.disabled = false;
-        btn.textContent = 'Sign In';
+        btn.textContent = 'Sign In as Admin';
         return;
     }
 
     currentUser = data.user;
+    closeModal('adminLoginModal');
+    document.getElementById('agentPortalPage').style.display = 'none';
     await bootApp();
 }
 
@@ -1349,12 +1438,12 @@ async function handleLogout() {
     await sb.auth.signOut();
     currentUser = null;
     agents = []; tasks = []; scheduleData = {};
-    document.getElementById('appPage').style.display   = 'none';
-    document.getElementById('loginPage').style.display = 'flex';
-    document.getElementById('loginEmail').value    = '';
-    document.getElementById('loginPassword').value = '';
+    document.getElementById('appPage').style.display      = 'none';
+    document.getElementById('agentPortalPage').style.display = 'block';
     document.getElementById('loginBtn').disabled    = false;
-    document.getElementById('loginBtn').textContent = 'Sign In';
+    document.getElementById('loginBtn').textContent = 'Sign In as Admin';
+    // Reload public portal data
+    await publicLoadData();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1363,13 +1452,171 @@ async function handleLogout() {
 async function bootApp() {
     showLoading('Loading team data...');
     document.getElementById('userEmail').textContent = currentUser.email;
-    document.getElementById('loginPage').style.display = 'none';
-    document.getElementById('appPage').style.display   = 'block';
+    document.getElementById('agentPortalPage').style.display = 'none';
+    document.getElementById('appPage').style.display          = 'block';
     await loadAllData();
     await loadAttendanceToday();
     await loadBreaksData();
     hideLoading();
     renderAll();
+}
+
+// Public portal: load agents + schedule + attendance + breaks without auth
+async function publicLoadData() {
+    document.getElementById('publicSyncDot').className = 'sync-dot syncing';
+    document.getElementById('publicSyncText').textContent = 'Loading...';
+    try {
+        const [{ data: ag }, { data: sc }, { data: att }, { data: brk }] = await Promise.all([
+            sb.from('agents').select('*').order('id'),
+            sb.from('schedule_data').select('*'),
+            sb.from('attendance').select('*').eq('date', new Date().toISOString().split('T')[0]),
+            sb.from('agent_breaks').select('*').eq('date', new Date().toISOString().split('T')[0])
+        ]);
+        agents = ag || [];
+        scheduleData = {};
+        (sc || []).forEach(row => {
+            if (!scheduleData[row.week_key]) scheduleData[row.week_key] = {};
+            scheduleData[row.week_key][row.day_index] = {
+                morning: row.morning_agents || [], night: row.night_agents || [],
+                off: row.off_agents || [], auto: row.auto_generated
+            };
+        });
+        attendanceRecords = {};
+        (att || []).forEach(r => {
+            attendanceRecords[r.agent_id] = { checkedIn: r.checked_in, checkInTime: r.check_in_time, checkOutTime: r.check_out_time };
+        });
+        breaksData = {};
+        (brk || []).forEach(r => {
+            breaksData[r.agent_id] = { b1: r.break1_time, b2: r.break2_time, b3: r.break3_time };
+        });
+        document.getElementById('publicSyncDot').className = 'sync-dot';
+        document.getElementById('publicSyncText').textContent = 'Live';
+        renderPublicAgentGrid();
+    } catch(e) {
+        document.getElementById('publicSyncDot').className = 'sync-dot error';
+        document.getElementById('publicSyncText').textContent = 'Offline';
+    }
+}
+
+function renderPublicAgentGrid() {
+    const grid = document.getElementById('publicAgentSelectGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const sorted = [...agents].sort((a,b) => a.name.localeCompare(b.name));
+    sorted.forEach(ag => {
+        const btn = document.createElement('button');
+        btn.className = 'agent-select-btn';
+        const rec = attendanceRecords[ag.id] || {};
+        const statusDot = rec.checkedIn 
+            ? '<span style="color:var(--success);font-size:0.75rem">● Checked In</span>'
+            : '<span style="color:var(--text-muted);font-size:0.75rem">○ Not checked in</span>';
+        btn.innerHTML = `
+            <div>${ag.name.split(' ')[0]}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted)">${ag.name.split(' ').slice(1).join(' ')}</div>
+            <div class="agent-group-dot" style="color:${ag.group_name==='A'?'var(--group-a)':ag.group_name==='B'?'var(--group-b)':'var(--group-c)'}">Group ${ag.group_name}</div>
+            <div style="margin-top:4px">${statusDot}</div>`;
+        btn.onclick = () => publicSelectAgent(ag);
+        grid.appendChild(btn);
+    });
+}
+
+let publicSelectedAgent = null;
+
+function publicSelectAgent(ag) {
+    publicSelectedAgent = ag;
+    document.getElementById('publicAgentSelectPanel').style.display = 'none';
+    document.getElementById('publicAgentDashboard').style.display = 'block';
+    document.getElementById('publicPortalAgentName').textContent = `👤 ${ag.name}`;
+    updatePublicDashboard();
+}
+
+function publicDeselectAgent() {
+    publicSelectedAgent = null;
+    document.getElementById('publicAgentSelectPanel').style.display = 'block';
+    document.getElementById('publicAgentDashboard').style.display = 'none';
+    document.getElementById('publicPortalAgentName').textContent = '';
+    renderPublicAgentGrid();
+}
+
+function updatePublicDashboard() {
+    const ag = publicSelectedAgent;
+    if (!ag) return;
+    const rec = attendanceRecords[ag.id] || {};
+
+    const statusEl = document.getElementById('publicCheckinStatus');
+    const btnEl    = document.getElementById('publicCheckinBtn');
+    const timeEl   = document.getElementById('publicCheckinTime');
+
+    if (rec.checkedIn) {
+        statusEl.className = 'checkin-status checked-in';
+        document.getElementById('publicCheckinIcon').textContent  = '✅';
+        document.getElementById('publicCheckinLabel').textContent = 'Checked In';
+        timeEl.textContent = `Since: ${rec.checkInTime}`;
+        btnEl.className    = 'checkin-btn check-out';
+        btnEl.textContent  = '🚪 Check Out';
+    } else {
+        statusEl.className = 'checkin-status checked-out';
+        document.getElementById('publicCheckinIcon').textContent  = '😴';
+        document.getElementById('publicCheckinLabel').textContent = rec.checkOutTime ? 'Checked Out' : 'Not Checked In';
+        timeEl.textContent = rec.checkOutTime ? `Checked out: ${rec.checkOutTime}` : '';
+        btnEl.className    = 'checkin-btn check-in';
+        btnEl.textContent  = '✅ Check In';
+    }
+
+    // Shift
+    const today = new Date().getDay();
+    const wk = `week_${Math.floor(selectedMonth * 4.33)}`;
+    const todayData = (scheduleData[wk] || {})[today] || { morning:[], night:[], off:[] };
+    const shiftEl = document.getElementById('publicShiftDisplay');
+    let shiftType = 'off';
+    if (todayData.morning.some(x => x.name === ag.name)) shiftType = 'morning';
+    else if (todayData.night.some(x => x.name === ag.name)) shiftType = 'night';
+    shiftEl.className = `shift-time-display ${shiftType}`;
+    if (shiftType === 'morning') {
+        document.getElementById('publicShiftIcon').textContent  = '☀️';
+        document.getElementById('publicShiftLabel').textContent = 'Morning Shift';
+        document.getElementById('publicShiftTime').textContent  = '9:00 AM – 5:30 PM';
+    } else if (shiftType === 'night') {
+        document.getElementById('publicShiftIcon').textContent  = '🌙';
+        document.getElementById('publicShiftLabel').textContent = 'Night Shift';
+        document.getElementById('publicShiftTime').textContent  = '3:00 PM – 11:00 PM';
+    } else {
+        document.getElementById('publicShiftIcon').textContent  = '😴';
+        document.getElementById('publicShiftLabel').textContent = 'Day Off';
+        document.getElementById('publicShiftTime').textContent  = 'Rest & recharge!';
+    }
+
+    // Breaks
+    const agBreaks = breaksData[ag.id] || {};
+    document.getElementById('publicBreak1').textContent = agBreaks.b1 || '—';
+    document.getElementById('publicBreak2').textContent = agBreaks.b2 || '—';
+    document.getElementById('publicBreak3').textContent = agBreaks.b3 || '—';
+}
+
+async function publicToggleCheckIn() {
+    const ag = publicSelectedAgent;
+    if (!ag) return;
+    const rec = attendanceRecords[ag.id] || {};
+    const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    if (rec.checkedIn) {
+        attendanceRecords[ag.id] = { checkedIn: false, checkInTime: rec.checkInTime, checkOutTime: now };
+        showNotification('Checked Out', `${ag.name} checked out at ${now}`);
+    } else {
+        attendanceRecords[ag.id] = { checkedIn: true, checkInTime: now, checkOutTime: null };
+        showNotification('Checked In', `${ag.name} checked in at ${now}`, 'success');
+    }
+
+    await sb.from('attendance').upsert({
+        agent_id: ag.id, agent_name: ag.name, date: todayStr,
+        checked_in:     attendanceRecords[ag.id].checkedIn,
+        check_in_time:  attendanceRecords[ag.id].checkInTime,
+        check_out_time: attendanceRecords[ag.id].checkOutTime
+    }, { onConflict: 'agent_id,date' });
+
+    updatePublicDashboard();
+    renderPublicAgentGrid();
 }
 
 async function loadAllData() {
@@ -2365,21 +2612,86 @@ function closeModal(id) { document.getElementById(id).classList.remove('active')
 window.onclick = e => { if(e.target.classList.contains('modal')) e.target.classList.remove('active'); };
 
 // ══════════════════════════════════════════════════════════════
-//  INIT — check if already logged in
+//  EXPORT AGENT YTD CSV (Admin)
+// ══════════════════════════════════════════════════════════════
+async function exportAgentYTD() {
+    showLoading('Building YTD report...');
+    try {
+        // Pull all attendance & breaks records (not just today)
+        const [{ data: allAtt }, { data: allBrk }] = await Promise.all([
+            sb.from('attendance').select('*').order('date'),
+            sb.from('agent_breaks').select('*').order('date')
+        ]);
+
+        let csv = 'Agent Name,Group,Total Work Days,Morning Shifts,Night Shifts,Warnings,PIP,';
+        csv += 'Total Check-In Days,Avg Check-In Time,Latest Check-Out,';
+        csv += 'Break 1 (Today),Lunch (Today),Break 2 (Today)\n';
+
+        agents.forEach(ag => {
+            const attRecs = (allAtt || []).filter(r => r.agent_id === ag.id);
+            const brkRec  = (allBrk  || []).find(r => r.agent_id === ag.id && r.date === new Date().toISOString().split('T')[0]);
+
+            const checkinDays = attRecs.filter(r => r.checked_in || r.check_in_time).length;
+            const checkInTimes = attRecs.filter(r => r.check_in_time).map(r => r.check_in_time);
+            const latestCheckout = attRecs.filter(r => r.check_out_time).map(r => r.check_out_time).slice(-1)[0] || '';
+
+            // Avg check-in: parse HH:MM strings to minutes, average, convert back
+            let avgCheckIn = '';
+            if (checkInTimes.length > 0) {
+                const mins = checkInTimes.map(t => {
+                    const [h, m] = t.replace(/AM|PM/g,'').trim().split(':').map(Number);
+                    return h * 60 + m;
+                });
+                const avg = Math.round(mins.reduce((a,b)=>a+b,0) / mins.length);
+                avgCheckIn = `${String(Math.floor(avg/60)).padStart(2,'0')}:${String(avg%60).padStart(2,'0')}`;
+            }
+
+            const b1 = brkRec?.break1_time || '';
+            const b2 = brkRec?.break2_time || '';
+            const b3 = brkRec?.break3_time || '';
+
+            csv += `"${ag.name}","${ag.group_name}",${ag.total_work_days||0},${ag.morning_shifts||0},${ag.night_shifts||0},`;
+            csv += `${ag.warnings||0},${ag.pip?'Yes':'No'},${checkinDays},"${avgCheckIn}","${latestCheckout}",`;
+            csv += `"${b1}","${b2}","${b3}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url;
+        a.download = `agent_ytd_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        showNotification('YTD Export', `${agents.length} agents exported ✓`);
+    } catch(e) {
+        showNotification('Error', 'Export failed: ' + e.message, 'error');
+    }
+    hideLoading();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  INIT — show agent portal by default, check admin session
 // ══════════════════════════════════════════════════════════════
 (async () => {
+    // Always show agent portal page first (public, no login needed)
+    document.getElementById('agentPortalPage').style.display = 'block';
+    document.getElementById('appPage').style.display          = 'none';
+
+    // Load public data immediately
+    await publicLoadData();
+    hideLoading();
+
+    // Silently check if admin session exists in background
     try {
         const sessionPromise = sb.auth.getSession();
-        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+        const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000));
         const { data: { session } } = await Promise.race([sessionPromise, timeout]);
         if (session) {
             currentUser = session.user;
+            document.getElementById('agentPortalPage').style.display = 'none';
             await bootApp();
-        } else {
-            hideLoading();
         }
     } catch(e) {
-        hideLoading();
+        // No session or timeout — stay on agent portal
     }
 })();
 </script>
