@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Management Hub</title>
+    <title>Team Hub – Nawy</title>
+    <link rel="icon" type="image/png" href="https://www.nawy.com/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,6 +27,41 @@
             --group-b: #10b981;
             --group-c: #f59e0b;
         }
+
+        /* Light mode overrides */
+        body.light-mode {
+            --primary: #f1f5f9;
+            --secondary: #e2e8f0;
+            --accent: #2563eb;
+            --accent-glow: rgba(37,99,235,0.2);
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --morning: #d97706;
+            --night: #7c3aed;
+            --auto: #0891b2;
+            --group-a: #2563eb;
+            --group-b: #059669;
+            --group-c: #d97706;
+        }
+        body.light-mode {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%) !important;
+        }
+        body.light-mode .card { background: rgba(255,255,255,0.85) !important; }
+        body.light-mode .topbar { background: rgba(241,245,249,0.95) !important; }
+        body.light-mode .tab-nav { background: rgba(226,232,240,0.8) !important; }
+        body.light-mode .agent-card, body.light-mode .task-card,
+        body.light-mode .warning-card, body.light-mode .stat-item,
+        body.light-mode .break-summary-card, body.light-mode .agent-info-card,
+        body.light-mode .today-shift-card, body.light-mode .day-cell,
+        body.light-mode .group-card, body.light-mode .modal-content,
+        body.light-mode .agent-portal-select { background: rgba(255,255,255,0.9) !important; border-color: var(--border) !important; }
+        body.light-mode input, body.light-mode select, body.light-mode textarea { background: #f8fafc !important; color: var(--text) !important; }
+        body.light-mode .breaks-table td { background: rgba(255,255,255,0.8) !important; }
+        body.light-mode .pin-btn { background: #f1f5f9 !important; color: var(--text) !important; }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -792,6 +828,39 @@
         /* Public agent portal page */
         #agentPortalPage { display: none; }
         #appPage { display: none; }
+
+        /* PIN pad */
+        .pin-pad { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 20px 0; max-width: 260px; margin-left: auto; margin-right: auto; }
+        .pin-btn { padding: 18px; font-size: 1.3rem; font-weight: 700; background: rgba(30,41,59,0.8); border: 1px solid var(--border); border-radius: 12px; color: var(--text); cursor: pointer; transition: all 0.2s; }
+        .pin-btn:hover { background: rgba(59,130,246,0.2); border-color: var(--accent); transform: scale(1.05); }
+        .pin-btn:active { transform: scale(0.95); }
+        .pin-display { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; }
+        .pin-dot.filled { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .pin-dot.error { background: var(--danger); border-color: var(--danger); }
+
+        /* Break notification banner */
+        .break-alert {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; padding: 16px 30px; border-radius: 16px;
+            font-size: 1rem; font-weight: 700; z-index: 5000;
+            box-shadow: 0 10px 40px rgba(245,158,11,0.4);
+            transition: transform 0.4s; text-align: center; max-width: 400px; width: 90%;
+        }
+        .break-alert.show { transform: translateX(-50%) translateY(0); }
+        .break-alert.overrun { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 10px 40px rgba(239,68,68,0.4); }
+
+        /* Admin users section */
+        .admin-users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 15px; margin-top: 20px; }
+        .admin-user-card { background: rgba(15,23,42,0.5); border: 1px solid var(--border); border-radius: 14px; padding: 18px; display: flex; align-items: center; justify-content: space-between; }
+
+        /* Violations table */
+        .violations-table { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+        .violations-table th { padding: 10px 14px; text-align: left; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .violations-table td { padding: 12px 14px; background: rgba(15,23,42,0.5); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .violations-table td:first-child { border-radius: 10px 0 0 10px; border-left: 1px solid var(--border); }
+        .violations-table td:last-child { border-radius: 0 10px 10px 0; border-right: 1px solid var(--border); }
     </style>
 </head>
 <body>
@@ -800,6 +869,83 @@
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text" id="loadingText">Loading...</div>
+</div>
+
+<!-- Break Alert Banner -->
+<div class="break-alert" id="breakAlert">
+    <div id="breakAlertText">☕ Time for your break!</div>
+    <div style="font-size:0.8rem;margin-top:4px;opacity:0.9" id="breakAlertSub"></div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal" id="forgotPasswordModal">
+    <div class="modal-content" style="max-width:420px">
+        <div style="text-align:center;margin-bottom:25px">
+            <div style="font-size:2rem;margin-bottom:8px">🔑</div>
+            <h3 style="font-size:1.2rem">Reset Password</h3>
+            <p style="color:var(--text-muted);font-size:0.85rem;margin-top:6px">Enter your email to receive a reset link</p>
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="resetEmail" placeholder="admin@company.com" />
+        </div>
+        <div id="resetMsg" style="display:none;padding:10px;border-radius:8px;font-size:0.85rem;margin-bottom:15px"></div>
+        <button class="login-btn" onclick="sendPasswordReset()" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">Send Reset Link</button>
+        <button class="btn btn-secondary" style="width:100%;margin-top:10px" onclick="closeModal('forgotPasswordModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- PIN Setup Modal (Admin sets agent PIN) -->
+<div class="modal" id="pinSetupModal">
+    <div class="modal-content" style="max-width:380px;text-align:center">
+        <h3 style="margin-bottom:5px">🔐 Set PIN</h3>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px" id="pinSetupAgentName"></div>
+        <div class="pin-display" id="pinSetupDisplay">
+            <div class="pin-dot" id="sd0"></div><div class="pin-dot" id="sd1"></div>
+            <div class="pin-dot" id="sd2"></div><div class="pin-dot" id="sd3"></div>
+        </div>
+        <div class="pin-pad">
+            <button class="pin-btn" onclick="pinSetupInput('1')">1</button>
+            <button class="pin-btn" onclick="pinSetupInput('2')">2</button>
+            <button class="pin-btn" onclick="pinSetupInput('3')">3</button>
+            <button class="pin-btn" onclick="pinSetupInput('4')">4</button>
+            <button class="pin-btn" onclick="pinSetupInput('5')">5</button>
+            <button class="pin-btn" onclick="pinSetupInput('6')">6</button>
+            <button class="pin-btn" onclick="pinSetupInput('7')">7</button>
+            <button class="pin-btn" onclick="pinSetupInput('8')">8</button>
+            <button class="pin-btn" onclick="pinSetupInput('9')">9</button>
+            <button class="pin-btn" onclick="pinSetupClear()" style="font-size:1rem">⌫</button>
+            <button class="pin-btn" onclick="pinSetupInput('0')">0</button>
+            <button class="pin-btn btn-secondary" onclick="closeModal('pinSetupModal')" style="font-size:0.75rem">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Agent PIN Entry (public portal) -->
+<div class="modal" id="pinEntryModal">
+    <div class="modal-content" style="max-width:380px;text-align:center">
+        <h3 style="margin-bottom:5px">🔐 Enter PIN</h3>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px" id="pinEntryAgentName"></div>
+        <div class="pin-display" id="pinEntryDisplay">
+            <div class="pin-dot" id="ed0"></div><div class="pin-dot" id="ed1"></div>
+            <div class="pin-dot" id="ed2"></div><div class="pin-dot" id="ed3"></div>
+        </div>
+        <div id="pinEntryError" style="color:var(--danger);font-size:0.85rem;height:20px;margin-bottom:5px"></div>
+        <div class="pin-pad">
+            <button class="pin-btn" onclick="pinEntryInput('1')">1</button>
+            <button class="pin-btn" onclick="pinEntryInput('2')">2</button>
+            <button class="pin-btn" onclick="pinEntryInput('3')">3</button>
+            <button class="pin-btn" onclick="pinEntryInput('4')">4</button>
+            <button class="pin-btn" onclick="pinEntryInput('5')">5</button>
+            <button class="pin-btn" onclick="pinEntryInput('6')">6</button>
+            <button class="pin-btn" onclick="pinEntryInput('7')">7</button>
+            <button class="pin-btn" onclick="pinEntryInput('8')">8</button>
+            <button class="pin-btn" onclick="pinEntryInput('9')">9</button>
+            <button class="pin-btn" onclick="pinEntryClear()" style="font-size:1rem">⌫</button>
+            <button class="pin-btn" onclick="pinEntryInput('0')">0</button>
+            <button class="pin-btn btn-secondary" onclick="closeModal('pinEntryModal');publicDeselectAgent()" style="font-size:0.75rem">Cancel</button>
+        </div>
+    </div>
 </div>
 
 <!-- ══════════════════════════ AGENT PORTAL PAGE (PUBLIC) ══════════════════════════ -->
@@ -814,6 +960,7 @@
                 <div class="sync-dot" id="publicSyncDot"></div>
                 <span id="publicSyncText">Live</span>
             </div>
+            <button onclick="toggleTheme()" id="publicThemeBtn" style="background:rgba(255,255,255,0.1);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:1rem" title="Toggle light/dark mode">🌙</button>
             <button class="btn" style="padding:8px 18px;font-size:0.85rem;background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="openAdminLoginModal()">🔐 Admin Login</button>
         </div>
     </div>
@@ -875,6 +1022,17 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Monthly Schedule for this agent -->
+                <div style="margin-top:25px">
+                    <h3 style="font-size:1.1rem;color:var(--text-muted);margin-bottom:15px">📅 Your Schedule This Month</h3>
+                    <div id="publicMonthSchedule" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;"></div>
+                    <div style="display:flex;gap:15px;margin-top:12px;flex-wrap:wrap;justify-content:center">
+                        <span style="display:flex;align-items:center;gap:6px;font-size:0.8rem"><span style="width:12px;height:12px;border-radius:50%;background:var(--morning);display:inline-block"></span>Morning</span>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:0.8rem"><span style="width:12px;height:12px;border-radius:50%;background:var(--night);display:inline-block"></span>Night</span>
+                        <span style="display:flex;align-items:center;gap:6px;font-size:0.8rem"><span style="width:12px;height:12px;border-radius:50%;background:#64748b;display:inline-block"></span>Day Off</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -901,7 +1059,10 @@
             Sign In as Admin
         </button>
         <div class="login-error" id="loginError"></div>
-        <button class="btn btn-secondary" style="width:100%;margin-top:12px" onclick="closeModal('adminLoginModal')">Cancel</button>
+        <button class="btn btn-secondary" style="width:100%;margin-top:10px" onclick="closeModal('adminLoginModal')">Cancel</button>
+        <div style="text-align:center;margin-top:12px">
+            <button onclick="openForgotPassword()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.85rem;text-decoration:underline">Forgot password?</button>
+        </div>
     </div>
 </div>
 
@@ -919,6 +1080,7 @@
                 <span id="syncText">Live</span>
             </div>
             <div class="user-pill" id="userEmail">admin</div>
+            <button onclick="toggleTheme()" id="adminThemeBtn" style="background:rgba(255,255,255,0.1);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-size:1rem" title="Toggle light/dark mode">🌙</button>
             <button class="btn btn-secondary" style="padding:8px 16px;font-size:0.85rem" onclick="exportAgentYTD()">📊 Export YTD</button>
             <button class="logout-btn" onclick="handleLogout()">Sign Out</button>
         </div>
@@ -931,6 +1093,8 @@
             <button class="tab-btn" onclick="switchTab('team', this)">⚠️ Warnings & PIP</button>
             <button class="tab-btn" onclick="switchTab('agentportal', this)">👤 Agent Portal</button>
             <button class="tab-btn" onclick="switchTab('breaks', this)">☕ Breaks</button>
+            <button class="tab-btn" onclick="switchTab('adminusers', this)">👑 Admin Users</button>
+            <button class="tab-btn" onclick="switchTab('violations', this)">⏱️ Violations</button>
         </nav>
 
         <!-- ── Tab 1: Schedule ── -->
@@ -1186,6 +1350,71 @@
             </div>
         </div>
 
+        <!-- ── Tab 6: Admin Users ── -->
+        <div id="adminusers" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">👑</span> Admin Users</h2>
+                    <button class="btn btn-success" onclick="openCreateAdminModal()">+ Create Admin</button>
+                </div>
+                <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px">Manage who can access the admin dashboard. Admins log in via the 🔐 Admin Login button.</p>
+                <div class="admin-users-grid" id="adminUsersList"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">🔐</span> Agent PINs</h2>
+                    <p style="color:var(--text-muted);font-size:0.85rem">Set a 4-digit PIN for each agent so only they can check in/out</p>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:10px" id="agentPinGrid"></div>
+            </div>
+        </div>
+
+        <!-- ── Tab 7: Violations ── -->
+        <div id="violations" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="icon">⏱️</span> Break Violations</h2>
+                    <div class="controls">
+                        <select id="violationMonthFilter" onchange="renderViolations()" style="padding:10px;background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:10px;color:var(--text)">
+                            <option value="all">All Months</option>
+                        </select>
+                        <select id="violationAgentFilter" onchange="renderViolations()" style="padding:10px;background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:10px;color:var(--text)">
+                            <option value="all">All Agents</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="stats-bar" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="stat-item">
+                        <div class="stat-number" id="vTotalViolations" style="color:var(--danger)">0</div>
+                        <div class="stat-label">Total Violations</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="vTotalMinutes" style="color:var(--warning)">0</div>
+                        <div class="stat-label">Total Overrun Mins</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="vTopOffender" style="color:var(--night);font-size:1.2rem">—</div>
+                        <div class="stat-label">Most Violations</div>
+                    </div>
+                </div>
+                <div style="overflow-x:auto">
+                    <table class="violations-table">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Date</th>
+                                <th>Break #</th>
+                                <th>Scheduled</th>
+                                <th>Returned At</th>
+                                <th>Overrun</th>
+                            </tr>
+                        </thead>
+                        <tbody id="violationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -1319,6 +1548,30 @@
         <div style="display:flex;gap:10px;justify-content:flex-end;">
             <button class="btn btn-secondary" onclick="closeModal('warningModal')">Cancel</button>
             <button class="btn btn-danger" onclick="saveWarning()">Add Warning</button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Admin Modal -->
+<div class="modal" id="createAdminModal">
+    <div class="modal-content" style="max-width:420px">
+        <h3 style="margin-bottom:20px">👑 Create Admin User</h3>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="newAdminName" placeholder="e.g. Sara Manager" />
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="newAdminEmail" placeholder="admin@company.com" />
+        </div>
+        <div class="form-group">
+            <label>Temporary Password</label>
+            <input type="password" id="newAdminPassword" placeholder="Min 6 characters" />
+        </div>
+        <div id="createAdminMsg" style="display:none;padding:10px;border-radius:8px;font-size:0.85rem;margin-bottom:15px"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+            <button class="btn btn-secondary" onclick="closeModal('createAdminModal')">Cancel</button>
+            <button class="btn btn-success" onclick="createAdminUser()">Create Admin</button>
         </div>
     </div>
 </div>
@@ -1523,11 +1776,21 @@ function renderPublicAgentGrid() {
 let publicSelectedAgent = null;
 
 function publicSelectAgent(ag) {
+    // If agent has a PIN, require it before showing dashboard
+    if (ag.pin) {
+        openPinEntry(ag);
+    } else {
+        confirmPublicSelectAgent(ag);
+    }
+}
+
+function confirmPublicSelectAgent(ag) {
     publicSelectedAgent = ag;
     document.getElementById('publicAgentSelectPanel').style.display = 'none';
     document.getElementById('publicAgentDashboard').style.display = 'block';
     document.getElementById('publicPortalAgentName').textContent = `👤 ${ag.name}`;
     updatePublicDashboard();
+    startBreakMonitor();
 }
 
 function publicDeselectAgent() {
@@ -1596,6 +1859,15 @@ function updatePublicDashboard() {
 async function publicToggleCheckIn() {
     const ag = publicSelectedAgent;
     if (!ag) return;
+    // If agent has a PIN set, require it first
+    if (ag.pin) {
+        openPinEntry(ag, () => doCheckInOut(ag));
+    } else {
+        doCheckInOut(ag);
+    }
+}
+
+async function doCheckInOut(ag) {
     const rec = attendanceRecords[ag.id] || {};
     const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
     const todayStr = new Date().toISOString().split('T')[0];
@@ -1606,6 +1878,7 @@ async function publicToggleCheckIn() {
     } else {
         attendanceRecords[ag.id] = { checkedIn: true, checkInTime: now, checkOutTime: null };
         showNotification('Checked In', `${ag.name} checked in at ${now}`, 'success');
+        startBreakMonitor();
     }
 
     await sb.from('attendance').upsert({
@@ -1753,6 +2026,8 @@ function switchTab(tabName, btn) {
     btn.classList.add('active');
     if (tabName === 'agentportal') renderAgentSelectGrid();
     if (tabName === 'breaks') { renderBreaksTable(); updateBreaksSummary(); }
+    if (tabName === 'adminusers') { renderAdminUsers(); renderAgentPinGrid(); }
+    if (tabName === 'violations') { loadViolations().then(renderViolations); }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2612,6 +2887,359 @@ function closeModal(id) { document.getElementById(id).classList.remove('active')
 window.onclick = e => { if(e.target.classList.contains('modal')) e.target.classList.remove('active'); };
 
 // ══════════════════════════════════════════════════════════════
+//  FORGOT PASSWORD
+// ══════════════════════════════════════════════════════════════
+function openForgotPassword() {
+    closeModal('adminLoginModal');
+    document.getElementById('resetEmail').value = '';
+    document.getElementById('resetMsg').style.display = 'none';
+    document.getElementById('forgotPasswordModal').classList.add('active');
+}
+
+async function sendPasswordReset() {
+    const email = document.getElementById('resetEmail').value.trim();
+    const msgEl = document.getElementById('resetMsg');
+    if (!email) { msgEl.style.display='block'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.color='#ef4444'; msgEl.textContent='Enter your email first.'; return; }
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+    msgEl.style.display = 'block';
+    if (error) {
+        msgEl.style.background = 'rgba(239,68,68,0.1)'; msgEl.style.color = '#ef4444';
+        msgEl.textContent = error.message;
+    } else {
+        msgEl.style.background = 'rgba(16,185,129,0.1)'; msgEl.style.color = '#10b981';
+        msgEl.textContent = '✅ Reset link sent! Check your email.';
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ADMIN USERS
+// ══════════════════════════════════════════════════════════════
+function openCreateAdminModal() {
+    document.getElementById('newAdminName').value = '';
+    document.getElementById('newAdminEmail').value = '';
+    document.getElementById('newAdminPassword').value = '';
+    document.getElementById('createAdminMsg').style.display = 'none';
+    document.getElementById('createAdminModal').classList.add('active');
+}
+
+async function createAdminUser() {
+    const name  = document.getElementById('newAdminName').value.trim();
+    const email = document.getElementById('newAdminEmail').value.trim();
+    const pass  = document.getElementById('newAdminPassword').value;
+    const msgEl = document.getElementById('createAdminMsg');
+
+    if (!name || !email || !pass) {
+        msgEl.style.display='block'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.color='#ef4444';
+        msgEl.textContent='Please fill all fields.'; return;
+    }
+    if (pass.length < 6) {
+        msgEl.style.display='block'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.color='#ef4444';
+        msgEl.textContent='Password must be at least 6 characters.'; return;
+    }
+
+    // Create in Supabase Auth using admin API via service role — we use signUp instead
+    const { data, error } = await sb.auth.admin?.createUser({ email, password: pass, email_confirm: true })
+        .catch(() => ({ error: { message: 'Admin API not available' } })) || {};
+
+    // Fallback: use regular signUp (works for most cases)
+    let finalError = error;
+    if (error) {
+        const { error: e2 } = await sb.auth.signUp({ email, password: pass });
+        finalError = e2;
+    }
+
+    if (finalError) {
+        msgEl.style.display='block'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.color='#ef4444';
+        msgEl.textContent = finalError.message; return;
+    }
+
+    // Save to admin_users table
+    await sb.from('admin_users').insert({ email, name });
+    msgEl.style.display='block'; msgEl.style.background='rgba(16,185,129,0.1)'; msgEl.style.color='#10b981';
+    msgEl.textContent = `✅ Admin "${name}" created! They can now log in.`;
+    await renderAdminUsers();
+    showNotification('Admin Created', `${name} can now access the admin dashboard`);
+}
+
+async function renderAdminUsers() {
+    const { data } = await sb.from('admin_users').select('*').order('created_at');
+    const grid = document.getElementById('adminUsersList');
+    if (!grid) return;
+    if (!data || data.length === 0) {
+        grid.innerHTML = '<div style="color:var(--text-muted);padding:20px">No admin users yet. Create one above.</div>';
+        return;
+    }
+    grid.innerHTML = data.map(u => `
+        <div class="admin-user-card">
+            <div>
+                <div style="font-weight:700">${u.name || 'Admin'}</div>
+                <div style="font-size:0.85rem;color:var(--text-muted)">${u.email}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Since ${new Date(u.created_at).toLocaleDateString()}</div>
+            </div>
+            <button class="btn btn-danger" style="padding:8px 14px;font-size:0.8rem" onclick="deleteAdminUser(${u.id},'${u.email}')">Remove</button>
+        </div>`).join('');
+}
+
+async function deleteAdminUser(id, email) {
+    if (!confirm(`Remove admin access for ${email}?`)) return;
+    await sb.from('admin_users').delete().eq('id', id);
+    await renderAdminUsers();
+    showNotification('Removed', `${email} removed from admin users`);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  AGENT PIN MANAGEMENT
+// ══════════════════════════════════════════════════════════════
+let pinSetupAgentId = null;
+let pinSetupValue = '';
+
+function renderAgentPinGrid() {
+    const grid = document.getElementById('agentPinGrid');
+    if (!grid) return;
+    grid.innerHTML = agents.map(ag => `
+        <div style="background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:12px;padding:15px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+                <div style="font-weight:700;font-size:0.95rem">${ag.name.split(' ')[0]}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">${ag.name.split(' ').slice(1).join(' ')}</div>
+                <div style="margin-top:4px">
+                    ${ag.pin 
+                        ? '<span style="color:var(--success);font-size:0.75rem">● PIN set</span>'
+                        : '<span style="color:var(--warning);font-size:0.75rem">○ No PIN</span>'}
+                </div>
+            </div>
+            <button class="btn" style="padding:8px 12px;font-size:0.8rem" onclick="openPinSetup(${ag.id})">
+                ${ag.pin ? 'Change' : 'Set PIN'}
+            </button>
+        </div>`).join('');
+}
+
+function openPinSetup(agentId) {
+    pinSetupAgentId = agentId;
+    pinSetupValue = '';
+    const ag = agents.find(a => a.id === agentId);
+    document.getElementById('pinSetupAgentName').textContent = ag ? ag.name : '';
+    ['sd0','sd1','sd2','sd3'].forEach(id => { document.getElementById(id).className = 'pin-dot'; });
+    document.getElementById('pinSetupModal').classList.add('active');
+}
+
+function pinSetupInput(digit) {
+    if (pinSetupValue.length >= 4) return;
+    pinSetupValue += digit;
+    updatePinDisplay('sd', pinSetupValue, false);
+    if (pinSetupValue.length === 4) {
+        setTimeout(() => savePinSetup(), 300);
+    }
+}
+
+function pinSetupClear() {
+    pinSetupValue = pinSetupValue.slice(0, -1);
+    updatePinDisplay('sd', pinSetupValue, false);
+}
+
+async function savePinSetup() {
+    const ag = agents.find(a => a.id === pinSetupAgentId);
+    if (!ag) return;
+    ag.pin = pinSetupValue;
+    await sb.from('agents').update({ pin: pinSetupValue }).eq('id', pinSetupAgentId);
+    closeModal('pinSetupModal');
+    renderAgentPinGrid();
+    showNotification('PIN Set', `PIN saved for ${ag.name} ✓`);
+}
+
+// ── PIN ENTRY (public portal) ──
+let pinEntryAgent = null, pinEntryValue = "", pinEntryCallback = null;
+
+function updatePinDisplay(prefix, value, isError) {
+    for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(prefix + i);
+        if (!dot) continue;
+        dot.className = 'pin-dot' + (isError ? ' error' : value.length > i ? ' filled' : '');
+    }
+}
+
+function openPinEntry(ag, callback) {
+    pinEntryAgent    = ag;
+    pinEntryValue    = '';
+    pinEntryCallback = callback || null;
+    document.getElementById('pinEntryAgentName').textContent = ag.name;
+    document.getElementById('pinEntryError').textContent = '';
+    ['ed0','ed1','ed2','ed3'].forEach(id => { document.getElementById(id).className = 'pin-dot'; });
+    document.getElementById('pinEntryModal').classList.add('active');
+}
+
+function pinEntryInput(digit) {
+    if (pinEntryValue.length >= 4) return;
+    pinEntryValue += digit;
+    updatePinDisplay('ed', pinEntryValue, false);
+    if (pinEntryValue.length === 4) {
+        setTimeout(() => verifyPin(), 200);
+    }
+}
+
+function pinEntryClear() {
+    pinEntryValue = pinEntryValue.slice(0, -1);
+    updatePinDisplay('ed', pinEntryValue, false);
+}
+
+function verifyPin() {
+    if (!pinEntryAgent) return;
+    if (pinEntryAgent.pin && pinEntryValue !== pinEntryAgent.pin) {
+        document.getElementById('pinEntryError').textContent = '❌ Wrong PIN. Try again.';
+        updatePinDisplay('ed', 'xxxx', true);
+        setTimeout(() => { pinEntryValue = ''; updatePinDisplay('ed', '', false); document.getElementById('pinEntryError').textContent = ''; }, 1000);
+        return;
+    }
+    closeModal('pinEntryModal');
+    if (pinEntryCallback) {
+        pinEntryCallback();
+        pinEntryCallback = null;
+    } else {
+        confirmPublicSelectAgent(pinEntryAgent);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  BREAK NOTIFICATIONS & VIOLATIONS
+// ══════════════════════════════════════════════════════════════
+let breakCheckInterval = null;
+let breakAlertShown = {};
+let allViolations = [];
+
+function startBreakMonitor() {
+    if (breakCheckInterval) clearInterval(breakCheckInterval);
+    breakCheckInterval = setInterval(checkBreakAlerts, 30000); // check every 30s
+    checkBreakAlerts();
+}
+
+function checkBreakAlerts() {
+    if (!publicSelectedAgent) return;
+    const ag = publicSelectedAgent;
+    const brk = breaksData[ag.id] || {};
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const todayStr = now.toISOString().split('T')[0];
+
+    const breaks = [
+        { key: 'b1', time: brk.b1, label: 'Break 1', duration: 15, num: 1 },
+        { key: 'b2', time: brk.b2, label: 'Lunch Break', duration: 30, num: 2 },
+        { key: 'b3', time: brk.b3, label: 'Break 2', duration: 15, num: 3 }
+    ];
+
+    for (const b of breaks) {
+        if (!b.time) continue;
+        const [bh, bm] = b.time.split(':').map(Number);
+        const bStart = bh * 60 + bm;
+        const bEnd   = bStart + b.duration;
+        const alertKey = `${ag.id}_${b.key}_${todayStr}`;
+
+        // 5-minute warning before break
+        if (nowMins >= bStart - 5 && nowMins <= bStart - 4 && !breakAlertShown[alertKey + '_warn']) {
+            breakAlertShown[alertKey + '_warn'] = true;
+            showBreakAlert(`⏰ ${b.label} in 5 minutes!`, `Get ready — your break starts at ${b.time}`, false);
+        }
+
+        // Notify at break start (within 1 min window)
+        if (nowMins >= bStart && nowMins <= bStart + 1 && !breakAlertShown[alertKey + '_start']) {
+            breakAlertShown[alertKey + '_start'] = true;
+            showBreakAlert(`☕ ${b.label} time!`, `You have ${b.duration} minutes. Go now!`, false);
+        }
+
+        // Detect overrun (agent still active after break ended + 2 min grace)
+        if (nowMins > bEnd + 2 && !breakAlertShown[alertKey + '_over']) {
+            const overrun = nowMins - bEnd;
+            breakAlertShown[alertKey + '_over'] = true;
+            showBreakAlert(`⚠️ ${b.label} overrun!`, `You are ${overrun} min late returning.`, true);
+            // Log violation
+            logBreakViolation(ag, b.num, b.time, overrun, todayStr);
+        }
+    }
+}
+
+function showBreakAlert(title, sub, isOverrun) {
+    const el  = document.getElementById('breakAlert');
+    const txt = document.getElementById('breakAlertText');
+    const sub2 = document.getElementById('breakAlertSub');
+    txt.textContent  = title;
+    sub2.textContent = sub;
+    el.className = 'break-alert show' + (isOverrun ? ' overrun' : '');
+    setTimeout(() => el.classList.remove('show'), isOverrun ? 8000 : 5000);
+}
+
+async function logBreakViolation(ag, breakNum, scheduledTime, overrunMins, dateStr) {
+    const now = new Date();
+    const actualReturn = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    await sb.from('break_violations').insert({
+        agent_id: ag.id, agent_name: ag.name, date: dateStr,
+        break_number: breakNum, scheduled_time: scheduledTime,
+        actual_return_time: actualReturn, overrun_minutes: overrunMins
+    });
+}
+
+async function loadViolations() {
+    const { data } = await sb.from('break_violations').select('*').order('date', { ascending: false });
+    allViolations = data || [];
+}
+
+function renderViolations() {
+    const monthFilter = document.getElementById('violationMonthFilter')?.value || 'all';
+    const agentFilter = document.getElementById('violationAgentFilter')?.value || 'all';
+
+    const filtered = allViolations.filter(v => {
+        if (monthFilter !== 'all' && !v.date.startsWith(monthFilter)) return false;
+        if (agentFilter !== 'all' && v.agent_name !== agentFilter) return false;
+        return true;
+    });
+
+    const tbody = document.getElementById('violationsTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = filtered.length === 0
+        ? '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">No violations found ✓</td></tr>'
+        : filtered.map(v => `
+            <tr>
+                <td style="font-weight:700">${v.agent_name}</td>
+                <td style="color:var(--text-muted)">${v.date}</td>
+                <td>Break ${v.break_number}</td>
+                <td>${v.scheduled_time || '—'}</td>
+                <td>${v.actual_return_time || '—'}</td>
+                <td><span style="color:var(--danger);font-weight:700">+${v.overrun_minutes} min</span></td>
+            </tr>`).join('');
+
+    // Stats
+    const total = filtered.length;
+    const totalMins = filtered.reduce((s, v) => s + (v.overrun_minutes || 0), 0);
+    const byCounts = {};
+    filtered.forEach(v => { byCounts[v.agent_name] = (byCounts[v.agent_name] || 0) + 1; });
+    const topName = Object.entries(byCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
+
+    const tv = document.getElementById('vTotalViolations');
+    const tm = document.getElementById('vTotalMinutes');
+    const to = document.getElementById('vTopOffender');
+    if (tv) tv.textContent = total;
+    if (tm) tm.textContent = totalMins;
+    if (to) to.textContent = topName.split(' ')[0];
+
+    // Populate filters
+    populateViolationFilters();
+}
+
+function populateViolationFilters() {
+    const monthSel = document.getElementById('violationMonthFilter');
+    const agentSel = document.getElementById('violationAgentFilter');
+    if (!monthSel || !agentSel) return;
+
+    const months = [...new Set(allViolations.map(v => v.date.slice(0,7)))].sort().reverse();
+    const curMonth = monthSel.value;
+    monthSel.innerHTML = '<option value="all">All Months</option>' +
+        months.map(m => `<option value="${m}" ${m===curMonth?'selected':''}>${m}</option>`).join('');
+
+    const agts = [...new Set(allViolations.map(v => v.agent_name))].sort();
+    const curAgt = agentSel.value;
+    agentSel.innerHTML = '<option value="all">All Agents</option>' +
+        agts.map(a => `<option value="${a}" ${a===curAgt?'selected':''}>${a}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
 //  EXPORT AGENT YTD CSV (Admin)
 // ══════════════════════════════════════════════════════════════
 async function exportAgentYTD() {
@@ -2623,19 +3251,27 @@ async function exportAgentYTD() {
             sb.from('agent_breaks').select('*').order('date')
         ]);
 
+        // Pull violations too
+        const { data: allViol } = await sb.from('break_violations').select('*').order('date');
+
+        // Get all months present in attendance data
+        const allMonths = [...new Set((allAtt||[]).map(r=>r.date.slice(0,7)))].sort();
+
+        // Build header: base cols + one col per month for overrun mins
         let csv = 'Agent Name,Group,Total Work Days,Morning Shifts,Night Shifts,Warnings,PIP,';
-        csv += 'Total Check-In Days,Avg Check-In Time,Latest Check-Out,';
-        csv += 'Break 1 (Today),Lunch (Today),Break 2 (Today)\n';
+        csv += 'Total Check-In Days,Avg Check-In Time,Latest Check-Out,Break 1 (Today),Lunch (Today),Break 2 (Today)';
+        allMonths.forEach(m => { csv += `,Overrun Mins ${m}`; });
+        csv += '\n';
 
         agents.forEach(ag => {
             const attRecs = (allAtt || []).filter(r => r.agent_id === ag.id);
             const brkRec  = (allBrk  || []).find(r => r.agent_id === ag.id && r.date === new Date().toISOString().split('T')[0]);
+            const violRecs = (allViol || []).filter(r => r.agent_id === ag.id);
 
             const checkinDays = attRecs.filter(r => r.checked_in || r.check_in_time).length;
             const checkInTimes = attRecs.filter(r => r.check_in_time).map(r => r.check_in_time);
             const latestCheckout = attRecs.filter(r => r.check_out_time).map(r => r.check_out_time).slice(-1)[0] || '';
 
-            // Avg check-in: parse HH:MM strings to minutes, average, convert back
             let avgCheckIn = '';
             if (checkInTimes.length > 0) {
                 const mins = checkInTimes.map(t => {
@@ -2652,7 +3288,15 @@ async function exportAgentYTD() {
 
             csv += `"${ag.name}","${ag.group_name}",${ag.total_work_days||0},${ag.morning_shifts||0},${ag.night_shifts||0},`;
             csv += `${ag.warnings||0},${ag.pip?'Yes':'No'},${checkinDays},"${avgCheckIn}","${latestCheckout}",`;
-            csv += `"${b1}","${b2}","${b3}"\n`;
+            csv += `"${b1}","${b2}","${b3}"`;
+
+            // Monthly overrun minutes
+            allMonths.forEach(m => {
+                const monthViol = violRecs.filter(v => v.date.startsWith(m));
+                const totalOverrun = monthViol.reduce((s,v) => s + (v.overrun_minutes||0), 0);
+                csv += `,${totalOverrun}`;
+            });
+            csv += '\n';
         });
 
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -2669,9 +3313,92 @@ async function exportAgentYTD() {
 }
 
 // ══════════════════════════════════════════════════════════════
+//  DARK / LIGHT THEME TOGGLE
+// ══════════════════════════════════════════════════════════════
+function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-mode');
+    const icon = isLight ? '☀️' : '🌙';
+    const pubBtn = document.getElementById('publicThemeBtn');
+    const admBtn = document.getElementById('adminThemeBtn');
+    if (pubBtn) pubBtn.textContent = icon;
+    if (admBtn) admBtn.textContent = icon;
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+}
+
+function applyStoredTheme() {
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        const icon = '☀️';
+        const pubBtn = document.getElementById('publicThemeBtn');
+        const admBtn = document.getElementById('adminThemeBtn');
+        if (pubBtn) pubBtn.textContent = icon;
+        if (admBtn) admBtn.textContent = icon;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MONTHLY SCHEDULE FOR AGENT (public portal)
+// ══════════════════════════════════════════════════════════════
+function renderPublicMonthSchedule(ag) {
+    const container = document.getElementById('publicMonthSchedule');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const monthName = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month];
+
+    // Day headers
+    ['S','M','T','W','T','F','S'].forEach(d => {
+        const h = document.createElement('div');
+        h.style.cssText = 'text-align:center;font-size:0.75rem;font-weight:700;color:var(--text-muted);padding:4px';
+        h.textContent = d;
+        container.appendChild(h);
+    });
+
+    // Empty cells for first day of month
+    const firstDay = new Date(year, month, 1).getDay();
+    for (let i = 0; i < firstDay; i++) {
+        container.appendChild(document.createElement('div'));
+    }
+
+    // Day cells
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dayOfWeek = date.getDay();
+        const weekNum = Math.floor((day - 1 + firstDay) / 7);
+        // Map to week_key (approx)
+        const weekKey = `week_${Math.floor(month * 4.33) + weekNum}`;
+        const wkData = (scheduleData[weekKey] || {})[dayOfWeek] || {};
+
+        let shiftType = 'off';
+        if ((wkData.morning || []).some(x => x.name === ag.name)) shiftType = 'morning';
+        else if ((wkData.night || []).some(x => x.name === ag.name)) shiftType = 'night';
+
+        const isToday = day === now.getDate();
+        const cell = document.createElement('div');
+        cell.style.cssText = `
+            aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+            border-radius:8px; font-size:0.75rem; font-weight:700; cursor:default;
+            border: ${isToday ? '2px solid var(--accent)' : '1px solid transparent'};
+            background: ${shiftType === 'morning' ? 'rgba(245,158,11,0.25)' : shiftType === 'night' ? 'rgba(139,92,246,0.25)' : 'rgba(100,116,139,0.15)'};
+            color: ${shiftType === 'morning' ? 'var(--morning)' : shiftType === 'night' ? 'var(--night)' : '#64748b'};
+        `;
+        cell.title = `${day} ${monthName}: ${shiftType}`;
+        cell.textContent = day;
+        container.appendChild(cell);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
 //  INIT — show agent portal by default, check admin session
 // ══════════════════════════════════════════════════════════════
 (async () => {
+    // Apply stored theme preference
+    applyStoredTheme();
+
     // Always show agent portal page first (public, no login needed)
     document.getElementById('agentPortalPage').style.display = 'block';
     document.getElementById('appPage').style.display          = 'none';
