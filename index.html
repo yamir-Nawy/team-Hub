@@ -37,31 +37,45 @@
             --success: #059669;
             --warning: #d97706;
             --danger: #dc2626;
-            --text: #0f172a;
+            --text: #1e293b;
             --text-muted: #475569;
             --border: #cbd5e1;
-            --morning: #d97706;
-            --night: #7c3aed;
+            --morning: #b45309;
+            --night: #6d28d9;
             --auto: #0891b2;
-            --group-a: #2563eb;
-            --group-b: #059669;
-            --group-c: #d97706;
+            --group-a: #1d4ed8;
+            --group-b: #047857;
+            --group-c: #b45309;
         }
         body.light-mode {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%) !important;
+            background: linear-gradient(135deg, #e2e8f0 0%, #ddd6fe 100%) !important;
         }
-        body.light-mode .card { background: rgba(255,255,255,0.85) !important; }
-        body.light-mode .topbar { background: rgba(241,245,249,0.95) !important; }
-        body.light-mode .tab-nav { background: rgba(226,232,240,0.8) !important; }
+        body.light-mode::before { display: none !important; }
+        body.light-mode .card { background: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 2px 12px rgba(0,0,0,0.08) !important; }
+        body.light-mode .topbar { background: rgba(255,255,255,0.95) !important; border-color: #e2e8f0 !important; }
+        body.light-mode .tab-nav { background: #f1f5f9 !important; border-color: #e2e8f0 !important; }
+        body.light-mode .tab-btn { color: #475569 !important; }
+        body.light-mode .tab-btn.active { background: white !important; color: #1e293b !important; }
         body.light-mode .agent-card, body.light-mode .task-card,
         body.light-mode .warning-card, body.light-mode .stat-item,
         body.light-mode .break-summary-card, body.light-mode .agent-info-card,
         body.light-mode .today-shift-card, body.light-mode .day-cell,
-        body.light-mode .group-card, body.light-mode .modal-content,
-        body.light-mode .agent-portal-select { background: rgba(255,255,255,0.9) !important; border-color: var(--border) !important; }
-        body.light-mode input, body.light-mode select, body.light-mode textarea { background: #f8fafc !important; color: var(--text) !important; }
-        body.light-mode .breaks-table td { background: rgba(255,255,255,0.8) !important; }
-        body.light-mode .pin-btn { background: #f1f5f9 !important; color: var(--text) !important; }
+        body.light-mode .group-card, body.light-mode .agent-portal-select,
+        body.light-mode .break-preview-item, body.light-mode .legend-item,
+        body.light-mode .user-pill { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #1e293b !important; }
+        body.light-mode .modal-content { background: #ffffff !important; border-color: #e2e8f0 !important; color: #1e293b !important; }
+        body.light-mode input, body.light-mode select, body.light-mode textarea { background: #f8fafc !important; color: #1e293b !important; border-color: #cbd5e1 !important; }
+        body.light-mode .breaks-table td, body.light-mode .breaks-table th { background: #f8fafc !important; color: #1e293b !important; border-color: #e2e8f0 !important; }
+        body.light-mode .violations-table td, body.light-mode .violations-table th { color: #1e293b !important; }
+        body.light-mode .pin-btn { background: #f1f5f9 !important; color: #1e293b !important; border-color: #cbd5e1 !important; }
+        body.light-mode .btn-secondary { background: #e2e8f0 !important; color: #1e293b !important; }
+        body.light-mode .shift-badge { color: white !important; }
+        body.light-mode .checkin-status { background: #f1f5f9 !important; border-color: #e2e8f0 !important; }
+        body.light-mode .month-btn { background: #f1f5f9 !important; color: #475569 !important; }
+        body.light-mode .month-btn.active { background: var(--accent) !important; color: white !important; }
+        body.light-mode .agent-select-grid .agent-select-btn { background: #f8fafc !important; border-color: #e2e8f0 !important; color: #1e293b !important; }
+        body.light-mode .sync-status { color: #475569 !important; }
+        body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #1e293b !important; }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -988,6 +1002,17 @@
                         </div>
                         <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;margin-bottom:15px" id="publicCheckinTime"></div>
                         <button class="checkin-btn check-in" id="publicCheckinBtn" onclick="publicToggleCheckIn()">✅ Check In</button>
+                        <div id="publicBreakBtnArea" style="display:none;margin-top:12px">
+                            <button id="publicBreakBtn" onclick="publicToggleBreak()" style="width:100%;padding:14px;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;transition:all 0.2s">
+                                ☕ Start Break
+                            </button>
+                            <div id="publicBreakTimer" style="text-align:center;font-size:0.85rem;color:var(--text-muted);margin-top:6px;display:none">
+                                ⏱️ On break: <span id="publicBreakTimerText">00:00</span>
+                            </div>
+                            <div id="publicOverrunWarning" style="display:none;margin-top:8px;padding:10px 14px;border-radius:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;font-size:0.85rem;font-weight:600;text-align:center">
+                                ⚠️ Break exceeded! <span id="publicOverrunMins">0</span> min over
+                            </div>
+                        </div>
                         <button class="btn btn-secondary" style="width:100%;margin-top:10px;padding:12px" onclick="publicDeselectAgent()">← Switch Agent</button>
                     </div>
                     <div class="today-shift-card">
@@ -1019,6 +1044,10 @@
                                 <div class="break-time" id="publicBreak3">—</div>
                                 <div class="break-duration">15 min</div>
                             </div>
+                        </div>
+                        <div id="publicMissingMinsBox" style="display:none;margin-top:12px;padding:12px 16px;border-radius:12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25)">
+                            <div style="font-size:0.85rem;font-weight:700;color:var(--danger);margin-bottom:4px">⚠️ This Month's Missing Minutes</div>
+                            <div id="publicMissingMinsList" style="font-size:0.82rem;color:var(--text-muted)"></div>
                         </div>
                     </div>
                 </div>
@@ -1397,6 +1426,9 @@
                         <div class="stat-label">Most Violations</div>
                     </div>
                 </div>
+                <!-- Per-agent summary -->
+                <div id="violationAgentSummary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px"></div>
+
                 <div style="overflow-x:auto">
                     <table class="violations-table">
                         <thead>
@@ -1719,12 +1751,15 @@ async function publicLoadData() {
     document.getElementById('publicSyncDot').className = 'sync-dot syncing';
     document.getElementById('publicSyncText').textContent = 'Loading...';
     try {
-        const [{ data: ag }, { data: sc }, { data: att }, { data: brk }] = await Promise.all([
+        const thisMonth = new Date().toISOString().slice(0,7);
+        const [{ data: ag }, { data: sc }, { data: att }, { data: brk }, { data: viols }] = await Promise.all([
             sb.from('agents').select('*').order('id'),
             sb.from('schedule_data').select('*'),
             sb.from('attendance').select('*').eq('date', new Date().toISOString().split('T')[0]),
-            sb.from('agent_breaks').select('*').eq('date', new Date().toISOString().split('T')[0])
+            sb.from('agent_breaks').select('*').eq('date', new Date().toISOString().split('T')[0]),
+            sb.from('break_violations').select('*').gte('date', thisMonth + '-01')
         ]);
+        publicViolations = viols || [];
         agents = ag || [];
         scheduleData = {};
         (sc || []).forEach(row => {
@@ -1774,6 +1809,7 @@ function renderPublicAgentGrid() {
 }
 
 let publicSelectedAgent = null;
+let publicViolations = [];
 
 function publicSelectAgent(ag) {
     // If agent has a PIN, require it before showing dashboard
@@ -1817,6 +1853,7 @@ function updatePublicDashboard() {
         timeEl.textContent = `Since: ${rec.checkInTime}`;
         btnEl.className    = 'checkin-btn check-out';
         btnEl.textContent  = '🚪 Check Out';
+        document.getElementById('publicBreakBtnArea').style.display = 'block';
     } else {
         statusEl.className = 'checkin-status checked-out';
         document.getElementById('publicCheckinIcon').textContent  = '😴';
@@ -1824,11 +1861,18 @@ function updatePublicDashboard() {
         timeEl.textContent = rec.checkOutTime ? `Checked out: ${rec.checkOutTime}` : '';
         btnEl.className    = 'checkin-btn check-in';
         btnEl.textContent  = '✅ Check In';
+        document.getElementById('publicBreakBtnArea').style.display = 'none';
+        publicEndBreakTimer();
     }
 
-    // Shift
-    const today = new Date().getDay();
-    const wk = `week_${Math.floor(selectedMonth * 4.33)}`;
+    // Shift — use today's actual week number (not admin selectedMonth)
+    const todayDate = new Date();
+    const today = todayDate.getDay();
+    const jan1 = new Date(todayDate.getFullYear(), 0, 1);
+    const jan1Day = jan1.getDay();
+    const dayOfYear = Math.floor((todayDate - jan1) / 86400000);
+    const todayWeekNum = Math.floor((dayOfYear + jan1Day) / 7);
+    const wk = `week_${todayWeekNum}`;
     const todayData = (scheduleData[wk] || {})[today] || { morning:[], night:[], off:[] };
     const shiftEl = document.getElementById('publicShiftDisplay');
     let shiftType = 'off';
@@ -1854,6 +1898,27 @@ function updatePublicDashboard() {
     document.getElementById('publicBreak1').textContent = agBreaks.b1 || '—';
     document.getElementById('publicBreak2').textContent = agBreaks.b2 || '—';
     document.getElementById('publicBreak3').textContent = agBreaks.b3 || '—';
+
+    // Missing minutes this month
+    const agViols = (publicViolations || []).filter(v => v.agent_id === ag.id);
+    const minsBox = document.getElementById('publicMissingMinsBox');
+    const minsList = document.getElementById('publicMissingMinsList');
+    if (minsBox && minsList) {
+        if (agViols.length > 0) {
+            const total = agViols.reduce((s,v) => s + (v.overrun_minutes||0), 0);
+            minsList.innerHTML = agViols.map(v =>
+                `<div style="display:flex;justify-content:space-between;margin-bottom:3px">
+                    <span>${v.date} · Break ${v.break_number}</span>
+                    <span style="color:var(--danger);font-weight:700">+${v.overrun_minutes} min</span>
+                </div>`).join('') +
+                `<div style="border-top:1px solid rgba(239,68,68,0.2);margin-top:6px;padding-top:6px;font-weight:700;display:flex;justify-content:space-between">
+                    <span>Total this month:</span><span style="color:var(--danger)">+${total} min</span>
+                </div>`;
+            minsBox.style.display = 'block';
+        } else {
+            minsBox.style.display = 'none';
+        }
+    }
 }
 
 async function publicToggleCheckIn() {
@@ -2937,21 +3002,15 @@ async function createAdminUser() {
         msgEl.textContent='Password must be at least 6 characters.'; return;
     }
 
-    // Create in Supabase Auth using admin API via service role — we use signUp instead
-    const { data, error } = await sb.auth.admin?.createUser({ email, password: pass, email_confirm: true })
-        .catch(() => ({ error: { message: 'Admin API not available' } })) || {};
+    // Create Supabase auth account via signUp
+    const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password: pass });
 
-    // Fallback: use regular signUp (works for most cases)
-    let finalError = error;
-    if (error) {
-        const { error: e2 } = await sb.auth.signUp({ email, password: pass });
-        finalError = e2;
-    }
-
-    if (finalError) {
+    if (signUpError) {
         msgEl.style.display='block'; msgEl.style.background='rgba(239,68,68,0.1)'; msgEl.style.color='#ef4444';
-        msgEl.textContent = finalError.message; return;
+        msgEl.textContent = signUpError.message; return;
     }
+    // Note: Supabase may send a confirmation email. If email confirmations are OFF in your Supabase project,
+    // the user can log in immediately. To disable confirmations: Supabase Dashboard → Auth → Settings → disable "Confirm email".
 
     // Save to admin_users table
     await sb.from('admin_users').insert({ email, name });
@@ -3219,6 +3278,30 @@ function renderViolations() {
     if (tm) tm.textContent = totalMins;
     if (to) to.textContent = topName.split(' ')[0];
 
+    // Per-agent summary cards
+    const summaryEl = document.getElementById('violationAgentSummary');
+    if (summaryEl) {
+        const byAgent = {};
+        // Use ALL violations (not filtered) for summary when showing all agents
+        const summaryData = agentFilter === 'all' ? allViolations.filter(v => monthFilter === 'all' || v.date.startsWith(monthFilter)) : filtered;
+        summaryData.forEach(v => {
+            if (!byAgent[v.agent_name]) byAgent[v.agent_name] = { count: 0, mins: 0 };
+            byAgent[v.agent_name].count++;
+            byAgent[v.agent_name].mins += (v.overrun_minutes || 0);
+        });
+        const sorted = Object.entries(byAgent).sort((a,b) => b[1].mins - a[1].mins);
+        summaryEl.innerHTML = sorted.length === 0
+            ? '<div style="color:var(--text-muted);font-size:0.9rem">No violations in this period 🎉</div>'
+            : sorted.map(([name, d]) => `
+                <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:14px">
+                    <div style="font-weight:700;font-size:0.95rem;margin-bottom:6px">${name}</div>
+                    <div style="display:flex;justify-content:space-between;font-size:0.82rem">
+                        <span style="color:var(--text-muted)">${d.count} violation${d.count>1?'s':''}</span>
+                        <span style="color:var(--danger);font-weight:700">+${d.mins} min total</span>
+                    </div>
+                </div>`).join('');
+    }
+
     // Populate filters
     populateViolationFilters();
 }
@@ -3313,6 +3396,121 @@ async function exportAgentYTD() {
 }
 
 // ══════════════════════════════════════════════════════════════
+//  PUBLIC BREAK BUTTON — start/end break with timer + overrun
+// ══════════════════════════════════════════════════════════════
+let publicActiveBreak = null; // { num, startTime, duration, scheduledEnd }
+let publicBreakTimerInterval = null;
+
+function publicToggleBreak() {
+    const ag = publicActiveBreak ? null : publicSelectedAgent;
+    if (publicActiveBreak) {
+        // End break
+        publicEndBreak();
+    } else {
+        // Start break — find which break is next/current
+        publicStartNextBreak();
+    }
+}
+
+function publicStartNextBreak() {
+    const ag = publicSelectedAgent;
+    if (!ag) return;
+    const brk = breaksData[ag.id] || {};
+    const now = new Date();
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+
+    const breaks = [
+        { num: 1, time: brk.b1, duration: 15, label: 'Break 1' },
+        { num: 2, time: brk.b2, duration: 30, label: 'Lunch Break' },
+        { num: 3, time: brk.b3, duration: 15, label: 'Break 2' },
+    ];
+
+    // Find the closest upcoming or current break
+    let chosen = null;
+    for (const b of breaks) {
+        if (!b.time) continue;
+        const [h, m] = b.time.split(':').map(Number);
+        const bStart = h * 60 + m;
+        // Allow starting within 30 min before or anytime after scheduled start
+        if (nowMins >= bStart - 30) { chosen = b; }
+    }
+    if (!chosen) { chosen = breaks.find(b => b.time) || null; }
+    if (!chosen || !chosen.time) {
+        showNotification('No Break', 'No break times assigned yet', 'error'); return;
+    }
+
+    const startTime = new Date();
+    const [h, m] = chosen.time.split(':').map(Number);
+    publicActiveBreak = {
+        num: chosen.num, label: chosen.label,
+        startTime, duration: chosen.duration,
+        scheduledTime: chosen.time,
+        scheduledEndMins: h * 60 + m + chosen.duration
+    };
+
+    const btn = document.getElementById('publicBreakBtn');
+    btn.textContent = '✋ End Break';
+    btn.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+    document.getElementById('publicBreakTimer').style.display = 'block';
+    document.getElementById('publicOverrunWarning').style.display = 'none';
+
+    publicBreakTimerInterval = setInterval(() => {
+        if (!publicActiveBreak) return;
+        const elapsed = Math.floor((new Date() - publicActiveBreak.startTime) / 1000);
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        document.getElementById('publicBreakTimerText').textContent =
+            `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+
+        // Overrun detection
+        if (mins > publicActiveBreak.duration) {
+            const over = mins - publicActiveBreak.duration;
+            document.getElementById('publicOverrunWarning').style.display = 'block';
+            document.getElementById('publicOverrunMins').textContent = over;
+        }
+    }, 1000);
+
+    showNotification('Break Started', `${chosen.label} — ${chosen.duration} min`, 'success');
+}
+
+async function publicEndBreak() {
+    if (!publicActiveBreak) return;
+    const ag = publicSelectedAgent;
+    const b = publicActiveBreak;
+    const elapsed = Math.floor((new Date() - b.startTime) / 1000 / 60);
+    const overrun = Math.max(0, elapsed - b.duration);
+
+    clearInterval(publicBreakTimerInterval);
+    publicBreakTimerInterval = null;
+    publicActiveBreak = null;
+
+    const btn = document.getElementById('publicBreakBtn');
+    btn.textContent = '☕ Start Break';
+    btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+    document.getElementById('publicBreakTimer').style.display = 'none';
+    document.getElementById('publicOverrunWarning').style.display = 'none';
+
+    if (overrun > 0 && ag) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const actualReturn = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        await sb.from('break_violations').upsert({
+            agent_id: ag.id, agent_name: ag.name, date: todayStr,
+            break_number: b.num, scheduled_time: b.scheduledTime,
+            actual_return_time: actualReturn, overrun_minutes: overrun
+        }, { onConflict: 'agent_id,date,break_number' }).catch(() => {});
+        showNotification('⚠️ Break Overrun', `You were ${overrun} min late — logged`, 'error');
+    } else {
+        showNotification('Break Ended', `Back from ${b.label}`, 'success');
+    }
+}
+
+function publicEndBreakTimer() {
+    if (publicBreakTimerInterval) { clearInterval(publicBreakTimerInterval); publicBreakTimerInterval = null; }
+    publicActiveBreak = null;
+}
+
+// ══════════════════════════════════════════════════════════════
 //  DARK / LIGHT THEME TOGGLE
 // ══════════════════════════════════════════════════════════════
 function toggleTheme() {
@@ -3351,9 +3549,9 @@ function renderPublicMonthSchedule(ag) {
     const monthName = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month];
 
     // Day headers
-    ['S','M','T','W','T','F','S'].forEach(d => {
+    ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
         const h = document.createElement('div');
-        h.style.cssText = 'text-align:center;font-size:0.75rem;font-weight:700;color:var(--text-muted);padding:4px';
+        h.style.cssText = 'text-align:center;font-size:0.72rem;font-weight:700;color:var(--text-muted);padding:4px 2px';
         h.textContent = d;
         container.appendChild(h);
     });
@@ -3364,13 +3562,20 @@ function renderPublicMonthSchedule(ag) {
         container.appendChild(document.createElement('div'));
     }
 
+    // Calculate week number for Jan 1 of this year
+    // week_0 = first week, incrementing by 1 each 7 days from Jan 1
+    const jan1 = new Date(year, 0, 1);
+    const jan1Day = jan1.getDay(); // day of week for Jan 1
+
     // Day cells
     for (let day = 1; day <= daysInMonth; day++) {
         const date = new Date(year, month, day);
         const dayOfWeek = date.getDay();
-        const weekNum = Math.floor((day - 1 + firstDay) / 7);
-        // Map to week_key (approx)
-        const weekKey = `week_${Math.floor(month * 4.33) + weekNum}`;
+        // How many days since Jan 1?
+        const dayOfYear = Math.floor((date - jan1) / 86400000);
+        // Week number (0-indexed, same as schedule generator: week_0 to week_51)
+        const weekNum = Math.floor((dayOfYear + jan1Day) / 7);
+        const weekKey = `week_${weekNum}`;
         const wkData = (scheduleData[weekKey] || {})[dayOfWeek] || {};
 
         let shiftType = 'off';
@@ -3381,12 +3586,12 @@ function renderPublicMonthSchedule(ag) {
         const cell = document.createElement('div');
         cell.style.cssText = `
             aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-            border-radius:8px; font-size:0.75rem; font-weight:700; cursor:default;
-            border: ${isToday ? '2px solid var(--accent)' : '1px solid transparent'};
-            background: ${shiftType === 'morning' ? 'rgba(245,158,11,0.25)' : shiftType === 'night' ? 'rgba(139,92,246,0.25)' : 'rgba(100,116,139,0.15)'};
-            color: ${shiftType === 'morning' ? 'var(--morning)' : shiftType === 'night' ? 'var(--night)' : '#64748b'};
+            border-radius:8px; font-size:0.78rem; font-weight:700; cursor:default;
+            border: ${isToday ? '2px solid var(--accent)' : '1px solid rgba(148,163,184,0.2)'};
+            background: ${shiftType === 'morning' ? 'rgba(245,158,11,0.22)' : shiftType === 'night' ? 'rgba(139,92,246,0.22)' : 'rgba(100,116,139,0.1)'};
+            color: ${shiftType === 'morning' ? 'var(--morning)' : shiftType === 'night' ? 'var(--night)' : 'var(--text-muted)'};
         `;
-        cell.title = `${day} ${monthName}: ${shiftType}`;
+        cell.title = `${day} ${monthName}: ${shiftType === 'morning' ? '☀️ Morning' : shiftType === 'night' ? '🌙 Night' : '😴 Day Off'}`;
         cell.textContent = day;
         container.appendChild(cell);
     }
