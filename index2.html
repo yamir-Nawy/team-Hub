@@ -1,0 +1,1747 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1 Meeting Assignment Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .week-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .week-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .week-btn:hover, .week-btn.active {
+            background: white;
+            color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .week-content {
+            display: none;
+        }
+
+        .week-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .week-header {
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .week-header h2 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .week-header .date-range {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .leads-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .lead-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .lead-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .lead-header {
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lead-1 .lead-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .lead-2 .lead-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .lead-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .lead-header h3 {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .lead-header .agent-count {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .agents-list {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .agent-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .agent-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .agent-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .lead-1 .agent-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .lead-2 .agent-number {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .agent-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .export-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .export-btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            background: white;
+            color: #667eea;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            font-size: 1rem;
+        }
+
+        .export-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .current-week-badge {
+            display: inline-block;
+            background: #00d9ff;
+            color: #333;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .leads-container {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗓️ 1:1 Meeting Assignment Dashboard</h1>
+            <p>Automatic weekly assignment rotation for 2 Team Leads & 29 Agents</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="number">2</div>
+                <div class="label">Team Leads</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">29</div>
+                <div class="label">Total Agents</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">14-15</div>
+                <div class="label">Meetings per Lead</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">Weeks Scheduled</div>
+            </div>
+        </div>
+
+        <div class="week-selector">
+            <button class="week-btn active" onclick="showWeek(1)">Week 1</button>
+            <button class="week-btn " onclick="showWeek(2)">Week 2</button>
+            <button class="week-btn " onclick="showWeek(3)">Week 3</button>
+            <button class="week-btn " onclick="showWeek(4)">Week 4</button>
+            <button class="week-btn " onclick="showWeek(5)">Week 5</button>
+            <button class="week-btn " onclick="showWeek(6)">Week 6</button>
+            <button class="week-btn " onclick="showWeek(7)">Week 7</button>
+            <button class="week-btn " onclick="showWeek(8)">Week 8</button>
+        </div>
+
+        <div id="week-1" class="week-content active">
+            <div class="week-header">
+                <h2>Week 1 Assignments <span class='current-week-badge'>CURRENT</span></h2>
+                <div class="date-range">📅 Mar 16 - Mar 20, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-2" class="week-content ">
+            <div class="week-header">
+                <h2>Week 2 Assignments </h2>
+                <div class="date-range">📅 Mar 23 - Mar 27, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-3" class="week-content ">
+            <div class="week-header">
+                <h2>Week 3 Assignments </h2>
+                <div class="date-range">📅 Mar 30 - Apr 03, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-4" class="week-content ">
+            <div class="week-header">
+                <h2>Week 4 Assignments </h2>
+                <div class="date-range">📅 Apr 06 - Apr 10, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-5" class="week-content ">
+            <div class="week-header">
+                <h2>Week 5 Assignments </h2>
+                <div class="date-range">📅 Apr 13 - Apr 17, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-6" class="week-content ">
+            <div class="week-header">
+                <h2>Week 6 Assignments </h2>
+                <div class="date-range">📅 Apr 20 - Apr 24, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-7" class="week-content ">
+            <div class="week-header">
+                <h2>Week 7 Assignments </h2>
+                <div class="date-range">📅 Apr 27 - May 01, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="week-8" class="week-content ">
+            <div class="week-header">
+                <h2>Week 8 Assignments </h2>
+                <div class="date-range">📅 May 04 - May 08, 2026</div>
+            </div>
+
+            <div class="leads-container">
+                <div class="lead-card lead-1">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 1</h3>
+                        <div class="agent-count">14 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Habiba Omar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Ahmed Nawar</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Maysara Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Noha Abdelhalim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Jolie Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Nadeen Akram</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Norhan Sameh</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Youstina Youssef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Habiba Emad</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Hebatullah Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Belal Atef</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Rahma Medhat</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Mai Abdelnaby</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Dayana Alshamaa</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lead-card lead-2">
+                    <div class="lead-header">
+                        <h3>👤 Team Lead 2</h3>
+                        <div class="agent-count">15 Agents Assigned</div>
+                    </div>
+                    <div class="agents-list">
+                        <div class="agent-item">
+                            <div class="agent-number">1</div>
+                            <div class="agent-name">Silvia Joseph</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">2</div>
+                            <div class="agent-name">Lilian Ashraf</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">3</div>
+                            <div class="agent-name">Bassant Namrod</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">4</div>
+                            <div class="agent-name">Nada Salah</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">5</div>
+                            <div class="agent-name">Ehab Tamer</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">6</div>
+                            <div class="agent-name">Mai Mahmoud</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">7</div>
+                            <div class="agent-name">Salma Mohsen</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">8</div>
+                            <div class="agent-name">Berbara Romany lotfi</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">9</div>
+                            <div class="agent-name">Marise Ibrahim</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">10</div>
+                            <div class="agent-name">Bernadette Essam</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">11</div>
+                            <div class="agent-name">Salma Khaled</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">12</div>
+                            <div class="agent-name">Yasmin Mustafa</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">13</div>
+                            <div class="agent-name">Salma Elgarhy</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">14</div>
+                            <div class="agent-name">Mariam Adel</div>
+                        </div>
+                        <div class="agent-item">
+                            <div class="agent-number">15</div>
+                            <div class="agent-name">Shahd Hossam</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <button class="export-btn" onclick="exportToCSV()">📥 Export All Weeks to CSV</button>
+        </div>
+    </div>
+
+    <script>
+        function showWeek(weekNum) {
+            // Hide all weeks
+            document.querySelectorAll('.week-content').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.week-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show selected week
+            document.getElementById('week-' + weekNum).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function exportToCSV() {
+            let csv = 'Week,Date Range,Team Lead,Agent Name\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Marise Ibrahim\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Bernadette Essam\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Salma Khaled\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Yasmin Mustafa\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Salma Elgarhy\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Habiba Emad\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Hebatullah Mahmoud\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Belal Atef\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Rahma Medhat\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Nada Salah\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '1,Mar 16 - Mar 20, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Bernadette Essam\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Salma Khaled\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Yasmin Mustafa\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Salma Elgarhy\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Habiba Emad\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Hebatullah Mahmoud\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Belal Atef\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Rahma Medhat\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Nada Salah\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '2,Mar 23 - Mar 27, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Salma Khaled\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Yasmin Mustafa\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Salma Elgarhy\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Belal Atef\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Rahma Medhat\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Nada Salah\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '3,Mar 30 - Apr 03, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Yasmin Mustafa\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Salma Elgarhy\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Belal Atef\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Rahma Medhat\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Nada Salah\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '4,Apr 06 - Apr 10, 2026,Team Lead 2,Salma Khaled\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Salma Elgarhy\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Belal Atef\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 1,Rahma Medhat\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Nada Salah\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Salma Khaled\n';
+            csv += '5,Apr 13 - Apr 17, 2026,Team Lead 2,Yasmin Mustafa\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Mariam Adel\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Belal Atef\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 1,Rahma Medhat\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Mai Abdelnaby\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Dayana Alshamaa\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Nada Salah\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Salma Khaled\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Yasmin Mustafa\n';
+            csv += '6,Apr 20 - Apr 24, 2026,Team Lead 2,Salma Elgarhy\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Shahd Hossam\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Belal Atef\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Rahma Medhat\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Mai Abdelnaby\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 1,Dayana Alshamaa\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Nada Salah\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Salma Khaled\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Yasmin Mustafa\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Salma Elgarhy\n';
+            csv += '7,Apr 27 - May 01, 2026,Team Lead 2,Mariam Adel\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Habiba Omar\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Ahmed Nawar\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Maysara Mahmoud\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Noha Abdelhalim\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Jolie Emad\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Nadeen Akram\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Norhan Sameh\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Youstina Youssef\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Habiba Emad\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Hebatullah Mahmoud\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Belal Atef\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Rahma Medhat\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Mai Abdelnaby\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 1,Dayana Alshamaa\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Silvia Joseph\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Lilian Ashraf\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Bassant Namrod\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Nada Salah\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Ehab Tamer\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Mai Mahmoud\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Salma Mohsen\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Berbara Romany lotfi\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Marise Ibrahim\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Bernadette Essam\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Salma Khaled\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Yasmin Mustafa\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Salma Elgarhy\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Mariam Adel\n';
+            csv += '8,May 04 - May 08, 2026,Team Lead 2,Shahd Hossam\n';
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '1on1_meeting_assignments.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Auto-refresh to current week on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add logic here to detect current week automatically
+        });
+    </script>
+</body>
+</html>
