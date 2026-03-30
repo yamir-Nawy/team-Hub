@@ -73,11 +73,16 @@
         body.light-mode .kpi-col-chip { background:#e2e8f0 !important; color:#1e293b !important; border-color:#cbd5e1 !important; }
         body.light-mode .kpi-col-chip.opt { color:#475569 !important; }
         body.light-mode .kpi-step-card { background:#f8fafc !important; border-color:#e2e8f0 !important; }
-        /* Light mode for new elements */
         body.light-mode .yearly-cal-day { border-color:#e2e8f0 !important; }
         body.light-mode .yearly-cal-month-header { background:#f1f5f9 !important; color:#1e293b !important; }
         body.light-mode .group-config-row input { background:#f8fafc !important; color:#1e293b !important; border-color:#cbd5e1 !important; }
         body.light-mode .drag-drop-hint { background:#f1f5f9 !important; color:#475569 !important; border-color:#e2e8f0 !important; }
+        /* Light mode for full-month view */
+        body.light-mode .month-day-card { background:#ffffff !important; border-color:#e2e8f0 !important; }
+        body.light-mode .month-day-card:hover { border-color:var(--accent) !important; }
+        body.light-mode .month-day-header { background:#f1f5f9 !important; border-color:#e2e8f0 !important; color:#1e293b !important; }
+        body.light-mode .month-day-header.today { background:rgba(37,99,235,0.1) !important; }
+        body.light-mode .month-day-header.weekend { background:#fef3c7 !important; }
 
         body {
             font-family:'Segoe UI',system-ui,sans-serif;
@@ -176,22 +181,28 @@
         .agent-tag-group { padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); transition:all 0.2s; cursor:pointer; }
         .agent-tag-group:hover { transform:scale(1.1); background:rgba(255,255,255,0.1); }
         .agent-tag-group.a { border-color:var(--group-a); color:#60a5fa; } .agent-tag-group.b { border-color:var(--group-b); color:#34d399; } .agent-tag-group.c { border-color:var(--group-c); color:#fbbf24; }
+
+        /* ── FULL MONTH SCHEDULE GRID ── */
         .schedule-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; margin-bottom:30px; }
         .day-header { text-align:center; padding:15px; background:rgba(59,130,246,0.1); border-radius:12px; font-weight:700; border:1px solid var(--border); }
-        .day-cell { background:rgba(15,23,42,0.5); border:1px solid var(--border); border-radius:12px; padding:15px; min-height:280px; transition:all 0.3s; position:relative; }
+        .day-cell { background:rgba(15,23,42,0.5); border:1px solid var(--border); border-radius:12px; padding:12px; min-height:200px; transition:all 0.3s; position:relative; }
         .day-cell:hover { border-color:var(--accent); transform:translateY(-2px); }
         .day-cell.auto-generated { border-color:var(--auto); box-shadow:0 0 20px rgba(6,182,212,0.1); }
+        .day-cell.today-cell { border-color:var(--accent); box-shadow:0 0 15px var(--accent-glow); }
+        .day-cell.empty-cell { background:transparent; border:1px dashed rgba(255,255,255,0.05); min-height:auto; pointer-events:none; }
         .auto-badge { position:absolute; top:-8px; right:-8px; background:var(--auto); color:white; padding:4px 8px; border-radius:20px; font-size:0.7rem; font-weight:700; animation:pulse 2s infinite; }
-        .day-date { font-weight:700; margin-bottom:10px; color:var(--text-muted); font-size:0.9rem; }
-        .shift-section { margin-bottom:10px; padding:10px; border-radius:8px; font-size:0.85rem; transition:all 0.2s; min-height:50px; }
+        .day-date { font-weight:700; margin-bottom:8px; color:var(--text-muted); font-size:0.85rem; display:flex; justify-content:space-between; align-items:center; }
+        .day-date .date-num { font-size:1.1rem; color:var(--text); }
+        .day-cell.today-cell .day-date .date-num { color:var(--accent); }
+        .shift-section { margin-bottom:6px; padding:8px; border-radius:8px; font-size:0.8rem; transition:all 0.2s; min-height:40px; }
         .shift-section.drag-over { outline:2px dashed var(--accent); outline-offset:-2px; background:rgba(59,130,246,0.1) !important; }
         .shift-morning { background:rgba(245,158,11,0.1); border-left:3px solid var(--morning); }
         .shift-night   { background:rgba(139,92,246,0.1);  border-left:3px solid var(--night); }
         .shift-off     { background:rgba(100,116,139,0.1); border-left:3px solid #64748b; }
-        .shift-title { font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
-        .agent-count { background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:12px; font-size:0.75rem; }
-        .agent-list-small { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
-        .agent-tag { padding:3px 8px; border-radius:12px; font-size:0.75rem; cursor:grab; transition:all 0.2s; font-weight:600; user-select:none; }
+        .shift-title { font-weight:700; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; }
+        .agent-count { background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:12px; font-size:0.7rem; }
+        .agent-list-small { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
+        .agent-tag { padding:2px 7px; border-radius:12px; font-size:0.7rem; cursor:grab; transition:all 0.2s; font-weight:600; user-select:none; }
         .agent-tag:active { cursor:grabbing; }
         .agent-tag.dragging { opacity:0.4; transform:scale(0.9); }
         .agent-tag:hover { transform:scale(1.15); }
@@ -199,7 +210,6 @@
         .agent-tag.group-b { background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
         .agent-tag.group-c { background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid rgba(245,158,11,0.3); }
 
-        /* ── DRAG & DROP HINT ── */
         .drag-drop-hint { display:flex; align-items:center; gap:8px; padding:10px 16px; background:rgba(6,182,212,0.08); border:1px dashed rgba(6,182,212,0.3); border-radius:10px; margin-bottom:20px; font-size:0.85rem; color:var(--auto); }
         .drag-drop-hint .hint-icon { font-size:1.2rem; }
 
@@ -384,11 +394,45 @@
         .violations-table td:first-child { border-radius:10px 0 0 10px; border-left:1px solid var(--border); }
         .violations-table td:last-child  { border-radius:0 10px 10px 0;  border-right:1px solid var(--border); }
 
-        /* KPI styles (abbreviated - same as original) */
+        /* KPI styles */
         .kpi-mode-bar{display:flex;gap:4px;background:rgba(15,23,42,0.5);border-radius:12px;padding:4px;width:fit-content;margin-bottom:1.5rem;border:1px solid var(--border)}.kpi-mode-btn{padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--text-muted);border-radius:8px;transition:all 0.2s;font-family:inherit}.kpi-mode-btn.active{background:var(--accent);color:#fff}.kpi-sum-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.25rem}.kpi-sum-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}.kpi-sum-val{font-size:24px;font-weight:700}.kpi-sum-label{font-size:11px;color:var(--text-muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.04em}.kpi-overall-bar{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}.kpi-overall-track{flex:1;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden}.kpi-overall-fill{height:100%;border-radius:4px;transition:width 0.4s}.kpi-overall-label{font-size:13px;font-weight:600;white-space:nowrap;color:var(--text)}.kpi-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:1.5rem}.kpi-dash-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:16px;padding:16px;transition:border-color 0.2s}.kpi-dash-card:hover{border-color:rgba(255,255,255,0.2)}.kpi-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:8px}.kpi-card-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.35}.kpi-badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}.kpi-badge-pass{background:var(--pass-bg);color:var(--pass-text);border:1px solid rgba(16,185,129,0.3)}.kpi-badge-warn{background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(245,158,11,0.3)}.kpi-badge-fail{background:var(--fail-bg);color:var(--fail-text);border:1px solid rgba(239,68,68,0.3)}.kpi-val-row{display:flex;gap:18px;margin-bottom:10px}.kpi-val-block{display:flex;flex-direction:column;gap:2px}.kpi-val-lbl{font-size:11px;color:var(--text-muted)}.kpi-val-num{font-size:20px;font-weight:700;color:var(--text)}.kpi-val-sm{font-size:13px;color:var(--text-muted)}.kpi-prog-bar{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}.kpi-prog-fill{height:100%;border-radius:3px;transition:width 0.4s}.kpi-edit-row{display:flex;align-items:center;gap:8px;margin-top:9px}.kpi-edit-row label{font-size:11px;color:var(--text-muted);white-space:nowrap}.kpi-edit-row input{width:72px;padding:4px 7px;font-size:12px;border:0.5px solid rgba(255,255,255,0.2);border-radius:8px;background:rgba(15,23,42,0.6);color:var(--text);font-family:inherit}.kpi-edit-row input:focus{outline:none;border-color:var(--accent)}.kpi-pct-lbl{font-size:11px;color:var(--text-muted)}.kpi-import-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}.kpi-import-card h3{font-size:15px;font-weight:600;margin-bottom:5px;color:var(--text)}.kpi-import-card p{font-size:12px;color:var(--text-muted);line-height:1.6;max-width:600px}.kpi-import-btns{display:flex;flex-direction:column;gap:7px;align-items:flex-end;flex-shrink:0}.btn-kpi-calc{background:var(--pass-fill);color:#fff;border:none;padding:9px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity 0.15s}.btn-kpi-calc:hover{opacity:0.85}.btn-kpi-clear{background:transparent;color:var(--text-muted);border:1px solid var(--border);padding:7px 14px;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit;display:none}.btn-kpi-clear:hover{color:var(--text)}.kpi-steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem}.kpi-step-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}.kpi-step-num{width:22px;height:22px;border-radius:50%;background:var(--pass-fill);color:#fff;font-size:11px;font-weight:700;flex-shrink:0;display:flex;align-items:center;justify-content:center}.kpi-step-card p{font-size:12px;color:var(--text-muted);line-height:1.5}.kpi-step-card strong{color:var(--text)}.kpi-col-ref{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:1.5rem}.kpi-col-ref-title{font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em}.kpi-chips{display:flex;flex-wrap:wrap;gap:6px}.kpi-col-chip{background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:3px 10px;font-size:11px;font-family:monospace;color:var(--accent)}.kpi-col-chip.opt{color:var(--text-muted)}.kpi-paste-label{font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:6px}.kpi-paste-box{width:100%;height:130px;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--text);font-size:12px;font-family:monospace;padding:12px;resize:vertical;outline:none;line-height:1.6;transition:border-color 0.15s}.kpi-paste-box:focus{border-color:var(--accent)}.kpi-paste-box::placeholder{color:var(--text-muted)}.kpi-calc-row{display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:1.5rem}.kpi-err-box{background:var(--fail-bg);border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:9px 14px;font-size:12px;color:var(--fail-text);display:none;line-height:1.5}.kpi-auto-sum-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem}.kpi-table-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:1.5rem}.kpi-table-top{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}.kpi-table-title{font-size:13px;font-weight:600;color:var(--text)}.kpi-table-sub{font-size:11px;color:var(--text-muted);margin-top:2px}.kpi-search-box{background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:6px 12px;font-size:12px;color:var(--text);font-family:inherit;outline:none;width:200px}.kpi-search-box::placeholder{color:var(--text-muted)}.kpi-search-box:focus{border-color:var(--accent)}.kpi-agent-table{width:100%;border-collapse:collapse}.kpi-agent-table th{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.04em;text-transform:uppercase;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);background:rgba(15,23,42,0.6);white-space:nowrap}.kpi-agent-table td{padding:11px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.05);white-space:nowrap}.kpi-agent-table tr:last-child td{border-bottom:none}.kpi-agent-table tr:hover td{background:rgba(59,130,246,0.05)}.kpi-agent-cell{display:flex;align-items:center;gap:9px;font-weight:600}.kpi-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}.kav0{background:rgba(59,130,246,0.25);color:#60a5fa}.kav1{background:rgba(16,185,129,0.25);color:#34d399}.kav2{background:rgba(239,68,68,0.25);color:#f87171}.kav3{background:rgba(245,158,11,0.25);color:#fbbf24}.kav4{background:rgba(139,92,246,0.25);color:#a78bfa}.kav5{background:rgba(6,182,212,0.25);color:#67e8f9}.kpi-td-cell{display:flex;flex-direction:column;gap:3px}.kpi-td-val{font-size:12px;font-family:monospace}.kpi-mini-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;width:56px}.kpi-mini-fill{height:100%;border-radius:2px}.kpi-score-val{font-size:13px;font-weight:700;font-family:monospace}.kpi-section-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px}.kpi-team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.kpi-team-card{background:rgba(15,23,42,0.5);border:1px solid var(--border);border-radius:16px;padding:14px 16px}.kpi-tc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}.kpi-tc-name{font-size:12px;color:var(--text-muted)}.kpi-tc-val{font-size:22px;font-weight:700;margin-bottom:8px}.kpi-tc-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px}.kpi-empty{background:rgba(15,23,42,0.5);border:1px dashed rgba(255,255,255,0.15);border-radius:16px;padding:2.5rem;text-align:center}.kpi-empty p{font-size:13px;color:var(--text-muted);line-height:1.6}.hidden{display:none!important}
 
+        /* ── MONTHLY ROSTER TABLE ── */
+        .monthly-roster-container { margin-top:30px; }
+        .monthly-roster-scroll { overflow-x:auto; border:1px solid var(--border); border-radius:14px; }
+        .monthly-roster-table { width:100%; border-collapse:collapse; min-width:900px; }
+        .monthly-roster-table th { padding:8px 6px; font-size:0.7rem; font-weight:700; text-align:center; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.03em; border-bottom:2px solid var(--border); background:rgba(15,23,42,0.6); position:sticky; top:0; z-index:5; white-space:nowrap; }
+        .monthly-roster-table th.agent-col { text-align:left; padding-left:14px; min-width:130px; position:sticky; left:0; z-index:10; background:rgba(15,23,42,0.95); }
+        .monthly-roster-table th.today-col { background:rgba(59,130,246,0.15); color:var(--accent); }
+        .monthly-roster-table th.weekend-col { color:var(--warning); }
+        .monthly-roster-table td { padding:4px 3px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.7rem; font-weight:600; transition:background 0.15s; }
+        .monthly-roster-table td.agent-name-col { text-align:left; padding-left:14px; font-weight:700; font-size:0.8rem; position:sticky; left:0; background:rgba(15,23,42,0.95); z-index:3; white-space:nowrap; border-right:1px solid var(--border); }
+        .monthly-roster-table tr:hover td { background:rgba(59,130,246,0.04); }
+        .monthly-roster-table tr:hover td.agent-name-col { background:rgba(30,41,59,0.95); }
+        .roster-cell { display:inline-block; width:22px; height:22px; line-height:22px; border-radius:5px; font-size:0.65rem; }
+        .roster-cell.m { background:rgba(245,158,11,0.2); color:var(--morning); }
+        .roster-cell.n { background:rgba(139,92,246,0.2); color:var(--night); }
+        .roster-cell.o { background:rgba(100,116,139,0.1); color:var(--text-muted); font-size:0.6rem; }
+        .roster-cell.today-highlight { outline:2px solid var(--accent); outline-offset:-1px; }
+        .monthly-roster-table td.today-col-cell { background:rgba(59,130,246,0.04); }
+        .roster-group-sep td { border-bottom:2px solid var(--border) !important; }
+        .roster-group-label { font-size:0.7rem; font-weight:700; padding:6px 14px !important; text-align:left !important; letter-spacing:0.04em; }
+        .roster-group-label.a { color:var(--group-a); background:rgba(59,130,246,0.06) !important; }
+        .roster-group-label.b { color:var(--group-b); background:rgba(16,185,129,0.06) !important; }
+        .roster-group-label.c { color:var(--group-c); background:rgba(245,158,11,0.06) !important; }
+        .roster-summary-row td { font-weight:800; border-top:2px solid var(--border); background:rgba(15,23,42,0.6); }
+        .roster-summary-row td.agent-name-col { background:rgba(15,23,42,0.95); }
+        body.light-mode .monthly-roster-table th { background:#f1f5f9 !important; color:#475569 !important; }
+        body.light-mode .monthly-roster-table th.agent-col { background:#f8fafc !important; }
+        body.light-mode .monthly-roster-table td.agent-name-col { background:#f8fafc !important; color:#1e293b !important; }
+        body.light-mode .monthly-roster-table tr:hover td { background:rgba(59,130,246,0.06) !important; }
+        body.light-mode .monthly-roster-table tr:hover td.agent-name-col { background:#f1f5f9 !important; }
+        body.light-mode .roster-summary-row td { background:#f1f5f9 !important; }
+        body.light-mode .roster-summary-row td.agent-name-col { background:#f1f5f9 !important; }
+        body.light-mode .monthly-roster-scroll { border-color:#e2e8f0 !important; }
+
         @media (max-width:968px) {
-            .schedule-grid { grid-template-columns:1fr; }
+            .schedule-grid { grid-template-columns:1fr !important; }
             .stats-bar { grid-template-columns:repeat(2,1fr); }
             .agent-roster { grid-template-columns:1fr; }
             .group-grid { grid-template-columns:1fr; }
@@ -502,17 +546,17 @@
                 </div>
                 <div class="shift-legend"><div class="legend-item"><div class="dot group-a"></div><span>Group A</span></div><div class="legend-item"><div class="dot group-b"></div><span>Group B</span></div><div class="legend-item"><div class="dot group-c"></div><span>Group C</span></div><div class="legend-item"><div class="dot morning"></div><span>Morning</span></div><div class="legend-item"><div class="dot night"></div><span>Night</span></div></div>
 
-                <!-- ✨ NEW: Group Configuration Panel -->
+                <!-- Group Configuration Panel -->
                 <div class="group-config-panel">
                     <div class="group-config-header">
                         <h3 style="display:flex;align-items:center;gap:10px">⚙️ Group Size & Agent Count</h3>
                         <div class="controls">
                             <button class="btn btn-success" style="padding:8px 16px;font-size:0.85rem" onclick="openBulkAddModal()">+ Add Agents</button>
                             <button class="btn btn-danger" style="padding:8px 16px;font-size:0.85rem" onclick="openRemoveAgentModal()">− Remove Agents</button>
-                            <button class="btn" style="padding:8px 16px;font-size:0.85rem" onclick="applyGroupConfig()">✅ Apply Changes</button>
+                            <button class="btn" style="padding:8px 16px;font-size:0.85rem" onclick="applyGroupConfig()">✅ Apply & Regenerate</button>
                         </div>
                     </div>
-                    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:15px">Adjust how many agents belong to each group. Changes will redistribute agents and regenerate the schedule.</p>
+                    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:15px">Adjust how many agents belong to each group. Applying will redistribute agents <strong>and regenerate the schedule</strong>.</p>
                     <div class="group-config-grid">
                         <div class="group-config-row a"><label class="a">Group A (Fri-Sat Off)</label><input type="number" id="cfgGroupA" min="1" max="50" value="9"><div class="config-sub">Morning + Night agents</div></div>
                         <div class="group-config-row b"><label class="b">Group B (Sun-Mon Off)</label><input type="number" id="cfgGroupB" min="1" max="50" value="10"><div class="config-sub">Morning + Night agents</div></div>
@@ -524,13 +568,27 @@
                 <div class="group-distribution-panel"><h3 style="display:flex;align-items:center;gap:10px">👥 Group Distribution</h3><p style="color:var(--text-muted);font-size:0.9rem;margin:8px 0 0">Agents rotate between groups monthly.</p><div class="group-grid" id="groupDistribution"></div></div>
                 <div class="controls" style="margin-bottom:20px"><button class="btn btn-success" onclick="openAddAgentModal()">+ Add Agent</button></div>
 
-                <!-- ✨ NEW: Drag & Drop hint -->
+                <!-- Drag & Drop hint -->
                 <div class="drag-drop-hint"><span class="hint-icon">🔀</span>Drag and drop agent names between Morning, Night, and Off sections to manually reassign shifts</div>
 
                 <div class="month-selector" id="monthSelector"></div>
-                <div class="schedule-grid" id="scheduleGrid"></div>
+                <div id="scheduleGrid"></div>
 
-                <!-- ✨ NEW: Yearly Calendar -->
+                <!-- ✨ Monthly Full Team Roster Table -->
+                <div class="monthly-roster-container">
+                    <div class="card-header" style="margin-top:10px">
+                        <h2><span class="icon">📋</span> Full Team Schedule</h2>
+                        <div class="controls">
+                            <button class="btn btn-secondary" style="padding:8px 16px;font-size:0.85rem" onclick="exportMonthlyRoster()">📥 Export Month</button>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:15px">All agents' shifts for <strong id="rosterMonthLabel"></strong>, sorted by group then name. <span style="font-size:0.75rem">☀ = Morning &nbsp; 🌙 = Night &nbsp; — = Off</span></p>
+                    <div class="monthly-roster-scroll" style="max-height:600px;overflow-y:auto">
+                        <table class="monthly-roster-table" id="monthlyRosterTable"></table>
+                    </div>
+                </div>
+
+                <!-- Yearly Calendar -->
                 <div class="yearly-calendar-container">
                     <div class="card-header" style="margin-top:10px"><h2><span class="icon">🗓️</span> Yearly Calendar Overview</h2>
                         <div style="display:flex;align-items:center;gap:10px">
@@ -637,10 +695,10 @@
 <div class="modal" id="autoScheduleModal"><div class="modal-content"><h3 style="margin-bottom:20px">⚡ Auto Schedule Configuration</h3><div class="form-group"><label>Distribution Method</label><select id="scheduleMethod"><option value="fair">Fair Rotation (Recommended)</option><option value="seniority">Seniority Based</option><option value="performance">Performance Based</option><option value="random">Random Fair</option></select></div><div class="form-group"><label>Group Rotation</label><select id="groupRotation"><option value="monthly">Monthly Rotation (A→B→C)</option><option value="biweekly">Bi-Weekly Rotation</option><option value="quarterly">Quarterly Rotation</option></select></div><div class="form-group"><label>Agents to Exclude (Vacation/Leave)</label><div class="checkbox-group" id="excludeAgents"></div></div><div style="background:rgba(6,182,212,0.1);border:1px solid var(--auto);border-radius:10px;padding:15px;margin-bottom:20px"><div style="font-weight:700;color:var(--auto);margin-bottom:5px">🤖 AI Distribution Logic</div><div style="font-size:0.9rem;color:var(--text-muted)">• Groups rotate monthly: A→B→C→A<br>• Group A: Fri-Sat Off | Group B: Sun-Mon Off | Group C: Tue-Wed Off<br>• Uses configured group sizes for morning/night splits<br>• Ensures 5 working days max per week</div></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('autoScheduleModal')">Cancel</button><button class="btn btn-auto" onclick="executeAutoSchedule()">⚡ Generate Schedule</button></div></div></div>
 <div class="modal" id="addAgentModal"><div class="modal-content"><h3 style="margin-bottom:20px">+ Add New Agent</h3><div class="form-group"><label>Agent Name</label><input type="text" id="newAgentName" placeholder="Full Name"></div><div class="form-group"><label>Group</label><select id="newAgentGroup"><option value="A">Group A (Fri-Sat Off)</option><option value="B">Group B (Sun-Mon Off)</option><option value="C">Group C (Tue-Wed Off)</option></select></div><div class="form-group"><label>Preferred Shift</label><select id="newAgentShift"><option value="any">Any</option><option value="morning">Morning</option><option value="night">Night</option></select></div><div class="form-group"><label>Seniority (Years)</label><input type="number" id="newAgentSeniority" min="1" max="20" value="1"></div><div class="form-group"><label>Performance Score (0-100)</label><input type="number" id="newAgentPerf" min="0" max="100" value="80"></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('addAgentModal')">Cancel</button><button class="btn btn-success" onclick="saveNewAgent()">Save Agent</button></div></div></div>
 
-<!-- ✨ NEW: Bulk Add Agents Modal -->
+<!-- Bulk Add Agents Modal -->
 <div class="modal" id="bulkAddModal"><div class="modal-content"><h3 style="margin-bottom:20px">+ Bulk Add Agents</h3><div class="form-group"><label>Number of Agents to Add</label><input type="number" id="bulkAddCount" min="1" max="50" value="5"></div><div class="form-group"><label>Name Prefix (e.g. "Agent")</label><input type="text" id="bulkAddPrefix" value="Agent" placeholder="Agent"></div><div class="form-group"><label>Starting Number</label><input type="number" id="bulkAddStart" min="1" value="1"></div><div class="form-group"><label>Auto-assign to Groups</label><select id="bulkAddGroupMode"><option value="auto">Even distribution across A/B/C</option><option value="A">All to Group A</option><option value="B">All to Group B</option><option value="C">All to Group C</option></select></div><div style="background:rgba(6,182,212,0.1);border:1px solid var(--auto);border-radius:10px;padding:12px;margin-bottom:15px;font-size:0.85rem;color:var(--text-muted)">Preview: Will add <strong id="bulkPreviewCount" style="color:var(--auto)">5</strong> agents named <strong id="bulkPreviewNames" style="color:var(--text)">Agent 1, Agent 2, ...</strong></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('bulkAddModal')">Cancel</button><button class="btn btn-success" onclick="executeBulkAdd()">Add Agents</button></div></div></div>
 
-<!-- ✨ NEW: Remove Agent Modal -->
+<!-- Remove Agent Modal -->
 <div class="modal" id="removeAgentModal"><div class="modal-content"><h3 style="margin-bottom:20px">− Remove Agents</h3><p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:15px">Select agents to remove from the roster. This cannot be undone.</p><div class="checkbox-group" id="removeAgentList" style="max-height:400px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px"><button class="btn btn-secondary" onclick="closeModal('removeAgentModal')">Cancel</button><button class="btn btn-danger" onclick="executeRemoveAgents()">🗑️ Remove Selected</button></div></div></div>
 
 <div class="modal" id="taskModal"><div class="modal-content"><h3 style="margin-bottom:20px">Assign Task</h3><div class="form-group"><label>Task Type</label><select id="taskType"><option>Calls</option><option>Support Calls</option><option>Facebook</option><option>FB Group</option><option>Respond</option><option>Forms</option><option>New Partner</option><option>Unlocked Rentals</option><option>Unknown</option><option>AI (Bot)</option><option>Repricing</option><option>Freelancer</option><option>Inventory</option></select></div><div class="form-group"><label>Priority</label><select id="taskPriority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div><div class="form-group"><label>Assign Specific Agents</label><div class="checkbox-group" id="manualAgentSelect"></div></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('taskModal')">Cancel</button><button class="btn" onclick="saveManualTask()">Save</button></div></div></div>
@@ -667,6 +725,20 @@ const months=['January','February','March','April','May','June','July','August',
 const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const taskTypes=['Calls','Support Calls','Facebook','FB Group','Respond','Forms','New Partner','Unlocked Rentals','Unknown','AI (Bot)','Repricing','Freelancer','Inventory'];
 const groupConfig={A:{name:'Group A',offDays:[5,6],color:'a',workDays:[0,1,2,3,4]},B:{name:'Group B',offDays:[0,1],color:'b',workDays:[2,3,4,5,6]},C:{name:'Group C',offDays:[2,3],color:'c',workDays:[4,5,6,0,1]}};
+
+// ═══════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════
+function getWeekNumForDate(date){
+    const year=date.getFullYear();
+    const jan1=new Date(year,0,1),jan1Day=jan1.getDay();
+    const dayOfYear=Math.floor((date-jan1)/86400000);
+    return Math.floor((dayOfYear+jan1Day)/7);
+}
+function getScheduleForDate(date){
+    const wk=`week_${getWeekNumForDate(date)}`;
+    return (scheduleData[wk]||{})[date.getDay()]||{morning:[],night:[],off:[]};
+}
 
 // ═══════════════════════════════════════════════════════════
 //  LOADING / SYNC
@@ -697,7 +769,7 @@ function renderPublicAgentGrid(){const grid=document.getElementById('publicAgent
 function publicSelectAgent(ag){if(ag.pin){openPinEntry(ag)}else{confirmPublicSelectAgent(ag)}}
 function confirmPublicSelectAgent(ag){publicSelectedAgent=ag;document.getElementById('publicAgentSelectPanel').style.display='none';document.getElementById('publicAgentDashboard').style.display='block';document.getElementById('publicPortalAgentName').textContent=`👤 ${ag.name}`;updatePublicDashboard();startBreakMonitor()}
 function publicDeselectAgent(){publicSelectedAgent=null;document.getElementById('publicAgentSelectPanel').style.display='block';document.getElementById('publicAgentDashboard').style.display='none';document.getElementById('publicPortalAgentName').textContent='';renderPublicAgentGrid()}
-function updatePublicDashboard(){const ag=publicSelectedAgent;if(!ag)return;const rec=attendanceRecords[ag.id]||{};const statusEl=document.getElementById('publicCheckinStatus'),btnEl=document.getElementById('publicCheckinBtn');if(rec.checkedIn){statusEl.className='checkin-status checked-in';document.getElementById('publicCheckinIcon').textContent='✅';document.getElementById('publicCheckinLabel').textContent='Checked In';document.getElementById('publicCheckinTime').textContent=`Since: ${rec.checkInTime}`;btnEl.className='checkin-btn check-out';btnEl.textContent='🚪 Check Out';document.getElementById('publicBreakBtnArea').style.display='block'}else{statusEl.className='checkin-status checked-out';document.getElementById('publicCheckinIcon').textContent='😴';document.getElementById('publicCheckinLabel').textContent=rec.checkOutTime?'Checked Out':'Not Checked In';document.getElementById('publicCheckinTime').textContent=rec.checkOutTime?`Out: ${rec.checkOutTime}`:'';btnEl.className='checkin-btn check-in';btnEl.textContent='✅ Check In';document.getElementById('publicBreakBtnArea').style.display='none'}const todayDate=new Date(),today=todayDate.getDay(),jan1=new Date(todayDate.getFullYear(),0,1),jan1Day=jan1.getDay(),dayOfYear=Math.floor((todayDate-jan1)/86400000),todayWeekNum=Math.floor((dayOfYear+jan1Day)/7),wk=`week_${todayWeekNum}`,todayData=(scheduleData[wk]||{})[today]||{morning:[],night:[],off:[]};const shiftEl=document.getElementById('publicShiftDisplay');let shiftType='off';if(todayData.morning.some(x=>x.name===ag.name))shiftType='morning';else if(todayData.night.some(x=>x.name===ag.name))shiftType='night';shiftEl.className=`shift-time-display ${shiftType}`;if(shiftType==='morning'){document.getElementById('publicShiftIcon').textContent='☀️';document.getElementById('publicShiftLabel').textContent='Morning Shift';document.getElementById('publicShiftTime').textContent='9:00 AM – 5:30 PM'}else if(shiftType==='night'){document.getElementById('publicShiftIcon').textContent='🌙';document.getElementById('publicShiftLabel').textContent='Night Shift';document.getElementById('publicShiftTime').textContent='3:00 PM – 11:00 PM'}else{document.getElementById('publicShiftIcon').textContent='😴';document.getElementById('publicShiftLabel').textContent='Day Off';document.getElementById('publicShiftTime').textContent='Rest & recharge!'}const agBreaks=breaksData[ag.id]||{};document.getElementById('publicBreak1').textContent=agBreaks.b1||'—';document.getElementById('publicBreak2').textContent=agBreaks.b2||'—';document.getElementById('publicBreak3').textContent=agBreaks.b3||'—';const agViols=(publicViolations||[]).filter(v=>v.agent_id===ag.id),minsBox=document.getElementById('publicMissingMinsBox'),minsList=document.getElementById('publicMissingMinsList');if(minsBox&&minsList){if(agViols.length>0){const total=agViols.reduce((s,v)=>s+(v.overrun_minutes||0),0);minsList.innerHTML=agViols.map(v=>`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>${v.date} · Break ${v.break_number}</span><span style="color:var(--danger);font-weight:700">+${v.overrun_minutes} min</span></div>`).join('')+`<div style="border-top:1px solid rgba(239,68,68,0.2);margin-top:6px;padding-top:6px;font-weight:700;display:flex;justify-content:space-between"><span>Total:</span><span style="color:var(--danger)">+${total} min</span></div>`;minsBox.style.display='block'}else{minsBox.style.display='none'}}}
+function updatePublicDashboard(){const ag=publicSelectedAgent;if(!ag)return;const rec=attendanceRecords[ag.id]||{};const statusEl=document.getElementById('publicCheckinStatus'),btnEl=document.getElementById('publicCheckinBtn');if(rec.checkedIn){statusEl.className='checkin-status checked-in';document.getElementById('publicCheckinIcon').textContent='✅';document.getElementById('publicCheckinLabel').textContent='Checked In';document.getElementById('publicCheckinTime').textContent=`Since: ${rec.checkInTime}`;btnEl.className='checkin-btn check-out';btnEl.textContent='🚪 Check Out';document.getElementById('publicBreakBtnArea').style.display='block'}else{statusEl.className='checkin-status checked-out';document.getElementById('publicCheckinIcon').textContent='😴';document.getElementById('publicCheckinLabel').textContent=rec.checkOutTime?'Checked Out':'Not Checked In';document.getElementById('publicCheckinTime').textContent=rec.checkOutTime?`Out: ${rec.checkOutTime}`:'';btnEl.className='checkin-btn check-in';btnEl.textContent='✅ Check In';document.getElementById('publicBreakBtnArea').style.display='none'}const todayDate=new Date();const todayData=getScheduleForDate(todayDate);const shiftEl=document.getElementById('publicShiftDisplay');let shiftType='off';if(todayData.morning.some(x=>x.name===ag.name))shiftType='morning';else if(todayData.night.some(x=>x.name===ag.name))shiftType='night';shiftEl.className=`shift-time-display ${shiftType}`;if(shiftType==='morning'){document.getElementById('publicShiftIcon').textContent='☀️';document.getElementById('publicShiftLabel').textContent='Morning Shift';document.getElementById('publicShiftTime').textContent='9:00 AM – 5:30 PM'}else if(shiftType==='night'){document.getElementById('publicShiftIcon').textContent='🌙';document.getElementById('publicShiftLabel').textContent='Night Shift';document.getElementById('publicShiftTime').textContent='3:00 PM – 11:00 PM'}else{document.getElementById('publicShiftIcon').textContent='😴';document.getElementById('publicShiftLabel').textContent='Day Off';document.getElementById('publicShiftTime').textContent='Rest & recharge!'}const agBreaks=breaksData[ag.id]||{};document.getElementById('publicBreak1').textContent=agBreaks.b1||'—';document.getElementById('publicBreak2').textContent=agBreaks.b2||'—';document.getElementById('publicBreak3').textContent=agBreaks.b3||'—';const agViols=(publicViolations||[]).filter(v=>v.agent_id===ag.id),minsBox=document.getElementById('publicMissingMinsBox'),minsList=document.getElementById('publicMissingMinsList');if(minsBox&&minsList){if(agViols.length>0){const total=agViols.reduce((s,v)=>s+(v.overrun_minutes||0),0);minsList.innerHTML=agViols.map(v=>`<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span>${v.date} · Break ${v.break_number}</span><span style="color:var(--danger);font-weight:700">+${v.overrun_minutes} min</span></div>`).join('')+`<div style="border-top:1px solid rgba(239,68,68,0.2);margin-top:6px;padding-top:6px;font-weight:700;display:flex;justify-content:space-between"><span>Total:</span><span style="color:var(--danger)">+${total} min</span></div>`;minsBox.style.display='block'}else{minsBox.style.display='none'}}}
 async function publicToggleCheckIn(){const ag=publicSelectedAgent;if(!ag)return;if(ag.pin){openPinEntry(ag,()=>doCheckInOut(ag))}else{doCheckInOut(ag)}}
 async function doCheckInOut(ag){const rec=attendanceRecords[ag.id]||{},now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),todayStr=new Date().toISOString().split('T')[0];if(rec.checkedIn){attendanceRecords[ag.id]={checkedIn:false,checkInTime:rec.checkInTime,checkOutTime:now};showNotification('Checked Out',`${ag.name} out at ${now}`)}else{attendanceRecords[ag.id]={checkedIn:true,checkInTime:now,checkOutTime:null};showNotification('Checked In',`${ag.name} in at ${now}`,'success');startBreakMonitor()}await sb.from('attendance').upsert({agent_id:ag.id,agent_name:ag.name,date:todayStr,checked_in:attendanceRecords[ag.id].checkedIn,check_in_time:attendanceRecords[ag.id].checkInTime,check_out_time:attendanceRecords[ag.id].checkOutTime},{onConflict:'agent_id,date'});updatePublicDashboard();renderPublicAgentGrid()}
 
@@ -708,12 +780,12 @@ async function saveScheduleToDB(schedObj){setSyncStatus('syncing');await sb.from
 // ═══════════════════════════════════════════════════════════
 //  RENDER ALL
 // ═══════════════════════════════════════════════════════════
-function renderAll(){updateStats();renderMonthSelector();renderGroupDistribution();renderSchedule();renderAgentRoster();renderTasks();renderWarnings();updateGroupConfigInputs();renderYearlyCalendar()}
+function renderAll(){updateStats();renderMonthSelector();renderGroupDistribution();renderSchedule();renderMonthlyRoster();renderAgentRoster();renderTasks();renderWarnings();updateGroupConfigInputs();renderYearlyCalendar()}
 function updateStats(){document.getElementById('statA').textContent=agents.filter(x=>x.group_name==='A').length;document.getElementById('statB').textContent=agents.filter(x=>x.group_name==='B').length;document.getElementById('statC').textContent=agents.filter(x=>x.group_name==='C').length;document.getElementById('statTotal').textContent=agents.length}
 function switchTab(tabName,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(tabName).classList.add('active');btn.classList.add('active');if(tabName==='agentportal')renderAgentSelectGrid();if(tabName==='breaks'){renderBreaksTable();updateBreaksSummary()}if(tabName==='adminusers'){renderAdminUsers();renderAgentPinGrid()}if(tabName==='violations'){loadViolations().then(renderViolations)}if(tabName==='kpidash'){renderKpiManualPanel('kagent');renderKpiManualPanel('ktl');renderKpiManualPanel('kmgr')}if(tabName==='schedule'){renderYearlyCalendar()}}
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ GROUP CONFIGURATION
+//  GROUP CONFIGURATION — NOW TRIGGERS SCHEDULE REGENERATION
 // ═══════════════════════════════════════════════════════════
 function updateGroupConfigInputs(){
     document.getElementById('cfgGroupA').value=agents.filter(a=>a.group_name==='A').length;
@@ -727,25 +799,66 @@ function updateGroupConfigInputs(){
 function validateGroupConfig(){
     const a=parseInt(document.getElementById('cfgGroupA').value)||0,b=parseInt(document.getElementById('cfgGroupB').value)||0,c=parseInt(document.getElementById('cfgGroupC').value)||0;
     const total=a+b+c,el=document.getElementById('groupConfigTotal');
-    if(total===agents.length){el.className='group-config-total valid';el.textContent=`✅ Total: ${total} agents — matches roster (${agents.length})`}
-    else{el.className='group-config-total invalid';el.textContent=`⚠️ Total: ${total} agents — roster has ${agents.length} (${total>agents.length?'need to add '+(total-agents.length):'need to remove '+(agents.length-total)})`}
+    const curA=agents.filter(x=>x.group_name==='A').length,curB=agents.filter(x=>x.group_name==='B').length,curC=agents.filter(x=>x.group_name==='C').length;
+    if(total!==agents.length){el.className='group-config-total invalid';el.textContent=`⚠️ Total: ${total} agents — roster has ${agents.length} (${total>agents.length?'need to add '+(total-agents.length):'need to remove '+(agents.length-total)})`}
+    else if(a!==curA||b!==curB||c!==curC){el.className='group-config-total invalid';el.style.borderColor='rgba(245,158,11,0.5)';el.style.color='var(--warning)';el.style.background='rgba(245,158,11,0.08)';el.textContent=`⚡ Total: ${total} ✓ — Click "Apply Changes" to redistribute groups & regenerate the schedule`}
+    else{el.className='group-config-total valid';el.textContent=`✅ Total: ${total} agents — matches roster (${agents.length})`}
 }
 async function applyGroupConfig(){
     const a=parseInt(document.getElementById('cfgGroupA').value)||0,b=parseInt(document.getElementById('cfgGroupB').value)||0,c=parseInt(document.getElementById('cfgGroupC').value)||0,total=a+b+c;
     if(total!==agents.length){showNotification('Mismatch',`Total (${total}) doesn't match roster (${agents.length}). Add or remove agents first.`,'error');return}
-    if(!confirm(`Redistribute agents: A=${a}, B=${b}, C=${c}?`))return;
+    if(!confirm(`Redistribute agents: A=${a}, B=${b}, C=${c}?\nThis will also regenerate the full schedule.`))return;
+    showLoading('Redistributing groups & regenerating schedule...');
     const sorted=[...agents].sort((x,y)=>x.id-y.id);let idx=0;
     for(let i=0;i<a;i++){if(sorted[idx])sorted[idx++].group_name='A'}
     for(let i=0;i<b;i++){if(sorted[idx])sorted[idx++].group_name='B'}
     for(let i=0;i<c;i++){if(sorted[idx])sorted[idx++].group_name='C'}
-    await saveAgents();renderAll();showNotification('Groups Updated',`A=${a}, B=${b}, C=${c} applied ✓`)
+    await saveAgents();
+    // NOW REGENERATE THE SCHEDULE with current settings
+    await regenerateScheduleFromCurrentGroups();
+    hideLoading();
+    renderAll();
+    showNotification('Groups & Schedule Updated',`A=${a}, B=${b}, C=${c} — schedule regenerated ✓`);
+}
+
+// Shared schedule generation logic (used by both auto-schedule and group config apply)
+async function regenerateScheduleFromCurrentGroups(){
+    const method=document.getElementById('scheduleMethod')?.value||'fair';
+    const groupRot=document.getElementById('groupRotation')?.value||'monthly';
+    let avail=[...agents];
+    avail.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
+    const yearSched={};
+    for(let week=0;week<52;week++){
+        const wk=`week_${week}`;yearSched[wk]={};
+        let offset=0;
+        if(groupRot==='monthly')offset=Math.floor(week/4.33)%3;
+        else if(groupRot==='biweekly')offset=Math.floor(week/2)%3;
+        else offset=Math.floor(week/13)%3;
+        const rotate=(g)=>{const gs=['A','B','C'];return gs[(gs.indexOf(g)+offset)%3]};
+        avail.forEach(a=>a._effGroup=rotate(a.group_name));
+        for(let day=0;day<7;day++){
+            const offA=avail.filter(a=>groupConfig[a._effGroup].offDays.includes(day));
+            let working=avail.filter(a=>!offA.includes(a));
+            if(method==='performance')working.sort((a,b)=>b.performance-a.performance);
+            else if(method==='seniority')working.sort((a,b)=>b.seniority-a.seniority);
+            else if(method==='random')working.sort(()=>Math.random()-0.5);
+            else working.sort((a,b)=>(a.morning_shifts-a.night_shifts)-(b.morning_shifts-b.night_shifts));
+            const half=Math.ceil(working.length/2),morning=working.slice(0,half),night=working.slice(half);
+            morning.forEach(a=>{a.morning_shifts++;a.total_work_days++});
+            night.forEach(a=>{a.night_shifts++;a.total_work_days++});
+            yearSched[wk][day]={morning:morning.map(a=>({name:a.name,group:a._effGroup})),night:night.map(a=>({name:a.name,group:a._effGroup})),off:offA.map(a=>({name:a.name,group:a._effGroup})),auto:true}
+        }
+    }
+    scheduleData=yearSched;
+    lastAutoDistribution=new Date().toLocaleString();
+    const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
+    await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);
 }
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ BULK ADD / REMOVE AGENTS
+//  BULK ADD / REMOVE AGENTS
 // ═══════════════════════════════════════════════════════════
 function openBulkAddModal(){
-    const maxId=agents.length>0?Math.max(...agents.map(a=>a.id)):0;
     document.getElementById('bulkAddStart').value=agents.length+1;
     updateBulkPreview();
     document.getElementById('bulkAddModal').classList.add('active');
@@ -768,8 +881,7 @@ async function executeBulkAdd(){
     showLoading(`Adding ${count} agents...`);closeModal('bulkAddModal');
     const newAgents=[];
     for(let i=0;i<count;i++){
-        let group;
-        if(mode==='auto'){group=['A','B','C'][i%3]}else{group=mode}
+        let group;if(mode==='auto'){group=['A','B','C'][i%3]}else{group=mode}
         newAgents.push({name:`${prefix} ${start+i}`,group_name:group,shift:'morning',preferred_shift:'any',seniority:1,performance:80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0})
     }
     const{data,error}=await sb.from('agents').insert(newAgents).select();
@@ -798,59 +910,102 @@ function openAddAgentModal(){document.getElementById('newAgentName').value='';do
 async function saveNewAgent(){const name=document.getElementById('newAgentName').value.trim();if(!name){showNotification('Error','Enter a name','error');return}const ag={name,group_name:document.getElementById('newAgentGroup').value,shift:'morning',preferred_shift:document.getElementById('newAgentShift').value,seniority:parseInt(document.getElementById('newAgentSeniority').value)||1,performance:parseInt(document.getElementById('newAgentPerf').value)||80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0};setSyncStatus('syncing');const{data,error}=await sb.from('agents').insert(ag).select().single();if(error){showNotification('Error',error.message,'error');setSyncStatus('error');return}agents.push(data);setSyncStatus('live');closeModal('addAgentModal');renderAll();showNotification('Agent Added',`${name} added to Group ${ag.group_name}`)}
 function openAutoScheduleModal(){document.getElementById('excludeAgents').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.id}"><span>${a.name} (Group ${a.group_name})</span></label>`).join('');document.getElementById('autoScheduleModal').classList.add('active')}
 async function executeAutoSchedule(){
-    const method=document.getElementById('scheduleMethod').value,groupRot=document.getElementById('groupRotation').value,excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));
-    let avail=agents.filter(a=>!excluded.includes(a.id));
-    // Use configured group sizes
-    const cfgA=parseInt(document.getElementById('cfgGroupA').value)||9,cfgB=parseInt(document.getElementById('cfgGroupB').value)||10,cfgC=parseInt(document.getElementById('cfgGroupC').value)||9;
-    const morningPerShift=Math.ceil(avail.length/3),nightPerShift=Math.floor(avail.length/3);
+    const excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));
+    const origAgents=[...agents];
+    // Temporarily remove excluded
+    agents=agents.filter(a=>!excluded.includes(a.id));
     showLoading('Generating 52-week schedule...');closeModal('autoScheduleModal');
-    avail.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
-    const yearSched={};
-    for(let week=0;week<52;week++){const wk=`week_${week}`;yearSched[wk]={};let offset=0;if(groupRot==='monthly')offset=Math.floor(week/4.33)%3;else if(groupRot==='biweekly')offset=Math.floor(week/2)%3;else offset=Math.floor(week/13)%3;const rotate=(g)=>{const gs=['A','B','C'];return gs[(gs.indexOf(g)+offset)%3]};avail.forEach(a=>a._effGroup=rotate(a.group_name));for(let day=0;day<7;day++){const offA=avail.filter(a=>groupConfig[a._effGroup].offDays.includes(day));let working=avail.filter(a=>!offA.includes(a));if(method==='performance')working.sort((a,b)=>b.performance-a.performance);else if(method==='seniority')working.sort((a,b)=>b.seniority-a.seniority);else if(method==='random')working.sort(()=>Math.random()-0.5);else working.sort((a,b)=>(a.morning_shifts-a.night_shifts)-(b.morning_shifts-b.night_shifts));const half=Math.ceil(working.length/2),morning=working.slice(0,half),night=working.slice(half),extra=[];morning.forEach(a=>{a.morning_shifts++;a.total_work_days++});night.forEach(a=>{a.night_shifts++;a.total_work_days++});yearSched[wk][day]={morning:morning.map(a=>({name:a.name,group:a._effGroup})),night:night.map(a=>({name:a.name,group:a._effGroup})),off:[...offA,...extra].map(a=>({name:a.name,group:a._effGroup})),auto:true}}}
-    scheduleData=yearSched;lastAutoDistribution=new Date().toLocaleString();document.getElementById('autoStatus').textContent=`Last distribution: ${lastAutoDistribution}`;await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);await loadAllData();hideLoading();renderAll();showNotification('Schedule Generated','52-week schedule saved ✓')
+    await regenerateScheduleFromCurrentGroups();
+    agents=origAgents; // restore
+    await loadAllData();hideLoading();renderAll();
+    showNotification('Schedule Generated','52-week schedule saved ✓');
 }
 function generateSchedule(){openAutoScheduleModal()}
-function renderMonthSelector(){const sel=document.getElementById('monthSelector');sel.innerHTML='';months.forEach((m,i)=>{const btn=document.createElement('button');btn.className=`month-btn${i===selectedMonth?' active':''}`;btn.textContent=m;btn.onclick=()=>{selectedMonth=i;renderMonthSelector();renderSchedule()};sel.appendChild(btn)})}
+function renderMonthSelector(){const sel=document.getElementById('monthSelector');sel.innerHTML='';months.forEach((m,i)=>{const btn=document.createElement('button');btn.className=`month-btn${i===selectedMonth?' active':''}`;btn.textContent=m;btn.onclick=()=>{selectedMonth=i;renderMonthSelector();renderSchedule();renderMonthlyRoster()};sel.appendChild(btn)})}
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ DRAG & DROP SCHEDULE RENDERING
+//  ✨ FULL MONTH SCHEDULE VIEW WITH DRAG & DROP
 // ═══════════════════════════════════════════════════════════
 let dragData=null;
+
 function renderSchedule(){
-    const grid=document.getElementById('scheduleGrid');grid.innerHTML='';
+    const grid=document.getElementById('scheduleGrid');
+    grid.innerHTML='';
+    grid.className='schedule-grid';
+
+    const year=new Date().getFullYear();
+    const today=new Date();
+    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
+    const firstDayOfWeek=new Date(year,selectedMonth,1).getDay(); // 0=Sun
+
+    // Day headers
     days.forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
-    const wk=`week_${Math.floor(selectedMonth*4.33)}`,week=scheduleData[wk];
-    if(!week){const msg=document.createElement('div');msg.style.cssText='grid-column:1/-1;text-align:center;padding:50px;color:var(--text-muted)';msg.innerHTML='<div style="font-size:2rem;margin-bottom:10px">📅</div><div>No schedule yet. Click <strong>Auto Distribute</strong> to generate.</div>';grid.appendChild(msg);return}
-    for(let day=0;day<7;day++){
-        const d=week[day]||{morning:[],night:[],off:[]};
-        const cell=document.createElement('div');cell.className=`day-cell${d.auto?' auto-generated':''}`;
-        cell.innerHTML=`${d.auto?'<span class="auto-badge">AUTO</span>':''}<div class="day-date">${days[day]} · ${months[selectedMonth]}</div>`;
-        // Create shift sections with drag/drop
+
+    // Empty cells before 1st
+    for(let i=0;i<firstDayOfWeek;i++){
+        const empty=document.createElement('div');
+        empty.className='day-cell empty-cell';
+        grid.appendChild(empty);
+    }
+
+    // Check if we have any schedule data at all
+    const hasData=Object.keys(scheduleData).length>0;
+
+    // Each day of the month
+    for(let d=1;d<=daysInMonth;d++){
+        const date=new Date(year,selectedMonth,d);
+        const dow=date.getDay();
+        const wkNum=getWeekNumForDate(date);
+        const wk=`week_${wkNum}`;
+        const dayData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]};
+        const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
+
+        const cell=document.createElement('div');
+        cell.className=`day-cell${dayData.auto?' auto-generated':''}${isToday?' today-cell':''}`;
+
+        const dayName=days[dow];
+        cell.innerHTML=`${dayData.auto?'<span class="auto-badge">AUTO</span>':''}
+            <div class="day-date"><span class="date-num">${d}</span><span>${dayName}</span></div>`;
+
+        if(!hasData){
+            cell.innerHTML+=`<div style="text-align:center;padding:20px 5px;color:var(--text-muted);font-size:0.75rem">No schedule</div>`;
+            grid.appendChild(cell);
+            continue;
+        }
+
+        // Shift sections with drag/drop
         ['morning','night','off'].forEach(shiftType=>{
             const section=document.createElement('div');
             section.className=`shift-section shift-${shiftType}`;
-            section.dataset.day=day;section.dataset.shift=shiftType;section.dataset.week=wk;
+            section.dataset.day=dow;section.dataset.date=d;section.dataset.shift=shiftType;section.dataset.week=wk;
+
             const icon=shiftType==='morning'?'☀️':shiftType==='night'?'🌙':'😴';
-            const agentList=d[shiftType]||[];
-            section.innerHTML=`<div class="shift-title"><span>${icon} ${shiftType.charAt(0).toUpperCase()+shiftType.slice(1)}</span><span class="agent-count">${agentList.length}</span></div><div class="agent-list-small">${agentList.map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}" draggable="true" data-name="${a.name}" data-group="${a.group||'A'}" data-day="${day}" data-shift="${shiftType}" data-week="${wk}"${shiftType==='off'?' style="opacity:.6"':''}>${a.name.split(' ')[0]}</span>`).join('')}</div>`;
-            // Drop zone listeners
+            const agentList=dayData[shiftType]||[];
+
+            section.innerHTML=`<div class="shift-title"><span>${icon} ${shiftType.charAt(0).toUpperCase()+shiftType.slice(1)}</span><span class="agent-count">${agentList.length}</span></div><div class="agent-list-small">${agentList.map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}" draggable="true" data-name="${a.name}" data-group="${a.group||'A'}" data-dow="${dow}" data-shift="${shiftType}" data-week="${wk}"${shiftType==='off'?' style="opacity:.6"':''}>${a.name.split(' ')[0]}</span>`).join('')}</div>`;
+
+            // Drop zone
             section.addEventListener('dragover',e=>{e.preventDefault();section.classList.add('drag-over')});
             section.addEventListener('dragleave',()=>{section.classList.remove('drag-over')});
-            section.addEventListener('drop',e=>{e.preventDefault();section.classList.remove('drag-over');handleDrop(e,day,shiftType,wk)});
+            section.addEventListener('drop',e=>{e.preventDefault();section.classList.remove('drag-over');handleDrop(e,dow,shiftType,wk)});
+
             cell.appendChild(section);
         });
+
         grid.appendChild(cell);
     }
-    // Setup drag listeners on all agent tags
+
+    // Setup drag listeners
     grid.querySelectorAll('.agent-tag[draggable]').forEach(tag=>{
         tag.addEventListener('dragstart',e=>{
-            dragData={name:tag.dataset.name,group:tag.dataset.group,fromDay:parseInt(tag.dataset.day),fromShift:tag.dataset.shift,fromWeek:tag.dataset.week};
+            dragData={name:tag.dataset.name,group:tag.dataset.group,fromDay:parseInt(tag.dataset.dow),fromShift:tag.dataset.shift,fromWeek:tag.dataset.week};
             tag.classList.add('dragging');
             e.dataTransfer.effectAllowed='move';
         });
         tag.addEventListener('dragend',()=>{tag.classList.remove('dragging');dragData=null;document.querySelectorAll('.drag-over').forEach(s=>s.classList.remove('drag-over'))});
     });
 }
+
 async function handleDrop(e,toDay,toShift,toWeek){
     if(!dragData)return;
     const{name,group,fromDay,fromShift,fromWeek}=dragData;
@@ -864,18 +1019,114 @@ async function handleDrop(e,toDay,toShift,toWeek){
     const dest=scheduleData[toWeek][toDay];
     if(!dest[toShift].some(a=>a.name===name)){dest[toShift].push({name,group})}
     renderSchedule();
+    renderMonthlyRoster();
     showNotification('Moved',`${name.split(' ')[0]} → ${toShift} (${days[toDay]})`);
-    // Save to DB
     await saveScheduleToDB(scheduleData);
 }
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ YEARLY CALENDAR
+//  ✨ FULL TEAM MONTHLY ROSTER TABLE
+// ═══════════════════════════════════════════════════════════
+function renderMonthlyRoster(){
+    const table=document.getElementById('monthlyRosterTable');
+    const label=document.getElementById('rosterMonthLabel');
+    if(!table)return;
+    const year=new Date().getFullYear();
+    const today=new Date();
+    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
+    if(label)label.textContent=`${months[selectedMonth]} ${year}`;
+
+    // Build header row: Agent | 1 | 2 | 3 ... | 31 | Summary
+    let hdr='<thead><tr><th class="agent-col">Agent</th>';
+    for(let d=1;d<=daysInMonth;d++){
+        const date=new Date(year,selectedMonth,d);
+        const dow=date.getDay();
+        const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
+        const isWeekend=(dow===0||dow===6);
+        hdr+=`<th class="${isToday?'today-col':''}${isWeekend?' weekend-col':''}">${d}<br><span style="font-size:0.6rem;opacity:0.7">${days[dow].charAt(0)}</span></th>`;
+    }
+    hdr+='<th style="min-width:50px">☀️</th><th style="min-width:50px">🌙</th><th style="min-width:50px">Off</th></tr></thead>';
+
+    // Build body: group by group, then alphabetical
+    let body='<tbody>';
+    const groups=['A','B','C'];
+    const groupLabels={A:'Group A — Fri-Sat Off',B:'Group B — Sun-Mon Off',C:'Group C — Tue-Wed Off'};
+    const summaryMorning=new Array(daysInMonth).fill(0);
+    const summaryNight=new Array(daysInMonth).fill(0);
+    const summaryOff=new Array(daysInMonth).fill(0);
+
+    groups.forEach(g=>{
+        const gAgents=agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name));
+        if(!gAgents.length)return;
+        // Group label row
+        body+=`<tr class="roster-group-sep"><td class="roster-group-label ${g.toLowerCase()}" colspan="${daysInMonth+4}">● ${groupLabels[g]} (${gAgents.length} agents)</td></tr>`;
+
+        gAgents.forEach(ag=>{
+            let mCount=0,nCount=0,oCount=0;
+            let row=`<td class="agent-name-col"><span style="color:var(--group-${g.toLowerCase()})">${ag.name}</span></td>`;
+            for(let d=1;d<=daysInMonth;d++){
+                const date=new Date(year,selectedMonth,d);
+                const dow=date.getDay();
+                const dayData=getScheduleForDate(date);
+                const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
+                let shift='o';
+                if(dayData.morning.some(x=>x.name===ag.name)){shift='m';mCount++;summaryMorning[d-1]++}
+                else if(dayData.night.some(x=>x.name===ag.name)){shift='n';nCount++;summaryNight[d-1]++}
+                else{oCount++;summaryOff[d-1]++}
+                const lbl=shift==='m'?'☀':shift==='n'?'🌙':'—';
+                row+=`<td class="${isToday?'today-col-cell':''}"><span class="roster-cell ${shift}${isToday?' today-highlight':''}">${lbl}</span></td>`;
+            }
+            row+=`<td style="color:var(--morning);font-weight:700;text-align:center">${mCount}</td>`;
+            row+=`<td style="color:var(--night);font-weight:700;text-align:center">${nCount}</td>`;
+            row+=`<td style="color:var(--text-muted);font-weight:700;text-align:center">${oCount}</td>`;
+            body+=`<tr>${row}</tr>`;
+        });
+    });
+
+    // Summary row
+    body+='<tr class="roster-summary-row"><td class="agent-name-col" style="font-weight:800">TOTAL ON SHIFT</td>';
+    for(let d=0;d<daysInMonth;d++){
+        body+=`<td style="text-align:center;font-size:0.7rem;font-weight:700"><span style="color:var(--morning)">${summaryMorning[d]}</span>/<span style="color:var(--night)">${summaryNight[d]}</span></td>`;
+    }
+    body+='<td></td><td></td><td></td></tr>';
+    body+='</tbody>';
+
+    table.innerHTML=hdr+body;
+}
+
+function exportMonthlyRoster(){
+    const year=new Date().getFullYear();
+    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
+    let csv=`Agent,Group`;
+    for(let d=1;d<=daysInMonth;d++){
+        const date=new Date(year,selectedMonth,d);
+        csv+=`,${d} ${days[date.getDay()]}`;
+    }
+    csv+=`,Morning,Night,Off\n`;
+    ['A','B','C'].forEach(g=>{
+        agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name)).forEach(ag=>{
+            csv+=`"${ag.name}","Group ${g}"`;
+            let mc=0,nc=0,oc=0;
+            for(let d=1;d<=daysInMonth;d++){
+                const date=new Date(year,selectedMonth,d);
+                const dayData=getScheduleForDate(date);
+                if(dayData.morning.some(x=>x.name===ag.name)){csv+=`,Morning`;mc++}
+                else if(dayData.night.some(x=>x.name===ag.name)){csv+=`,Night`;nc++}
+                else{csv+=`,Off`;oc++}
+            }
+            csv+=`,${mc},${nc},${oc}\n`;
+        });
+    });
+    const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=`roster_${months[selectedMonth]}_${year}.csv`;a.click();
+    showNotification('Exported',`${months[selectedMonth]} roster downloaded`);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  YEARLY CALENDAR (unchanged)
 // ═══════════════════════════════════════════════════════════
 function renderYearlyCalendar(){
-    const select=document.getElementById('yearlyCalAgentSelect');
-    if(!select)return;
-    // Populate agent select
+    const select=document.getElementById('yearlyCalAgentSelect');if(!select)return;
     const prevVal=select.value;
     select.innerHTML='<option value="__overview">All Agents (Overview)</option>'+agents.map(a=>`<option value="${a.name}">${a.name}</option>`).join('');
     if(prevVal&&[...select.options].some(o=>o.value===prevVal))select.value=prevVal;
@@ -885,25 +1136,20 @@ function renderYearlyCalendar(){
     for(let m=0;m<12;m++){
         const monthDiv=document.createElement('div');monthDiv.className='yearly-cal-month';
         monthDiv.innerHTML=`<div class="yearly-cal-month-header">${months[m]} ${year}</div>`;
-        // Weekday headers
         const wdDiv=document.createElement('div');wdDiv.className='yearly-cal-weekdays';
         ['S','M','T','W','T','F','S'].forEach(d=>{const s=document.createElement('div');s.className='yearly-cal-weekday';s.textContent=d;wdDiv.appendChild(s)});
         monthDiv.appendChild(wdDiv);
-        // Days
         const daysDiv=document.createElement('div');daysDiv.className='yearly-cal-days';
         const daysInMonth=new Date(year,m+1,0).getDate();
         const firstDay=new Date(year,m,1).getDay();
         for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='yearly-cal-day empty';daysDiv.appendChild(e)}
-        const jan1=new Date(year,0,1),jan1Day=jan1.getDay();
         for(let d=1;d<=daysInMonth;d++){
             const date=new Date(year,m,d),dow=date.getDay();
-            const dayOfYear=Math.floor((date-jan1)/86400000);
-            const weekNum=Math.floor((dayOfYear+jan1Day)/7);
-            const wk=`week_${weekNum}`;
+            const wkNum=getWeekNumForDate(date);
+            const wk=`week_${wkNum}`;
             const wkData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]};
             let shiftType='off';
             if(selectedAgent==='__overview'){
-                // Show dominant shift
                 shiftType=wkData.morning.length>=wkData.night.length?'morning':'night';
                 if(!wkData.morning.length&&!wkData.night.length)shiftType='off';
             }else{
@@ -914,11 +1160,7 @@ function renderYearlyCalendar(){
             const cell=document.createElement('div');
             cell.className=`yearly-cal-day ${shiftType}${isToday?' today':''}`;
             cell.textContent=d;
-            if(selectedAgent==='__overview'){
-                cell.title=`${d} ${months[m]}: ☀️${wkData.morning.length} 🌙${wkData.night.length} 😴${wkData.off.length}`;
-            }else{
-                cell.title=`${d} ${months[m]}: ${shiftType==='morning'?'☀️ Morning':shiftType==='night'?'🌙 Night':'😴 Off'}`;
-            }
+            cell.title=selectedAgent==='__overview'?`${d} ${months[m]}: ☀️${wkData.morning.length} 🌙${wkData.night.length} 😴${wkData.off.length}`:`${d} ${months[m]}: ${shiftType==='morning'?'☀️ Morning':shiftType==='night'?'🌙 Night':'😴 Off'}`;
             cell.onclick=()=>{selectedMonth=m;renderMonthSelector();renderSchedule();window.scrollTo({top:document.getElementById('scheduleGrid').offsetTop-100,behavior:'smooth'})};
             daysDiv.appendChild(cell);
         }
@@ -926,12 +1168,17 @@ function renderYearlyCalendar(){
     }
 }
 
-function renderAgentRoster(){const roster=document.getElementById('agentRoster');roster.innerHTML='';const sorted=[...agents].sort((a,b)=>(b.total_work_days||0)-(a.total_work_days||0)),wkData=scheduleData[`week_${Math.floor(selectedMonth*4.33)}`]||{};sorted.forEach(agent=>{const shifts=[];for(let d=0;d<7;d++){const dd=wkData[d];if(!dd){shifts.push('off');continue}if(dd.morning.some(x=>x.name===agent.name))shifts.push('morning');else if(dd.night.some(x=>x.name===agent.name))shifts.push('night');else shifts.push('off')}const card=document.createElement('div');card.className=`agent-card${agent.tasks_assigned>0?' auto-assigned':''}`;const g=(agent.group_name||'A').toLowerCase();card.innerHTML=`<div class="agent-header"><div><div class="agent-name">${agent.name}</div><div class="agent-id">Seniority: ${agent.seniority}y · Perf: ${agent.performance}%</div></div><span class="agent-group-badge ${g}">Group ${agent.group_name}</span></div><div class="agent-stats"><span class="stat-pill" style="color:var(--morning)">☀️ ${agent.morning_shifts||0}</span><span class="stat-pill" style="color:var(--night)">🌙 ${agent.night_shifts||0}</span><span class="stat-pill" style="color:var(--success)">Tasks: ${agent.tasks_assigned||0}</span></div><div class="week-grid">${shifts.map((s,i)=>`<div class="week-day ${s}">${['S','M','T','W','T','F','S'][i]}</div>`).join('')}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(((agent.total_work_days||0)/260)*100,100)}%"></div></div><div style="font-size:.8rem;color:var(--text-muted);margin-top:5px">Yearly: ${agent.total_work_days||0} days</div><button class="btn btn-secondary" style="width:100%;margin-top:12px;padding:8px;font-size:.85rem" onclick="manageAgent(${agent.id})">⚙️ Manage</button>`;roster.appendChild(card)})}
+function renderAgentRoster(){const roster=document.getElementById('agentRoster');roster.innerHTML='';const sorted=[...agents].sort((a,b)=>(b.total_work_days||0)-(a.total_work_days||0));
+// Use first week of selected month for the mini week view
+const firstDate=new Date(new Date().getFullYear(),selectedMonth,1);
+const wkNum=getWeekNumForDate(firstDate);
+const wkData=scheduleData[`week_${wkNum}`]||{};
+sorted.forEach(agent=>{const shifts=[];for(let d=0;d<7;d++){const dd=wkData[d];if(!dd){shifts.push('off');continue}if(dd.morning.some(x=>x.name===agent.name))shifts.push('morning');else if(dd.night.some(x=>x.name===agent.name))shifts.push('night');else shifts.push('off')}const card=document.createElement('div');card.className=`agent-card${agent.tasks_assigned>0?' auto-assigned':''}`;const g=(agent.group_name||'A').toLowerCase();card.innerHTML=`<div class="agent-header"><div><div class="agent-name">${agent.name}</div><div class="agent-id">Seniority: ${agent.seniority}y · Perf: ${agent.performance}%</div></div><span class="agent-group-badge ${g}">Group ${agent.group_name}</span></div><div class="agent-stats"><span class="stat-pill" style="color:var(--morning)">☀️ ${agent.morning_shifts||0}</span><span class="stat-pill" style="color:var(--night)">🌙 ${agent.night_shifts||0}</span><span class="stat-pill" style="color:var(--success)">Tasks: ${agent.tasks_assigned||0}</span></div><div class="week-grid">${shifts.map((s,i)=>`<div class="week-day ${s}">${['S','M','T','W','T','F','S'][i]}</div>`).join('')}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(((agent.total_work_days||0)/260)*100,100)}%"></div></div><div style="font-size:.8rem;color:var(--text-muted);margin-top:5px">Yearly: ${agent.total_work_days||0} days</div><button class="btn btn-secondary" style="width:100%;margin-top:12px;padding:8px;font-size:.85rem" onclick="manageAgent(${agent.id})">⚙️ Manage</button>`;roster.appendChild(card)})}
 
 // ═══════════════════════════════════════════════════════════
-//  TASKS, WARNINGS, PORTAL (same as original)
+//  TASKS, WARNINGS, PORTAL
 // ═══════════════════════════════════════════════════════════
-async function autoDistributeTasks(){const maxT=parseInt(document.getElementById('maxTasksPerAgent').value),weight=document.getElementById('priorityWeight').value,shiftP=document.getElementById('shiftPreference').value;await sb.from('tasks').delete().eq('auto_assigned',true);tasks=tasks.filter(t=>!t.auto_assigned);agents.forEach(a=>a.tasks_assigned=tasks.filter(t=>(t.assignees||[]).includes(a.name)).length);const wkData=scheduleData[`week_${Math.floor(selectedMonth*4.33)}`]||{},newTasks=[];taskTypes.forEach(type=>{const priority=['Calls','Support Calls'].includes(type)?'high':['Facebook','Respond','Forms'].includes(type)?'medium':'low';const needed=priority==='high'?4:priority==='medium'?3:2;let avail=agents.filter(a=>{if(a.pip)return false;if((a.tasks_assigned||0)>=maxT)return false;return true});if(weight==='workload')avail.sort((a,b)=>a.tasks_assigned-b.tasks_assigned);else if(weight==='skill')avail.sort((a,b)=>b.performance-a.performance);else if(weight==='random')avail.sort(()=>Math.random()-0.5);else avail.sort((a,b)=>(a.tasks_assigned-b.tasks_assigned)+((b.performance-a.performance)*0.1));const selected=avail.slice(0,needed);if(selected.length>0){const t={type,priority,assignees:selected.map(a=>a.name),auto_assigned:true};newTasks.push(t);selected.forEach(a=>a.tasks_assigned=(a.tasks_assigned||0)+1)}});if(newTasks.length>0){const{data}=await sb.from('tasks').insert(newTasks.map(t=>({type:t.type,priority:t.priority,assignees:t.assignees,auto_assigned:true}))).select();if(data)tasks.push(...data)}await saveAgents();renderTasks();renderAgentRoster();showNotification('Distributed',`${newTasks.length} tasks assigned ✓`)}
+async function autoDistributeTasks(){const maxT=parseInt(document.getElementById('maxTasksPerAgent').value),weight=document.getElementById('priorityWeight').value,shiftP=document.getElementById('shiftPreference').value;await sb.from('tasks').delete().eq('auto_assigned',true);tasks=tasks.filter(t=>!t.auto_assigned);agents.forEach(a=>a.tasks_assigned=tasks.filter(t=>(t.assignees||[]).includes(a.name)).length);const today=new Date();const todayData=getScheduleForDate(today);const newTasks=[];taskTypes.forEach(type=>{const priority=['Calls','Support Calls'].includes(type)?'high':['Facebook','Respond','Forms'].includes(type)?'medium':'low';const needed=priority==='high'?4:priority==='medium'?3:2;let avail=agents.filter(a=>{if(a.pip)return false;if((a.tasks_assigned||0)>=maxT)return false;return true});if(weight==='workload')avail.sort((a,b)=>a.tasks_assigned-b.tasks_assigned);else if(weight==='skill')avail.sort((a,b)=>b.performance-a.performance);else if(weight==='random')avail.sort(()=>Math.random()-0.5);else avail.sort((a,b)=>(a.tasks_assigned-b.tasks_assigned)+((b.performance-a.performance)*0.1));const selected=avail.slice(0,needed);if(selected.length>0){const t={type,priority,assignees:selected.map(a=>a.name),auto_assigned:true};newTasks.push(t);selected.forEach(a=>a.tasks_assigned=(a.tasks_assigned||0)+1)}});if(newTasks.length>0){const{data}=await sb.from('tasks').insert(newTasks.map(t=>({type:t.type,priority:t.priority,assignees:t.assignees,auto_assigned:true}))).select();if(data)tasks.push(...data)}await saveAgents();renderTasks();renderAgentRoster();showNotification('Distributed',`${newTasks.length} tasks assigned ✓`)}
 function renderTasks(){const grid=document.getElementById('tasksGrid');grid.innerHTML='';taskTypes.forEach(type=>{const assigned=tasks.filter(t=>t.type===type),assignees=[...new Set(assigned.flatMap(t=>t.assignees||[]))],isAuto=assigned.some(t=>t.auto_assigned),priority=assigned[0]?.priority||'medium';const card=document.createElement('div');card.className=`task-card${isAuto?' auto-distributed':''}`;card.innerHTML=`<div class="task-header"><div><div class="task-title">${type}</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:5px">${assignees.length} agents</div></div><div class="task-meta">${isAuto?'<div class="auto-indicator">⚡ AUTO</div>':''}<span class="priority-badge priority-${priority}">${priority}</span></div></div><div class="task-assignees">${assignees.slice(0,6).map((n,i)=>`<div class="avatar${assigned.some(t=>t.auto_assigned&&(t.assignees||[]).includes(n))?' auto-assigned':''}" title="${n}" style="z-index:${6-i}">${n.split(' ')[0]}</div>`).join('')}${assignees.length>6?`<div class="avatar" style="background:var(--border)">+${assignees.length-6}</div>`:''}${!assignees.length?'<span style="color:var(--text-muted);font-size:.9rem">No agents</span>':''}</div><div style="margin-top:15px"><button class="btn btn-danger" style="width:100%;padding:8px;font-size:.85rem" onclick="clearTask('${type}')">Clear</button></div>`;grid.appendChild(card)})}
 function openTaskModal(){document.getElementById('manualAgentSelect').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.name}"><span>${a.name}</span></label>`).join('');document.getElementById('taskModal').classList.add('active')}
 async function saveManualTask(){const type=document.getElementById('taskType').value,priority=document.getElementById('taskPriority').value,assignees=Array.from(document.querySelectorAll('#manualAgentSelect input:checked')).map(c=>c.value);if(!assignees.length){showNotification('Error','Select agents','error');return}const{data}=await sb.from('tasks').insert({type,priority,assignees,auto_assigned:false}).select().single();if(data)tasks.push(data);closeModal('taskModal');renderTasks();showNotification('Assigned',`${assignees.length} agents`)}
@@ -949,12 +1196,12 @@ let selectedPortalAgent=null,currentBreakFilter='morning';
 function renderAgentSelectGrid(){const grid=document.getElementById('agentSelectGrid');grid.innerHTML='';[...agents].sort((a,b)=>a.name.localeCompare(b.name)).forEach(ag=>{const btn=document.createElement('button');btn.className='agent-select-btn';btn.innerHTML=`<div>${ag.name.split(' ')[0]}</div><div style="font-size:0.8rem;color:var(--text-muted)">${ag.name.split(' ').slice(1).join(' ')}</div><div class="agent-group-dot" style="color:${ag.group_name==='A'?'var(--group-a)':ag.group_name==='B'?'var(--group-b)':'var(--group-c)'}">Group ${ag.group_name}</div>`;btn.onclick=()=>selectPortalAgent(ag);grid.appendChild(btn)})}
 function selectPortalAgent(ag){selectedPortalAgent=ag;document.getElementById('agentSelectPanel').style.display='none';document.getElementById('agentDashboard').style.display='block';document.getElementById('portalAgentName').textContent=`👤 ${ag.name}`;updatePortalDashboard()}
 function deselectAgent(){selectedPortalAgent=null;document.getElementById('agentSelectPanel').style.display='block';document.getElementById('agentDashboard').style.display='none';document.getElementById('portalAgentName').textContent=''}
-function updatePortalDashboard(){if(!selectedPortalAgent)return;const ag=selectedPortalAgent,rec=attendanceRecords[ag.id]||{};const sE=document.getElementById('checkinStatus'),bE=document.getElementById('checkinBtn');if(rec.checkedIn){sE.className='checkin-status checked-in';document.getElementById('checkinIcon').textContent='✅';document.getElementById('checkinLabel').textContent='Checked In';document.getElementById('checkinTime').textContent=`Since: ${rec.checkInTime}`;bE.className='checkin-btn check-out';bE.textContent='🚪 Check Out'}else{sE.className='checkin-status checked-out';document.getElementById('checkinIcon').textContent='😴';document.getElementById('checkinLabel').textContent='Not Checked In';document.getElementById('checkinTime').textContent='';bE.className='checkin-btn check-in';bE.textContent='✅ Check In'}const today=new Date().getDay(),wk=`week_${Math.floor(selectedMonth*4.33)}`,wkData=scheduleData[wk]||{},td=wkData[today]||{morning:[],night:[],off:[]};const shiftEl=document.getElementById('todayShiftDisplay');let st='off';if(td.morning.some(x=>x.name===ag.name))st='morning';else if(td.night.some(x=>x.name===ag.name))st='night';shiftEl.className=`shift-time-display ${st}`;document.getElementById('todayShiftIcon').textContent=st==='morning'?'☀️':st==='night'?'🌙':'😴';document.getElementById('todayShiftLabel').textContent=st==='morning'?'Morning Shift':st==='night'?'Night Shift':'Day Off';document.getElementById('todayShiftTime').textContent=st==='morning'?'9 AM – 5:30 PM':st==='night'?'3 PM – 11 PM':'';const ab=breaksData[ag.id]||{};document.getElementById('agentBreak1Time').textContent=ab.b1||'—';document.getElementById('agentBreak2Time').textContent=ab.b2||'—';document.getElementById('agentBreak3Time').textContent=ab.b3||'—'}
+function updatePortalDashboard(){if(!selectedPortalAgent)return;const ag=selectedPortalAgent,rec=attendanceRecords[ag.id]||{};const sE=document.getElementById('checkinStatus'),bE=document.getElementById('checkinBtn');if(rec.checkedIn){sE.className='checkin-status checked-in';document.getElementById('checkinIcon').textContent='✅';document.getElementById('checkinLabel').textContent='Checked In';document.getElementById('checkinTime').textContent=`Since: ${rec.checkInTime}`;bE.className='checkin-btn check-out';bE.textContent='🚪 Check Out'}else{sE.className='checkin-status checked-out';document.getElementById('checkinIcon').textContent='😴';document.getElementById('checkinLabel').textContent='Not Checked In';document.getElementById('checkinTime').textContent='';bE.className='checkin-btn check-in';bE.textContent='✅ Check In'}const td=getScheduleForDate(new Date());const shiftEl=document.getElementById('todayShiftDisplay');let st='off';if(td.morning.some(x=>x.name===ag.name))st='morning';else if(td.night.some(x=>x.name===ag.name))st='night';shiftEl.className=`shift-time-display ${st}`;document.getElementById('todayShiftIcon').textContent=st==='morning'?'☀️':st==='night'?'🌙':'😴';document.getElementById('todayShiftLabel').textContent=st==='morning'?'Morning Shift':st==='night'?'Night Shift':'Day Off';document.getElementById('todayShiftTime').textContent=st==='morning'?'9 AM – 5:30 PM':st==='night'?'3 PM – 11 PM':'';const ab=breaksData[ag.id]||{};document.getElementById('agentBreak1Time').textContent=ab.b1||'—';document.getElementById('agentBreak2Time').textContent=ab.b2||'—';document.getElementById('agentBreak3Time').textContent=ab.b3||'—'}
 async function toggleCheckIn(){if(!selectedPortalAgent)return;const id=selectedPortalAgent.id,rec=attendanceRecords[id]||{},now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),todayStr=new Date().toISOString().split('T')[0];if(rec.checkedIn){attendanceRecords[id]={checkedIn:false,checkInTime:rec.checkInTime,checkOutTime:now}}else{attendanceRecords[id]={checkedIn:true,checkInTime:now,checkOutTime:null}}await sb.from('attendance').upsert({agent_id:id,agent_name:selectedPortalAgent.name,date:todayStr,checked_in:attendanceRecords[id].checkedIn,check_in_time:attendanceRecords[id].checkInTime,check_out_time:attendanceRecords[id].checkOutTime},{onConflict:'agent_id,date'});updatePortalDashboard();showNotification(attendanceRecords[id].checkedIn?'Checked In':'Checked Out',selectedPortalAgent.name)}
 async function loadAttendanceToday(){const{data}=await sb.from('attendance').select('*').eq('date',new Date().toISOString().split('T')[0]);attendanceRecords={};(data||[]).forEach(r=>{attendanceRecords[r.agent_id]={checkedIn:r.checked_in,checkInTime:r.check_in_time,checkOutTime:r.check_out_time}})}
 async function loadBreaksData(){const{data}=await sb.from('agent_breaks').select('*').eq('date',new Date().toISOString().split('T')[0]);breaksData={};(data||[]).forEach(r=>{breaksData[r.agent_id]={b1:r.break1_time,b2:r.break2_time,b3:r.break3_time}})}
 function filterBreaks(shift){currentBreakFilter=shift;document.getElementById('filterMorningBtn').className=`shift-filter-btn${shift==='morning'?' active morning':''}`;document.getElementById('filterNightBtn').className=`shift-filter-btn${shift==='night'?' active night':''}`;renderBreaksTable()}
-function getAgentsOnShift(shift){const today=new Date().getDay(),wk=`week_${Math.floor(selectedMonth*4.33)}`,wkData=scheduleData[wk]||{},td=wkData[today];if(!td)return agents.filter(a=>a.shift===shift||shift==='morning');return(td[shift]||[]).map(x=>agents.find(a=>a.name===x.name)).filter(Boolean)}
+function getAgentsOnShift(shift){const td=getScheduleForDate(new Date());if(!td.morning.length&&!td.night.length)return agents.filter(a=>a.shift===shift||shift==='morning');return(td[shift]||[]).map(x=>agents.find(a=>a.name===x.name)).filter(Boolean)}
 function renderBreaksTable(){const tbody=document.getElementById('breaksTableBody'),sa=getAgentsOnShift(currentBreakFilter);tbody.innerHTML='';sa.forEach(ag=>{if(!ag)return;const brk=breaksData[ag.id]||{},allSet=brk.b1&&brk.b2&&brk.b3,g=(ag.group_name||'A').toLowerCase();const tr=document.createElement('tr');tr.innerHTML=`<td class="agent-name-cell">${ag.name}</td><td><span class="agent-group-badge ${g}">Group ${ag.group_name}</span></td><td><div class="break-slot"><input type="time" class="break-time-input" value="${brk.b1||''}" onchange="updateBreak(${ag.id},'b1',this.value)"><span class="break-pill b15">15m</span></div></td><td><div class="break-slot"><input type="time" class="break-time-input" value="${brk.b2||''}" onchange="updateBreak(${ag.id},'b2',this.value)"><span class="break-pill b30">30m</span></div></td><td><div class="break-slot"><input type="time" class="break-time-input" value="${brk.b3||''}" onchange="updateBreak(${ag.id},'b3',this.value)"><span class="break-pill b15">15m</span></div></td><td><span class="break-pill ${allSet?'assigned':'unset'}">${allSet?'✅ Set':'⏳'}</span></td>`;tbody.appendChild(tr)});updateBreaksSummary()}
 function updateBreak(id,key,val){if(!breaksData[id])breaksData[id]={};breaksData[id][key]=val;renderBreaksTable()}
 function updateBreaksSummary(){document.getElementById('bsMorningCount').textContent=getAgentsOnShift('morning').length;document.getElementById('bsNightCount').textContent=getAgentsOnShift('night').length;document.getElementById('bsAssignedCount').textContent=Object.values(breaksData).filter(b=>b.b1&&b.b2&&b.b3).length}
@@ -1016,7 +1263,6 @@ let publicActiveBreak=null,publicBreakTimerInterval=null;
 function publicToggleBreak(){if(publicActiveBreak){publicEndBreak()}else{publicStartNextBreak()}}
 function publicStartNextBreak(){const ag=publicSelectedAgent;if(!ag)return;const brk=breaksData[ag.id]||{};const breaks=[{num:1,time:brk.b1,duration:15,label:'Break 1'},{num:2,time:brk.b2,duration:30,label:'Lunch'},{num:3,time:brk.b3,duration:15,label:'Break 2'}];const chosen=breaks.find(b=>b.time);if(!chosen){showNotification('No Break','No breaks assigned','error');return}publicActiveBreak={...chosen,startTime:new Date()};const btn=document.getElementById('publicBreakBtn');btn.textContent='✋ End Break';btn.style.background='linear-gradient(135deg,#ef4444,#dc2626)';document.getElementById('publicBreakTimer').style.display='block';publicBreakTimerInterval=setInterval(()=>{if(!publicActiveBreak)return;const el=Math.floor((new Date()-publicActiveBreak.startTime)/1000);document.getElementById('publicBreakTimerText').textContent=`${String(Math.floor(el/60)).padStart(2,'0')}:${String(el%60).padStart(2,'0')}`;if(el/60>publicActiveBreak.duration){document.getElementById('publicOverrunWarning').style.display='block';document.getElementById('publicOverrunMins').textContent=Math.floor(el/60-publicActiveBreak.duration)}},1000);showNotification('Break Started',chosen.label)}
 async function publicEndBreak(){if(!publicActiveBreak)return;clearInterval(publicBreakTimerInterval);const b=publicActiveBreak;publicActiveBreak=null;publicBreakTimerInterval=null;const btn=document.getElementById('publicBreakBtn');btn.textContent='☕ Start Break';btn.style.background='linear-gradient(135deg,#f59e0b,#d97706)';document.getElementById('publicBreakTimer').style.display='none';document.getElementById('publicOverrunWarning').style.display='none';showNotification('Break Ended',b.label)}
-function publicEndBreakTimer(){if(publicBreakTimerInterval)clearInterval(publicBreakTimerInterval);publicActiveBreak=null}
 
 function toggleTheme(){const isLight=document.body.classList.toggle('light-mode');const icon=isLight?'☀️':'🌙';['publicThemeBtn','adminThemeBtn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.textContent=icon});localStorage.setItem('theme',isLight?'light':'dark')}
 function applyStoredTheme(){if(localStorage.getItem('theme')==='light'){document.body.classList.add('light-mode');['publicThemeBtn','adminThemeBtn'].forEach(id=>{const btn=document.getElementById(id);if(btn)btn.textContent='☀️'})}}
