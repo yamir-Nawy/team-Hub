@@ -29,6 +29,7 @@
             --pass-bg: rgba(16,185,129,0.12); --pass-text: #34d399; --pass-fill: #10b981;
             --warn-bg: rgba(245,158,11,0.12);  --warn-text: #fbbf24; --warn-fill: #f59e0b;
             --fail-bg: rgba(239,68,68,0.12);   --fail-text: #f87171; --fail-fill: #ef4444;
+            --campaign: #e11d48;
         }
 
         body.light-mode {
@@ -41,6 +42,7 @@
             --pass-bg: #EAF3DE; --pass-text: #3B6D11; --pass-fill: #1D9E75;
             --warn-bg: #FAEEDA; --warn-text: #854F0B; --warn-fill: #EF9F27;
             --fail-bg: #FCEBEB; --fail-text: #A32D2D; --fail-fill: #E24B4A;
+            --campaign: #be123c;
         }
         body.light-mode { background: linear-gradient(135deg,#e2e8f0 0%,#ddd6fe 100%) !important; }
         body.light-mode::before { display:none !important; }
@@ -69,7 +71,6 @@
         body.light-mode .yearly-cal-month-header { background:#f1f5f9 !important; color:#1e293b !important; }
         body.light-mode .group-config-row input { background:#f8fafc !important; color:#1e293b !important; border-color:#cbd5e1 !important; }
         body.light-mode .drag-drop-hint { background:#f1f5f9 !important; color:#475569 !important; border-color:#e2e8f0 !important; }
-        /* Light mode for full-month view */
         body.light-mode .month-day-card { background:#ffffff !important; border-color:#e2e8f0 !important; }
         body.light-mode .month-day-card:hover { border-color:var(--accent) !important; }
         body.light-mode .month-day-header { background:#f1f5f9 !important; border-color:#e2e8f0 !important; color:#1e293b !important; }
@@ -143,6 +144,7 @@
         .btn-secondary:hover { background:var(--border); }
         .btn-success { background:linear-gradient(135deg,var(--success),#059669); }
         .btn-danger { background:linear-gradient(135deg,var(--danger),#dc2626); }
+        .btn-campaign { background:linear-gradient(135deg,var(--campaign),#9f1239); box-shadow:0 4px 15px rgba(225,29,72,0.3); }
         .stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:30px; }
         .stat-item { background:rgba(15,23,42,0.5); border:1px solid var(--border); border-radius:16px; padding:20px; text-align:center; transition:all 0.3s; }
         .stat-item:hover { transform:translateY(-5px); border-color:var(--accent); }
@@ -269,6 +271,7 @@
         .task-card { background:rgba(15,23,42,0.5); border:1px solid var(--border); border-radius:16px; padding:20px; transition:all 0.3s; position:relative; }
         .task-card:hover { border-color:var(--accent); transform:translateY(-5px); }
         .task-card.auto-distributed { border-color:var(--auto); box-shadow:0 0 20px rgba(6,182,212,0.1); }
+        .task-card.campaign-card { border-color:var(--campaign); box-shadow:0 0 20px rgba(225,29,72,0.15); }
         .task-header { display:flex; justify-content:space-between; align-items:start; margin-bottom:15px; }
         .task-title { font-weight:700; font-size:1.1rem; }
         .task-meta { display:flex; gap:10px; align-items:center; }
@@ -276,11 +279,14 @@
         .priority-high   { background:rgba(239,68,68,0.2); color:#ef4444; }
         .priority-medium { background:rgba(245,158,11,0.2); color:#f59e0b; }
         .priority-low    { background:rgba(16,185,129,0.2); color:#10b981; }
+        .priority-campaign { background:rgba(225,29,72,0.2); color:var(--campaign); }
         .auto-indicator { display:flex; align-items:center; gap:5px; font-size:0.8rem; color:var(--auto); font-weight:600; }
+        .campaign-indicator { display:flex; align-items:center; gap:5px; font-size:0.8rem; color:var(--campaign); font-weight:600; }
         .task-assignees { display:flex; gap:4px; margin-top:15px; flex-wrap:wrap; }
         .avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; border:2px solid var(--secondary); transition:all 0.2s; cursor:pointer; }
         .avatar:hover { transform:scale(1.2); z-index:10; }
         .avatar.auto-assigned { background:linear-gradient(135deg,var(--auto),#3b82f6); }
+        .avatar.campaign-assigned { background:linear-gradient(135deg,var(--campaign),#9f1239); }
         .warning-section { display:grid; gap:15px; }
         .warning-card { background:rgba(15,23,42,0.5); border:1px solid var(--border); border-radius:16px; padding:20px; display:flex; align-items:center; gap:20px; transition:all 0.3s; }
         .warning-card:hover { border-color:var(--danger); transform:translateX(10px); }
@@ -386,6 +392,15 @@
 
         .hidden{display:none!important}
 
+        /* ── CAMPAIGN AGENTS PANEL ── */
+        .campaign-panel { background:rgba(225,29,72,0.06); border:2px solid rgba(225,29,72,0.25); border-radius:16px; padding:20px; margin-bottom:20px; }
+        .campaign-panel h3 { color:var(--campaign); display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+        .campaign-agent-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+        .campaign-agent-tag { padding:6px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; background:rgba(225,29,72,0.15); color:var(--campaign); border:1px solid rgba(225,29,72,0.3); display:flex; align-items:center; gap:8px; }
+        .campaign-agent-tag .remove-campaign { cursor:pointer; opacity:0.7; transition:opacity 0.2s; font-size:1rem; }
+        .campaign-agent-tag .remove-campaign:hover { opacity:1; }
+        .campaign-info { background:rgba(225,29,72,0.08); border:1px solid rgba(225,29,72,0.2); border-radius:10px; padding:12px; font-size:0.85rem; color:var(--text-muted); margin-top:10px; }
+
         /* ── MONTHLY ROSTER TABLE ── */
         .monthly-roster-container { margin-top:30px; }
         .monthly-roster-scroll { overflow-x:auto; border:1px solid var(--border); border-radius:14px; }
@@ -419,6 +434,8 @@
         body.light-mode .roster-summary-row td { background:#f1f5f9 !important; }
         body.light-mode .roster-summary-row td.agent-name-col { background:#f1f5f9 !important; }
         body.light-mode .monthly-roster-scroll { border-color:#e2e8f0 !important; }
+        body.light-mode .campaign-panel { background:rgba(225,29,72,0.04) !important; border-color:rgba(190,18,60,0.2) !important; }
+        body.light-mode .campaign-agent-tag { background:rgba(225,29,72,0.1) !important; color:#be123c !important; }
 
         @media (max-width:968px) {
             .schedule-grid { grid-template-columns:1fr !important; }
@@ -511,7 +528,6 @@
             <button class="tab-btn" onclick="switchTab('team',this)">⚠️ Warnings &amp; PIP</button>
             <button class="tab-btn" onclick="switchTab('agentportal',this)">👤 Agent Portal</button>
             <button class="tab-btn" onclick="switchTab('breaks',this)">☕ Breaks</button>
-
             <button class="tab-btn" onclick="switchTab('adminusers',this)">👑 Admin Users</button>
             <button class="tab-btn" onclick="switchTab('violations',this)">⏱️ Violations</button>
         </nav>
@@ -556,34 +572,20 @@
 
                 <div class="group-distribution-panel"><h3 style="display:flex;align-items:center;gap:10px">👥 Group Distribution</h3><p style="color:var(--text-muted);font-size:0.9rem;margin:8px 0 0">Agents rotate between groups monthly.</p><div class="group-grid" id="groupDistribution"></div></div>
                 <div class="controls" style="margin-bottom:20px"><button class="btn btn-success" onclick="openAddAgentModal()">+ Add Agent</button></div>
-
-                <!-- Drag & Drop hint -->
                 <div class="drag-drop-hint"><span class="hint-icon">🔀</span>Drag and drop agent names between Morning, Night, and Off sections to manually reassign shifts</div>
-
                 <div class="month-selector" id="monthSelector"></div>
                 <div id="scheduleGrid"></div>
-
-                <!-- ✨ Monthly Full Team Roster Table -->
                 <div class="monthly-roster-container">
                     <div class="card-header" style="margin-top:10px">
                         <h2><span class="icon">📋</span> Full Team Schedule</h2>
-                        <div class="controls">
-                            <button class="btn btn-secondary" style="padding:8px 16px;font-size:0.85rem" onclick="exportMonthlyRoster()">📥 Export Month</button>
-                        </div>
+                        <div class="controls"><button class="btn btn-secondary" style="padding:8px 16px;font-size:0.85rem" onclick="exportMonthlyRoster()">📥 Export Month</button></div>
                     </div>
                     <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:15px">All agents' shifts for <strong id="rosterMonthLabel"></strong>, sorted by group then name. <span style="font-size:0.75rem">☀ = Morning &nbsp; 🌙 = Night &nbsp; — = Off</span></p>
-                    <div class="monthly-roster-scroll" style="max-height:600px;overflow-y:auto">
-                        <table class="monthly-roster-table" id="monthlyRosterTable"></table>
-                    </div>
+                    <div class="monthly-roster-scroll" style="max-height:600px;overflow-y:auto"><table class="monthly-roster-table" id="monthlyRosterTable"></table></div>
                 </div>
-
-                <!-- Yearly Calendar -->
                 <div class="yearly-calendar-container">
                     <div class="card-header" style="margin-top:10px"><h2><span class="icon">🗓️</span> Yearly Calendar Overview</h2>
-                        <div style="display:flex;align-items:center;gap:10px">
-                            <label style="font-size:0.85rem;margin:0">View for:</label>
-                            <select id="yearlyCalAgentSelect" onchange="renderYearlyCalendar()" style="width:200px;padding:8px 12px;font-size:0.85rem"></select>
-                        </div>
+                        <div style="display:flex;align-items:center;gap:10px"><label style="font-size:0.85rem;margin:0">View for:</label><select id="yearlyCalAgentSelect" onchange="renderYearlyCalendar()" style="width:200px;padding:8px 12px;font-size:0.85rem"></select></div>
                     </div>
                     <div class="yearly-cal-grid" id="yearlyCalGrid"></div>
                     <div class="yearly-cal-legend">
@@ -599,9 +601,35 @@
 
         <!-- ── Tab: Tasks ── -->
         <div id="tasks" class="tab-content">
+            <!-- CAMPAIGNS PANEL -->
+            <div class="card">
+                <div class="card-header"><h2><span class="icon" style="background:linear-gradient(135deg,var(--campaign),#9f1239)">📢</span> Campaigns</h2><div class="controls"><button class="btn btn-campaign" onclick="openCampaignModal()">+ Assign Campaign Agents</button></div></div>
+                <div class="campaign-panel">
+                    <h3>📢 Campaign Agents</h3>
+                    <p style="color:var(--text-muted);font-size:0.85rem">These agents are dedicated to <strong>Campaigns only</strong> for the entire month across all their shifts. They will <strong>not</strong> receive any other task from the auto distributor.</p>
+                    <div class="campaign-agent-list" id="campaignAgentList">
+                        <span style="color:var(--text-muted);font-size:0.9rem">No campaign agents assigned yet.</span>
+                    </div>
+                    <div class="campaign-info">
+                        <strong>How it works:</strong> Campaign agents are excluded from the auto task distributor. On their working days (from the rota), their only assigned task is "Campaigns". You can swap agents in and out at any time using the button above.
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-header"><h2><span class="icon">✓</span> Task Auto Distributor</h2><div class="controls"><button class="btn btn-auto" onclick="autoDistributeTasks()">🤖 Auto Distribute All</button><button class="btn btn-success" onclick="openTaskModal()">+ Manual Assign</button><button class="btn btn-secondary" onclick="clearAllTasks()">🗑️ Clear All</button></div></div>
-                <div class="task-distribution-panel"><h3 style="margin-bottom:15px">Distribution Settings</h3><div class="distribution-controls"><div style="flex:1;min-width:200px"><label>Max Tasks per Agent</label><input type="range" min="1" max="5" value="3" class="range-slider" id="maxTasksPerAgent" oninput="updateSliderLabel(this)"><div class="slider-labels"><span>1</span><span id="sliderValue">3</span><span>5</span></div></div><div style="flex:1;min-width:200px"><label>Priority Weight</label><select id="priorityWeight" style="width:100%"><option value="balanced">Balanced Distribution</option><option value="skill">Skill-Based</option><option value="workload">Low Workload First</option><option value="random">Random Fair</option></select></div><div style="flex:1;min-width:200px"><label>Shift Preference</label><select id="shiftPreference" style="width:100%"><option value="any">Any Shift</option><option value="morning">Morning Only</option><option value="night">Night Only</option></select></div></div></div>
+
+                <!-- Today's Available Agents Info -->
+                <div style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:12px;padding:16px;margin-bottom:20px">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:1.1rem">📋</span><strong style="color:var(--auto)">Today's Available Agents (from Yearly Rota)</strong></div>
+                    <div style="display:flex;gap:20px;flex-wrap:wrap">
+                        <div><span style="color:var(--morning);font-weight:700">☀️ Morning:</span> <span id="todayMorningNames" style="color:var(--text-muted);font-size:0.85rem">—</span></div>
+                        <div><span style="color:var(--night);font-weight:700">🌙 Night:</span> <span id="todayNightNames" style="color:var(--text-muted);font-size:0.85rem">—</span></div>
+                    </div>
+                    <div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted)">Auto distributor assigns tasks <strong>only</strong> to agents scheduled for today. Campaign agents are excluded.</div>
+                </div>
+
+                <div class="task-distribution-panel"><h3 style="margin-bottom:15px">Distribution Settings</h3><div class="distribution-controls"><div style="flex:1;min-width:200px"><label>Max Tasks per Agent</label><input type="range" min="1" max="5" value="3" class="range-slider" id="maxTasksPerAgent" oninput="updateSliderLabel(this)"><div class="slider-labels"><span>1</span><span id="sliderValue">3</span><span>5</span></div></div><div style="flex:1;min-width:200px"><label>Priority Weight</label><select id="priorityWeight" style="width:100%"><option value="balanced">Balanced Distribution</option><option value="skill">Skill-Based</option><option value="workload">Low Workload First</option><option value="random">Random Fair</option></select></div><div style="flex:1;min-width:200px"><label>Shift Preference</label><select id="shiftPreference" style="width:100%"><option value="any">Any Shift (Today's Rota)</option><option value="morning">Morning Only</option><option value="night">Night Only</option></select></div></div></div>
                 <div class="tasks-grid" id="tasksGrid"></div>
             </div>
         </div>
@@ -633,7 +661,6 @@
             </div>
         </div>
 
-
         <!-- ── Tab: Admin Users ── -->
         <div id="adminusers" class="tab-content">
             <div class="card"><div class="card-header"><h2><span class="icon">👑</span> Admin Users</h2><button class="btn btn-success" onclick="openCreateAdminModal()">+ Create Admin</button></div><div class="admin-users-grid" id="adminUsersList"></div></div>
@@ -655,16 +682,14 @@
 <!-- ══════════════ MODALS ══════════════ -->
 <div class="modal" id="autoScheduleModal"><div class="modal-content"><h3 style="margin-bottom:20px">⚡ Auto Schedule Configuration</h3><div class="form-group"><label>Distribution Method</label><select id="scheduleMethod"><option value="fair">Fair Rotation (Recommended)</option><option value="seniority">Seniority Based</option><option value="performance">Performance Based</option><option value="random">Random Fair</option></select></div><div class="form-group"><label>Group Rotation</label><select id="groupRotation"><option value="monthly">Monthly Rotation (A→B→C)</option><option value="biweekly">Bi-Weekly Rotation</option><option value="quarterly">Quarterly Rotation</option></select></div><div class="form-group"><label>Agents to Exclude (Vacation/Leave)</label><div class="checkbox-group" id="excludeAgents"></div></div><div style="background:rgba(6,182,212,0.1);border:1px solid var(--auto);border-radius:10px;padding:15px;margin-bottom:20px"><div style="font-weight:700;color:var(--auto);margin-bottom:5px">🤖 AI Distribution Logic</div><div style="font-size:0.9rem;color:var(--text-muted)">• Groups rotate monthly: A→B→C→A<br>• Group A: Fri-Sat Off | Group B: Sun-Mon Off | Group C: Tue-Wed Off<br>• Uses configured group sizes for morning/night splits<br>• Ensures 5 working days max per week</div></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('autoScheduleModal')">Cancel</button><button class="btn btn-auto" onclick="executeAutoSchedule()">⚡ Generate Schedule</button></div></div></div>
 <div class="modal" id="addAgentModal"><div class="modal-content"><h3 style="margin-bottom:20px">+ Add New Agent</h3><div class="form-group"><label>Agent Name</label><input type="text" id="newAgentName" placeholder="Full Name"></div><div class="form-group"><label>Group</label><select id="newAgentGroup"><option value="A">Group A (Fri-Sat Off)</option><option value="B">Group B (Sun-Mon Off)</option><option value="C">Group C (Tue-Wed Off)</option></select></div><div class="form-group"><label>Preferred Shift</label><select id="newAgentShift"><option value="any">Any</option><option value="morning">Morning</option><option value="night">Night</option></select></div><div class="form-group"><label>Seniority (Years)</label><input type="number" id="newAgentSeniority" min="1" max="20" value="1"></div><div class="form-group"><label>Performance Score (0-100)</label><input type="number" id="newAgentPerf" min="0" max="100" value="80"></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('addAgentModal')">Cancel</button><button class="btn btn-success" onclick="saveNewAgent()">Save Agent</button></div></div></div>
-
-<!-- Bulk Add Agents Modal -->
 <div class="modal" id="bulkAddModal"><div class="modal-content"><h3 style="margin-bottom:20px">+ Bulk Add Agents</h3><div class="form-group"><label>Number of Agents to Add</label><input type="number" id="bulkAddCount" min="1" max="50" value="5"></div><div class="form-group"><label>Name Prefix (e.g. "Agent")</label><input type="text" id="bulkAddPrefix" value="Agent" placeholder="Agent"></div><div class="form-group"><label>Starting Number</label><input type="number" id="bulkAddStart" min="1" value="1"></div><div class="form-group"><label>Auto-assign to Groups</label><select id="bulkAddGroupMode"><option value="auto">Even distribution across A/B/C</option><option value="A">All to Group A</option><option value="B">All to Group B</option><option value="C">All to Group C</option></select></div><div style="background:rgba(6,182,212,0.1);border:1px solid var(--auto);border-radius:10px;padding:12px;margin-bottom:15px;font-size:0.85rem;color:var(--text-muted)">Preview: Will add <strong id="bulkPreviewCount" style="color:var(--auto)">5</strong> agents named <strong id="bulkPreviewNames" style="color:var(--text)">Agent 1, Agent 2, ...</strong></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('bulkAddModal')">Cancel</button><button class="btn btn-success" onclick="executeBulkAdd()">Add Agents</button></div></div></div>
-
-<!-- Remove Agent Modal -->
 <div class="modal" id="removeAgentModal"><div class="modal-content"><h3 style="margin-bottom:20px">− Remove Agents</h3><p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:15px">Select agents to remove from the roster. This cannot be undone.</p><div class="checkbox-group" id="removeAgentList" style="max-height:400px"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px"><button class="btn btn-secondary" onclick="closeModal('removeAgentModal')">Cancel</button><button class="btn btn-danger" onclick="executeRemoveAgents()">🗑️ Remove Selected</button></div></div></div>
-
-<div class="modal" id="taskModal"><div class="modal-content"><h3 style="margin-bottom:20px">Assign Task</h3><div class="form-group"><label>Task Type</label><select id="taskType"><option>Calls</option><option>Support Calls</option><option>Facebook</option><option>FB Group</option><option>Respond</option><option>Forms</option><option>New Partner</option><option>Unlocked Rentals</option><option>Unknown</option><option>AI (Bot)</option><option>Repricing</option><option>Freelancer</option><option>Inventory</option></select></div><div class="form-group"><label>Priority</label><select id="taskPriority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div><div class="form-group"><label>Assign Specific Agents</label><div class="checkbox-group" id="manualAgentSelect"></div></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('taskModal')">Cancel</button><button class="btn" onclick="saveManualTask()">Save</button></div></div></div>
+<div class="modal" id="taskModal"><div class="modal-content"><h3 style="margin-bottom:20px">Assign Task</h3><div class="form-group"><label>Task Type</label><select id="taskType"><option>Calls</option><option>Support Calls</option><option>Facebook</option><option>FB Group</option><option>Respond</option><option>Forms</option><option>New Partner</option><option>Unlocked Rentals</option><option>Unknown</option><option>AI (Bot)</option><option>Repricing</option><option>Freelancer</option><option>Inventory</option></select></div><div class="form-group"><label>Priority</label><select id="taskPriority"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select></div><div class="form-group"><label>Assign Specific Agents (only today's on-shift agents shown)</label><div class="checkbox-group" id="manualAgentSelect"></div></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('taskModal')">Cancel</button><button class="btn" onclick="saveManualTask()">Save</button></div></div></div>
 <div class="modal" id="warningModal"><div class="modal-content"><h3 style="margin-bottom:20px">⚠️ Add Warning</h3><div class="form-group"><label>Select Agent</label><select id="warningAgentSelect"></select></div><div class="form-group"><label>Reason</label><textarea id="warningReason" rows="3" placeholder="Describe the reason..."></textarea></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('warningModal')">Cancel</button><button class="btn btn-danger" onclick="saveWarning()">Add Warning</button></div></div></div>
 <div class="modal" id="createAdminModal"><div class="modal-content" style="max-width:420px"><h3 style="margin-bottom:20px">👑 Create Admin User</h3><div class="form-group"><label>Full Name</label><input type="text" id="newAdminName" placeholder="e.g. Sara Manager"/></div><div class="form-group"><label>Email Address</label><input type="email" id="newAdminEmail" placeholder="admin@company.com"/></div><div class="form-group"><label>Temporary Password</label><input type="password" id="newAdminPassword" placeholder="Min 6 characters"/></div><div id="createAdminMsg" style="display:none;padding:10px;border-radius:8px;font-size:0.85rem;margin-bottom:15px"></div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('createAdminModal')">Cancel</button><button class="btn btn-success" onclick="createAdminUser()">Create Admin</button></div></div></div>
+
+<!-- Campaign Agent Assignment Modal -->
+<div class="modal" id="campaignModal"><div class="modal-content"><h3 style="margin-bottom:10px;color:var(--campaign)">📢 Assign Campaign Agents</h3><p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:15px">Select agents who will be dedicated to <strong>Campaigns only</strong> this month. They will not receive other tasks from the auto distributor.</p><div class="form-group"><label>Select Campaign Agents</label><div class="checkbox-group" id="campaignAgentSelect" style="max-height:400px"></div></div><div style="background:rgba(225,29,72,0.08);border:1px solid rgba(225,29,72,0.2);border-radius:10px;padding:12px;margin-bottom:15px;font-size:0.85rem;color:var(--text-muted)"><strong style="color:var(--campaign)">⚠️ Note:</strong> Campaign agents will have "Campaigns" as their <strong>only</strong> task on every working day. Use this for agents fully dedicated to outbound campaigns.</div><div style="display:flex;gap:10px;justify-content:flex-end"><button class="btn btn-secondary" onclick="closeModal('campaignModal')">Cancel</button><button class="btn btn-campaign" onclick="saveCampaignAgents()">✅ Save Campaign Roster</button></div></div></div>
 
 <div class="notification" id="notification"><div style="font-weight:700;margin-bottom:5px" id="notifTitle">Success</div><div style="font-size:0.9rem;color:var(--text-muted)" id="notifMessage">Operation completed</div></div>
 
@@ -682,6 +707,7 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let agents=[],tasks=[],scheduleData={};
 let selectedMonth=new Date().getMonth();
 let lastAutoDistribution=null,currentUser=null;
+let campaignAgentIds=[]; // IDs of agents assigned to campaigns this month
 const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const taskTypes=['Calls','Support Calls','Facebook','FB Group','Respond','Forms','New Partner','Unlocked Rentals','Unknown','AI (Bot)','Repricing','Freelancer','Inventory'];
@@ -690,15 +716,29 @@ const groupConfig={A:{name:'Group A',offDays:[5,6],color:'a',workDays:[0,1,2,3,4
 // ═══════════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════════
-function getWeekNumForDate(date){
-    const year=date.getFullYear();
-    const jan1=new Date(year,0,1),jan1Day=jan1.getDay();
-    const dayOfYear=Math.floor((date-jan1)/86400000);
-    return Math.floor((dayOfYear+jan1Day)/7);
+function getWeekNumForDate(date){const year=date.getFullYear(),jan1=new Date(year,0,1),jan1Day=jan1.getDay(),dayOfYear=Math.floor((date-jan1)/86400000);return Math.floor((dayOfYear+jan1Day)/7)}
+function getScheduleForDate(date){const wk=`week_${getWeekNumForDate(date)}`;return (scheduleData[wk]||{})[date.getDay()]||{morning:[],night:[],off:[]}}
+
+// ★ NEW: Get today's on-shift agents from the yearly rota
+function getTodayOnShiftAgents(shiftFilter){
+    const today=new Date();
+    const todayData=getScheduleForDate(today);
+    let onShift=[];
+    if(shiftFilter==='morning'){
+        onShift=todayData.morning||[];
+    }else if(shiftFilter==='night'){
+        onShift=todayData.night||[];
+    }else{
+        onShift=[...(todayData.morning||[]),...(todayData.night||[])];
+    }
+    // Map rota names to actual agent objects
+    return onShift.map(x=>agents.find(a=>a.name===x.name)).filter(Boolean);
 }
-function getScheduleForDate(date){
-    const wk=`week_${getWeekNumForDate(date)}`;
-    return (scheduleData[wk]||{})[date.getDay()]||{morning:[],night:[],off:[]};
+
+// ★ NEW: Get today's on-shift agents excluding campaign agents
+function getTodayAvailableAgents(shiftFilter){
+    const onShift=getTodayOnShiftAgents(shiftFilter);
+    return onShift.filter(a=>!campaignAgentIds.includes(a.id));
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -719,7 +759,7 @@ async function handleLogout(){await sb.auth.signOut();currentUser=null;agents=[]
 // ═══════════════════════════════════════════════════════════
 //  BOOT
 // ═══════════════════════════════════════════════════════════
-async function bootApp(){showLoading('Loading team data...');document.getElementById('userEmail').textContent=currentUser.email;document.getElementById('agentPortalPage').style.display='none';document.getElementById('appPage').style.display='block';await loadAllData();await loadAttendanceToday();await loadBreaksData();hideLoading();renderAll()}
+async function bootApp(){showLoading('Loading team data...');document.getElementById('userEmail').textContent=currentUser.email;document.getElementById('agentPortalPage').style.display='none';document.getElementById('appPage').style.display='block';await loadAllData();await loadAttendanceToday();await loadBreaksData();await loadCampaignAgents();hideLoading();renderAll()}
 
 let publicViolations=[],attendanceRecords={},breaksData={},publicSelectedAgent=null;
 async function publicLoadData(){
@@ -739,14 +779,85 @@ async function saveAgents(){setSyncStatus('syncing');const rows=agents.map(a=>({
 async function saveScheduleToDB(schedObj){setSyncStatus('syncing');await sb.from('schedule_data').delete().neq('id',0);const rows=[];Object.keys(schedObj).forEach(wk=>{Object.keys(schedObj[wk]).forEach(di=>{const d=schedObj[wk][di];rows.push({week_key:wk,day_index:parseInt(di),morning_agents:d.morning,night_agents:d.night,off_agents:d.off,auto_generated:!!d.auto})})});if(rows.length>0){const cs=500;for(let i=0;i<rows.length;i+=cs){await sb.from('schedule_data').insert(rows.slice(i,i+cs))}}setSyncStatus('live')}
 
 // ═══════════════════════════════════════════════════════════
-//  RENDER ALL
+//  CAMPAIGN AGENTS — Persist to Supabase
 // ═══════════════════════════════════════════════════════════
-function renderAll(){updateStats();renderMonthSelector();renderGroupDistribution();renderSchedule();renderMonthlyRoster();renderAgentRoster();renderTasks();renderWarnings();updateGroupConfigInputs();renderYearlyCalendar()}
-function updateStats(){document.getElementById('statA').textContent=agents.filter(x=>x.group_name==='A').length;document.getElementById('statB').textContent=agents.filter(x=>x.group_name==='B').length;document.getElementById('statC').textContent=agents.filter(x=>x.group_name==='C').length;document.getElementById('statTotal').textContent=agents.length}
-function switchTab(tabName,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(tabName).classList.add('active');btn.classList.add('active');if(tabName==='agentportal')renderAgentSelectGrid();if(tabName==='breaks'){renderBreaksTable();updateBreaksSummary()}if(tabName==='adminusers'){renderAdminUsers();renderAgentPinGrid()}if(tabName==='violations'){loadViolations().then(renderViolations)}if(tabName==='schedule'){renderYearlyCalendar()}}
+async function loadCampaignAgents(){
+    const thisMonth=new Date().toISOString().slice(0,7);
+    try{
+        const{data}=await sb.from('campaign_agents').select('*').eq('month',thisMonth);
+        campaignAgentIds=(data||[]).map(r=>r.agent_id);
+    }catch(e){
+        // Table might not exist yet — treat as empty
+        campaignAgentIds=[];
+    }
+}
+async function saveCampaignAgentsToDB(){
+    const thisMonth=new Date().toISOString().slice(0,7);
+    try{
+        await sb.from('campaign_agents').delete().eq('month',thisMonth);
+        if(campaignAgentIds.length>0){
+            const rows=campaignAgentIds.map(id=>({agent_id:id,month:thisMonth,agent_name:(agents.find(a=>a.id===id)||{}).name||''}));
+            await sb.from('campaign_agents').insert(rows);
+        }
+    }catch(e){
+        console.warn('campaign_agents table may not exist. Create it in Supabase with columns: id (int8 PK), agent_id (int8), month (text), agent_name (text)');
+    }
+}
+function openCampaignModal(){
+    const container=document.getElementById('campaignAgentSelect');
+    container.innerHTML=[...agents].sort((a,b)=>a.name.localeCompare(b.name)).map(a=>{
+        const checked=campaignAgentIds.includes(a.id)?'checked':'';
+        return `<label class="checkbox-item"><input type="checkbox" value="${a.id}" ${checked}><span>${a.name} (Group ${a.group_name})</span></label>`;
+    }).join('');
+    document.getElementById('campaignModal').classList.add('active');
+}
+async function saveCampaignAgents(){
+    campaignAgentIds=Array.from(document.querySelectorAll('#campaignAgentSelect input:checked')).map(c=>parseInt(c.value));
+    closeModal('campaignModal');
+    await saveCampaignAgentsToDB();
+    renderCampaignPanel();
+    renderTasks();
+    showNotification('Campaigns Updated',`${campaignAgentIds.length} agents assigned to campaigns`);
+}
+function renderCampaignPanel(){
+    const list=document.getElementById('campaignAgentList');
+    if(!list)return;
+    const cAgents=agents.filter(a=>campaignAgentIds.includes(a.id));
+    if(!cAgents.length){
+        list.innerHTML='<span style="color:var(--text-muted);font-size:0.9rem">No campaign agents assigned yet.</span>';
+        return;
+    }
+    list.innerHTML=cAgents.map(a=>`<span class="campaign-agent-tag">${a.name}<span class="remove-campaign" onclick="removeCampaignAgent(${a.id})" title="Remove from campaigns">✕</span></span>`).join('');
+}
+async function removeCampaignAgent(id){
+    campaignAgentIds=campaignAgentIds.filter(x=>x!==id);
+    await saveCampaignAgentsToDB();
+    renderCampaignPanel();
+    renderTasks();
+    showNotification('Removed',`${(agents.find(a=>a.id===id)||{}).name||'Agent'} removed from campaigns`);
+}
 
 // ═══════════════════════════════════════════════════════════
-//  GROUP CONFIGURATION — NOW TRIGGERS SCHEDULE REGENERATION
+//  RENDER ALL
+// ═══════════════════════════════════════════════════════════
+function renderAll(){updateStats();renderMonthSelector();renderGroupDistribution();renderSchedule();renderMonthlyRoster();renderAgentRoster();renderTasks();renderWarnings();updateGroupConfigInputs();renderYearlyCalendar();renderCampaignPanel();updateTodayAgentInfo()}
+function updateStats(){document.getElementById('statA').textContent=agents.filter(x=>x.group_name==='A').length;document.getElementById('statB').textContent=agents.filter(x=>x.group_name==='B').length;document.getElementById('statC').textContent=agents.filter(x=>x.group_name==='C').length;document.getElementById('statTotal').textContent=agents.length}
+function switchTab(tabName,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(tabName).classList.add('active');btn.classList.add('active');if(tabName==='agentportal')renderAgentSelectGrid();if(tabName==='breaks'){renderBreaksTable();updateBreaksSummary()}if(tabName==='adminusers'){renderAdminUsers();renderAgentPinGrid()}if(tabName==='violations'){loadViolations().then(renderViolations)}if(tabName==='schedule'){renderYearlyCalendar()}if(tabName==='tasks'){updateTodayAgentInfo();renderCampaignPanel()}}
+
+// ★ NEW: Show today's on-shift agents in the Tasks tab
+function updateTodayAgentInfo(){
+    const morningEl=document.getElementById('todayMorningNames');
+    const nightEl=document.getElementById('todayNightNames');
+    if(!morningEl||!nightEl)return;
+    const mAgents=getTodayOnShiftAgents('morning');
+    const nAgents=getTodayOnShiftAgents('night');
+    const campaignNames=new Set(agents.filter(a=>campaignAgentIds.includes(a.id)).map(a=>a.name));
+    morningEl.innerHTML=mAgents.length?mAgents.map(a=>`<span style="${campaignNames.has(a.name)?'text-decoration:line-through;opacity:0.5;':''}">${a.name.split(' ')[0]}</span>`).join(', '):'No agents scheduled';
+    nightEl.innerHTML=nAgents.length?nAgents.map(a=>`<span style="${campaignNames.has(a.name)?'text-decoration:line-through;opacity:0.5;':''}">${a.name.split(' ')[0]}</span>`).join(', '):'No agents scheduled';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  GROUP CONFIGURATION
 // ═══════════════════════════════════════════════════════════
 function updateGroupConfigInputs(){
     document.getElementById('cfgGroupA').value=agents.filter(a=>a.group_name==='A').length;
@@ -754,9 +865,7 @@ function updateGroupConfigInputs(){
     document.getElementById('cfgGroupC').value=agents.filter(a=>a.group_name==='C').length;
     validateGroupConfig();
 }
-['cfgGroupA','cfgGroupB','cfgGroupC'].forEach(id=>{
-    document.getElementById(id)?.addEventListener('input',validateGroupConfig);
-});
+['cfgGroupA','cfgGroupB','cfgGroupC'].forEach(id=>{document.getElementById(id)?.addEventListener('input',validateGroupConfig)});
 function validateGroupConfig(){
     const a=parseInt(document.getElementById('cfgGroupA').value)||0,b=parseInt(document.getElementById('cfgGroupB').value)||0,c=parseInt(document.getElementById('cfgGroupC').value)||0;
     const total=a+b+c,el=document.getElementById('groupConfigTotal');
@@ -774,94 +883,41 @@ async function applyGroupConfig(){
     for(let i=0;i<a;i++){if(sorted[idx])sorted[idx++].group_name='A'}
     for(let i=0;i<b;i++){if(sorted[idx])sorted[idx++].group_name='B'}
     for(let i=0;i<c;i++){if(sorted[idx])sorted[idx++].group_name='C'}
-    await saveAgents();
-    // NOW REGENERATE THE SCHEDULE with current settings
-    await regenerateScheduleFromCurrentGroups();
-    hideLoading();
-    renderAll();
-    showNotification('Groups & Schedule Updated',`A=${a}, B=${b}, C=${c} — schedule regenerated ✓`);
+    await saveAgents();await regenerateScheduleFromCurrentGroups();hideLoading();renderAll();showNotification('Groups & Schedule Updated',`A=${a}, B=${b}, C=${c} — schedule regenerated ✓`);
 }
 
-// Shared schedule generation logic (used by both auto-schedule and group config apply)
 async function regenerateScheduleFromCurrentGroups(){
     const method=document.getElementById('scheduleMethod')?.value||'fair';
     const groupRot=document.getElementById('groupRotation')?.value||'monthly';
-    let avail=[...agents];
-    avail.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
+    let avail=[...agents];avail.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
     const yearSched={};
     for(let week=0;week<52;week++){
         const wk=`week_${week}`;yearSched[wk]={};
-        let offset=0;
-        if(groupRot==='monthly')offset=Math.floor(week/4.33)%3;
-        else if(groupRot==='biweekly')offset=Math.floor(week/2)%3;
-        else offset=Math.floor(week/13)%3;
+        let offset=0;if(groupRot==='monthly')offset=Math.floor(week/4.33)%3;else if(groupRot==='biweekly')offset=Math.floor(week/2)%3;else offset=Math.floor(week/13)%3;
         const rotate=(g)=>{const gs=['A','B','C'];return gs[(gs.indexOf(g)+offset)%3]};
         avail.forEach(a=>a._effGroup=rotate(a.group_name));
         for(let day=0;day<7;day++){
             const offA=avail.filter(a=>groupConfig[a._effGroup].offDays.includes(day));
             let working=avail.filter(a=>!offA.includes(a));
-            if(method==='performance')working.sort((a,b)=>b.performance-a.performance);
-            else if(method==='seniority')working.sort((a,b)=>b.seniority-a.seniority);
-            else if(method==='random')working.sort(()=>Math.random()-0.5);
-            else working.sort((a,b)=>(a.morning_shifts-a.night_shifts)-(b.morning_shifts-b.night_shifts));
+            if(method==='performance')working.sort((a,b)=>b.performance-a.performance);else if(method==='seniority')working.sort((a,b)=>b.seniority-a.seniority);else if(method==='random')working.sort(()=>Math.random()-0.5);else working.sort((a,b)=>(a.morning_shifts-a.night_shifts)-(b.morning_shifts-b.night_shifts));
             const half=Math.ceil(working.length/2),morning=working.slice(0,half),night=working.slice(half);
-            morning.forEach(a=>{a.morning_shifts++;a.total_work_days++});
-            night.forEach(a=>{a.night_shifts++;a.total_work_days++});
+            morning.forEach(a=>{a.morning_shifts++;a.total_work_days++});night.forEach(a=>{a.night_shifts++;a.total_work_days++});
             yearSched[wk][day]={morning:morning.map(a=>({name:a.name,group:a._effGroup})),night:night.map(a=>({name:a.name,group:a._effGroup})),off:offA.map(a=>({name:a.name,group:a._effGroup})),auto:true}
         }
     }
-    scheduleData=yearSched;
-    lastAutoDistribution=new Date().toLocaleString();
-    const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
+    scheduleData=yearSched;lastAutoDistribution=new Date().toLocaleString();const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
     await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);
 }
 
 // ═══════════════════════════════════════════════════════════
 //  BULK ADD / REMOVE AGENTS
 // ═══════════════════════════════════════════════════════════
-function openBulkAddModal(){
-    document.getElementById('bulkAddStart').value=agents.length+1;
-    updateBulkPreview();
-    document.getElementById('bulkAddModal').classList.add('active');
-}
-function updateBulkPreview(){
-    const count=parseInt(document.getElementById('bulkAddCount')?.value)||5;
-    const prefix=document.getElementById('bulkAddPrefix')?.value||'Agent';
-    const start=parseInt(document.getElementById('bulkAddStart')?.value)||1;
-    const el1=document.getElementById('bulkPreviewCount'),el2=document.getElementById('bulkPreviewNames');
-    if(el1)el1.textContent=count;
-    if(el2)el2.textContent=Array.from({length:Math.min(count,3)},(_,i)=>`${prefix} ${start+i}`).join(', ')+(count>3?', ...':'');
-}
+function openBulkAddModal(){document.getElementById('bulkAddStart').value=agents.length+1;updateBulkPreview();document.getElementById('bulkAddModal').classList.add('active')}
+function updateBulkPreview(){const count=parseInt(document.getElementById('bulkAddCount')?.value)||5,prefix=document.getElementById('bulkAddPrefix')?.value||'Agent',start=parseInt(document.getElementById('bulkAddStart')?.value)||1;const el1=document.getElementById('bulkPreviewCount'),el2=document.getElementById('bulkPreviewNames');if(el1)el1.textContent=count;if(el2)el2.textContent=Array.from({length:Math.min(count,3)},(_,i)=>`${prefix} ${start+i}`).join(', ')+(count>3?', ...':'')}
 ['bulkAddCount','bulkAddPrefix','bulkAddStart'].forEach(id=>{document.getElementById(id)?.addEventListener('input',updateBulkPreview)});
-async function executeBulkAdd(){
-    const count=parseInt(document.getElementById('bulkAddCount').value)||0;
-    const prefix=document.getElementById('bulkAddPrefix').value||'Agent';
-    const start=parseInt(document.getElementById('bulkAddStart').value)||1;
-    const mode=document.getElementById('bulkAddGroupMode').value;
-    if(count<1){showNotification('Error','Add at least 1 agent','error');return}
-    showLoading(`Adding ${count} agents...`);closeModal('bulkAddModal');
-    const newAgents=[];
-    for(let i=0;i<count;i++){
-        let group;if(mode==='auto'){group=['A','B','C'][i%3]}else{group=mode}
-        newAgents.push({name:`${prefix} ${start+i}`,group_name:group,shift:'morning',preferred_shift:'any',seniority:1,performance:80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0})
-    }
-    const{data,error}=await sb.from('agents').insert(newAgents).select();
-    if(error){hideLoading();showNotification('Error',error.message,'error');return}
-    agents.push(...(data||[]));hideLoading();renderAll();showNotification('Agents Added',`${count} agents added to roster ✓`)
-}
-function openRemoveAgentModal(){
-    document.getElementById('removeAgentList').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.id}"><span>${a.name} (Group ${a.group_name})</span></label>`).join('');
-    document.getElementById('removeAgentModal').classList.add('active');
-}
-async function executeRemoveAgents(){
-    const checked=Array.from(document.querySelectorAll('#removeAgentList input:checked')).map(c=>parseInt(c.value));
-    if(!checked.length){showNotification('Error','Select agents to remove','error');return}
-    if(!confirm(`Remove ${checked.length} agent(s)? This cannot be undone.`))return;
-    showLoading('Removing agents...');closeModal('removeAgentModal');
-    for(const id of checked){await sb.from('agents').delete().eq('id',id)}
-    agents=agents.filter(a=>!checked.includes(a.id));
-    hideLoading();renderAll();showNotification('Removed',`${checked.length} agents removed ✓`)
-}
+async function executeBulkAdd(){const count=parseInt(document.getElementById('bulkAddCount').value)||0,prefix=document.getElementById('bulkAddPrefix').value||'Agent',start=parseInt(document.getElementById('bulkAddStart').value)||1,mode=document.getElementById('bulkAddGroupMode').value;if(count<1){showNotification('Error','Add at least 1 agent','error');return}showLoading(`Adding ${count} agents...`);closeModal('bulkAddModal');const newAgents=[];for(let i=0;i<count;i++){let group;if(mode==='auto'){group=['A','B','C'][i%3]}else{group=mode}newAgents.push({name:`${prefix} ${start+i}`,group_name:group,shift:'morning',preferred_shift:'any',seniority:1,performance:80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0})}const{data,error}=await sb.from('agents').insert(newAgents).select();if(error){hideLoading();showNotification('Error',error.message,'error');return}agents.push(...(data||[]));hideLoading();renderAll();showNotification('Agents Added',`${count} agents added to roster ✓`)}
+function openRemoveAgentModal(){document.getElementById('removeAgentList').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.id}"><span>${a.name} (Group ${a.group_name})</span></label>`).join('');document.getElementById('removeAgentModal').classList.add('active')}
+async function executeRemoveAgents(){const checked=Array.from(document.querySelectorAll('#removeAgentList input:checked')).map(c=>parseInt(c.value));if(!checked.length){showNotification('Error','Select agents to remove','error');return}if(!confirm(`Remove ${checked.length} agent(s)? This cannot be undone.`))return;showLoading('Removing agents...');closeModal('removeAgentModal');for(const id of checked){await sb.from('agents').delete().eq('id',id)}agents=agents.filter(a=>!checked.includes(a.id));hideLoading();renderAll();showNotification('Removed',`${checked.length} agents removed ✓`)}
 
 // ═══════════════════════════════════════════════════════════
 //  GROUP DISTRIBUTION & SCHEDULE
@@ -870,289 +926,177 @@ function renderGroupDistribution(){const container=document.getElementById('grou
 function openAddAgentModal(){document.getElementById('newAgentName').value='';document.getElementById('addAgentModal').classList.add('active')}
 async function saveNewAgent(){const name=document.getElementById('newAgentName').value.trim();if(!name){showNotification('Error','Enter a name','error');return}const ag={name,group_name:document.getElementById('newAgentGroup').value,shift:'morning',preferred_shift:document.getElementById('newAgentShift').value,seniority:parseInt(document.getElementById('newAgentSeniority').value)||1,performance:parseInt(document.getElementById('newAgentPerf').value)||80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0};setSyncStatus('syncing');const{data,error}=await sb.from('agents').insert(ag).select().single();if(error){showNotification('Error',error.message,'error');setSyncStatus('error');return}agents.push(data);setSyncStatus('live');closeModal('addAgentModal');renderAll();showNotification('Agent Added',`${name} added to Group ${ag.group_name}`)}
 function openAutoScheduleModal(){document.getElementById('excludeAgents').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.id}"><span>${a.name} (Group ${a.group_name})</span></label>`).join('');document.getElementById('autoScheduleModal').classList.add('active')}
-async function executeAutoSchedule(){
-    const excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));
-    const origAgents=[...agents];
-    // Temporarily remove excluded
-    agents=agents.filter(a=>!excluded.includes(a.id));
-    showLoading('Generating 52-week schedule...');closeModal('autoScheduleModal');
-    await regenerateScheduleFromCurrentGroups();
-    agents=origAgents; // restore
-    await loadAllData();hideLoading();renderAll();
-    showNotification('Schedule Generated','52-week schedule saved ✓');
-}
+async function executeAutoSchedule(){const excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));const origAgents=[...agents];agents=agents.filter(a=>!excluded.includes(a.id));showLoading('Generating 52-week schedule...');closeModal('autoScheduleModal');await regenerateScheduleFromCurrentGroups();agents=origAgents;await loadAllData();hideLoading();renderAll();showNotification('Schedule Generated','52-week schedule saved ✓')}
 function generateSchedule(){openAutoScheduleModal()}
 function renderMonthSelector(){const sel=document.getElementById('monthSelector');sel.innerHTML='';months.forEach((m,i)=>{const btn=document.createElement('button');btn.className=`month-btn${i===selectedMonth?' active':''}`;btn.textContent=m;btn.onclick=()=>{selectedMonth=i;renderMonthSelector();renderSchedule();renderMonthlyRoster()};sel.appendChild(btn)})}
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ FULL MONTH SCHEDULE VIEW WITH DRAG & DROP
+//  FULL MONTH SCHEDULE VIEW WITH DRAG & DROP
 // ═══════════════════════════════════════════════════════════
 let dragData=null;
-
 function renderSchedule(){
-    const grid=document.getElementById('scheduleGrid');
-    grid.innerHTML='';
-    grid.className='schedule-grid';
-
-    const year=new Date().getFullYear();
-    const today=new Date();
-    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
-    const firstDayOfWeek=new Date(year,selectedMonth,1).getDay(); // 0=Sun
-
-    // Day headers
+    const grid=document.getElementById('scheduleGrid');grid.innerHTML='';grid.className='schedule-grid';
+    const year=new Date().getFullYear(),today=new Date(),daysInMonth=new Date(year,selectedMonth+1,0).getDate(),firstDayOfWeek=new Date(year,selectedMonth,1).getDay();
     days.forEach(d=>{const h=document.createElement('div');h.className='day-header';h.textContent=d;grid.appendChild(h)});
-
-    // Empty cells before 1st
-    for(let i=0;i<firstDayOfWeek;i++){
-        const empty=document.createElement('div');
-        empty.className='day-cell empty-cell';
-        grid.appendChild(empty);
-    }
-
-    // Check if we have any schedule data at all
+    for(let i=0;i<firstDayOfWeek;i++){const empty=document.createElement('div');empty.className='day-cell empty-cell';grid.appendChild(empty)}
     const hasData=Object.keys(scheduleData).length>0;
-
-    // Each day of the month
     for(let d=1;d<=daysInMonth;d++){
-        const date=new Date(year,selectedMonth,d);
-        const dow=date.getDay();
-        const wkNum=getWeekNumForDate(date);
-        const wk=`week_${wkNum}`;
-        const dayData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]};
-        const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
-
-        const cell=document.createElement('div');
-        cell.className=`day-cell${dayData.auto?' auto-generated':''}${isToday?' today-cell':''}`;
-
-        const dayName=days[dow];
-        cell.innerHTML=`${dayData.auto?'<span class="auto-badge">AUTO</span>':''}
-            <div class="day-date"><span class="date-num">${d}</span><span>${dayName}</span></div>`;
-
-        if(!hasData){
-            cell.innerHTML+=`<div style="text-align:center;padding:20px 5px;color:var(--text-muted);font-size:0.75rem">No schedule</div>`;
-            grid.appendChild(cell);
-            continue;
-        }
-
-        // Shift sections with drag/drop
+        const date=new Date(year,selectedMonth,d),dow=date.getDay(),wkNum=getWeekNumForDate(date),wk=`week_${wkNum}`,dayData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]},isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
+        const cell=document.createElement('div');cell.className=`day-cell${dayData.auto?' auto-generated':''}${isToday?' today-cell':''}`;
+        cell.innerHTML=`${dayData.auto?'<span class="auto-badge">AUTO</span>':''}<div class="day-date"><span class="date-num">${d}</span><span>${days[dow]}</span></div>`;
+        if(!hasData){cell.innerHTML+=`<div style="text-align:center;padding:20px 5px;color:var(--text-muted);font-size:0.75rem">No schedule</div>`;grid.appendChild(cell);continue}
         ['morning','night','off'].forEach(shiftType=>{
-            const section=document.createElement('div');
-            section.className=`shift-section shift-${shiftType}`;
-            section.dataset.day=dow;section.dataset.date=d;section.dataset.shift=shiftType;section.dataset.week=wk;
-
-            const icon=shiftType==='morning'?'☀️':shiftType==='night'?'🌙':'😴';
-            const agentList=dayData[shiftType]||[];
-
+            const section=document.createElement('div');section.className=`shift-section shift-${shiftType}`;section.dataset.day=dow;section.dataset.date=d;section.dataset.shift=shiftType;section.dataset.week=wk;
+            const icon=shiftType==='morning'?'☀️':shiftType==='night'?'🌙':'😴';const agentList=dayData[shiftType]||[];
             section.innerHTML=`<div class="shift-title"><span>${icon} ${shiftType.charAt(0).toUpperCase()+shiftType.slice(1)}</span><span class="agent-count">${agentList.length}</span></div><div class="agent-list-small">${agentList.map(a=>`<span class="agent-tag group-${(a.group||'a').toLowerCase()}" draggable="true" data-name="${a.name}" data-group="${a.group||'A'}" data-dow="${dow}" data-shift="${shiftType}" data-week="${wk}"${shiftType==='off'?' style="opacity:.6"':''}>${a.name.split(' ')[0]}</span>`).join('')}</div>`;
-
-            // Drop zone
-            section.addEventListener('dragover',e=>{e.preventDefault();section.classList.add('drag-over')});
-            section.addEventListener('dragleave',()=>{section.classList.remove('drag-over')});
-            section.addEventListener('drop',e=>{e.preventDefault();section.classList.remove('drag-over');handleDrop(e,dow,shiftType,wk)});
-
+            section.addEventListener('dragover',e=>{e.preventDefault();section.classList.add('drag-over')});section.addEventListener('dragleave',()=>{section.classList.remove('drag-over')});section.addEventListener('drop',e=>{e.preventDefault();section.classList.remove('drag-over');handleDrop(e,dow,shiftType,wk)});
             cell.appendChild(section);
         });
-
         grid.appendChild(cell);
     }
-
-    // Setup drag listeners
     grid.querySelectorAll('.agent-tag[draggable]').forEach(tag=>{
-        tag.addEventListener('dragstart',e=>{
-            dragData={name:tag.dataset.name,group:tag.dataset.group,fromDay:parseInt(tag.dataset.dow),fromShift:tag.dataset.shift,fromWeek:tag.dataset.week};
-            tag.classList.add('dragging');
-            e.dataTransfer.effectAllowed='move';
-        });
+        tag.addEventListener('dragstart',e=>{dragData={name:tag.dataset.name,group:tag.dataset.group,fromDay:parseInt(tag.dataset.dow),fromShift:tag.dataset.shift,fromWeek:tag.dataset.week};tag.classList.add('dragging');e.dataTransfer.effectAllowed='move'});
         tag.addEventListener('dragend',()=>{tag.classList.remove('dragging');dragData=null;document.querySelectorAll('.drag-over').forEach(s=>s.classList.remove('drag-over'))});
     });
 }
-
-async function handleDrop(e,toDay,toShift,toWeek){
-    if(!dragData)return;
-    const{name,group,fromDay,fromShift,fromWeek}=dragData;
-    if(fromDay===toDay&&fromShift===toShift&&fromWeek===toWeek)return;
-    // Remove from source
-    const srcDay=scheduleData[fromWeek]?.[fromDay];
-    if(srcDay&&srcDay[fromShift]){srcDay[fromShift]=srcDay[fromShift].filter(a=>a.name!==name)}
-    // Add to destination
-    if(!scheduleData[toWeek])scheduleData[toWeek]={};
-    if(!scheduleData[toWeek][toDay])scheduleData[toWeek][toDay]={morning:[],night:[],off:[]};
-    const dest=scheduleData[toWeek][toDay];
-    if(!dest[toShift].some(a=>a.name===name)){dest[toShift].push({name,group})}
-    renderSchedule();
-    renderMonthlyRoster();
-    showNotification('Moved',`${name.split(' ')[0]} → ${toShift} (${days[toDay]})`);
-    await saveScheduleToDB(scheduleData);
-}
+async function handleDrop(e,toDay,toShift,toWeek){if(!dragData)return;const{name,group,fromDay,fromShift,fromWeek}=dragData;if(fromDay===toDay&&fromShift===toShift&&fromWeek===toWeek)return;const srcDay=scheduleData[fromWeek]?.[fromDay];if(srcDay&&srcDay[fromShift]){srcDay[fromShift]=srcDay[fromShift].filter(a=>a.name!==name)}if(!scheduleData[toWeek])scheduleData[toWeek]={};if(!scheduleData[toWeek][toDay])scheduleData[toWeek][toDay]={morning:[],night:[],off:[]};const dest=scheduleData[toWeek][toDay];if(!dest[toShift].some(a=>a.name===name)){dest[toShift].push({name,group})}renderSchedule();renderMonthlyRoster();showNotification('Moved',`${name.split(' ')[0]} → ${toShift} (${days[toDay]})`);await saveScheduleToDB(scheduleData)}
 
 // ═══════════════════════════════════════════════════════════
-//  ✨ FULL TEAM MONTHLY ROSTER TABLE
+//  FULL TEAM MONTHLY ROSTER TABLE
 // ═══════════════════════════════════════════════════════════
 function renderMonthlyRoster(){
-    const table=document.getElementById('monthlyRosterTable');
-    const label=document.getElementById('rosterMonthLabel');
-    if(!table)return;
-    const year=new Date().getFullYear();
-    const today=new Date();
-    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
-    if(label)label.textContent=`${months[selectedMonth]} ${year}`;
-
-    // Build header row: Agent | 1 | 2 | 3 ... | 31 | Summary
+    const table=document.getElementById('monthlyRosterTable'),label=document.getElementById('rosterMonthLabel');if(!table)return;
+    const year=new Date().getFullYear(),today=new Date(),daysInMonth=new Date(year,selectedMonth+1,0).getDate();if(label)label.textContent=`${months[selectedMonth]} ${year}`;
     let hdr='<thead><tr><th class="agent-col">Agent</th>';
-    for(let d=1;d<=daysInMonth;d++){
-        const date=new Date(year,selectedMonth,d);
-        const dow=date.getDay();
-        const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
-        const isWeekend=(dow===0||dow===6);
-        hdr+=`<th class="${isToday?'today-col':''}${isWeekend?' weekend-col':''}">${d}<br><span style="font-size:0.6rem;opacity:0.7">${days[dow].charAt(0)}</span></th>`;
-    }
+    for(let d=1;d<=daysInMonth;d++){const date=new Date(year,selectedMonth,d),dow=date.getDay(),isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear(),isWeekend=(dow===0||dow===6);hdr+=`<th class="${isToday?'today-col':''}${isWeekend?' weekend-col':''}">${d}<br><span style="font-size:0.6rem;opacity:0.7">${days[dow].charAt(0)}</span></th>`}
     hdr+='<th style="min-width:50px">☀️</th><th style="min-width:50px">🌙</th><th style="min-width:50px">Off</th></tr></thead>';
-
-    // Build body: group by group, then alphabetical
-    let body='<tbody>';
-    const groups=['A','B','C'];
-    const groupLabels={A:'Group A — Fri-Sat Off',B:'Group B — Sun-Mon Off',C:'Group C — Tue-Wed Off'};
-    const summaryMorning=new Array(daysInMonth).fill(0);
-    const summaryNight=new Array(daysInMonth).fill(0);
-    const summaryOff=new Array(daysInMonth).fill(0);
-
-    groups.forEach(g=>{
-        const gAgents=agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name));
-        if(!gAgents.length)return;
-        // Group label row
+    let body='<tbody>';const groups=['A','B','C'],groupLabels={A:'Group A — Fri-Sat Off',B:'Group B — Sun-Mon Off',C:'Group C — Tue-Wed Off'};
+    const summaryMorning=new Array(daysInMonth).fill(0),summaryNight=new Array(daysInMonth).fill(0),summaryOff=new Array(daysInMonth).fill(0);
+    groups.forEach(g=>{const gAgents=agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name));if(!gAgents.length)return;
         body+=`<tr class="roster-group-sep"><td class="roster-group-label ${g.toLowerCase()}" colspan="${daysInMonth+4}">● ${groupLabels[g]} (${gAgents.length} agents)</td></tr>`;
-
-        gAgents.forEach(ag=>{
-            let mCount=0,nCount=0,oCount=0;
-            let row=`<td class="agent-name-col"><span style="color:var(--group-${g.toLowerCase()})">${ag.name}</span></td>`;
-            for(let d=1;d<=daysInMonth;d++){
-                const date=new Date(year,selectedMonth,d);
-                const dow=date.getDay();
-                const dayData=getScheduleForDate(date);
-                const isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();
-                let shift='o';
-                if(dayData.morning.some(x=>x.name===ag.name)){shift='m';mCount++;summaryMorning[d-1]++}
-                else if(dayData.night.some(x=>x.name===ag.name)){shift='n';nCount++;summaryNight[d-1]++}
-                else{oCount++;summaryOff[d-1]++}
-                const lbl=shift==='m'?'☀':shift==='n'?'🌙':'—';
-                row+=`<td class="${isToday?'today-col-cell':''}"><span class="roster-cell ${shift}${isToday?' today-highlight':''}">${lbl}</span></td>`;
-            }
-            row+=`<td style="color:var(--morning);font-weight:700;text-align:center">${mCount}</td>`;
-            row+=`<td style="color:var(--night);font-weight:700;text-align:center">${nCount}</td>`;
-            row+=`<td style="color:var(--text-muted);font-weight:700;text-align:center">${oCount}</td>`;
-            body+=`<tr>${row}</tr>`;
-        });
-    });
-
-    // Summary row
+        gAgents.forEach(ag=>{let mCount=0,nCount=0,oCount=0;let row=`<td class="agent-name-col"><span style="color:var(--group-${g.toLowerCase()})">${ag.name}</span></td>`;
+            for(let d=1;d<=daysInMonth;d++){const date=new Date(year,selectedMonth,d),dow=date.getDay(),dayData=getScheduleForDate(date),isToday=d===today.getDate()&&selectedMonth===today.getMonth()&&year===today.getFullYear();let shift='o';if(dayData.morning.some(x=>x.name===ag.name)){shift='m';mCount++;summaryMorning[d-1]++}else if(dayData.night.some(x=>x.name===ag.name)){shift='n';nCount++;summaryNight[d-1]++}else{oCount++;summaryOff[d-1]++}const lbl=shift==='m'?'☀':shift==='n'?'🌙':'—';row+=`<td class="${isToday?'today-col-cell':''}"><span class="roster-cell ${shift}${isToday?' today-highlight':''}">${lbl}</span></td>`}
+            row+=`<td style="color:var(--morning);font-weight:700;text-align:center">${mCount}</td><td style="color:var(--night);font-weight:700;text-align:center">${nCount}</td><td style="color:var(--text-muted);font-weight:700;text-align:center">${oCount}</td>`;body+=`<tr>${row}</tr>`})});
     body+='<tr class="roster-summary-row"><td class="agent-name-col" style="font-weight:800">TOTAL ON SHIFT</td>';
-    for(let d=0;d<daysInMonth;d++){
-        body+=`<td style="text-align:center;font-size:0.7rem;font-weight:700"><span style="color:var(--morning)">${summaryMorning[d]}</span>/<span style="color:var(--night)">${summaryNight[d]}</span></td>`;
-    }
-    body+='<td></td><td></td><td></td></tr>';
-    body+='</tbody>';
-
-    table.innerHTML=hdr+body;
+    for(let d=0;d<daysInMonth;d++){body+=`<td style="text-align:center;font-size:0.7rem;font-weight:700"><span style="color:var(--morning)">${summaryMorning[d]}</span>/<span style="color:var(--night)">${summaryNight[d]}</span></td>`}
+    body+='<td></td><td></td><td></td></tr></tbody>';table.innerHTML=hdr+body;
 }
+function exportMonthlyRoster(){const year=new Date().getFullYear(),daysInMonth=new Date(year,selectedMonth+1,0).getDate();let csv=`Agent,Group`;for(let d=1;d<=daysInMonth;d++){const date=new Date(year,selectedMonth,d);csv+=`,${d} ${days[date.getDay()]}`}csv+=`,Morning,Night,Off\n`;['A','B','C'].forEach(g=>{agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name)).forEach(ag=>{csv+=`"${ag.name}","Group ${g}"`;let mc=0,nc=0,oc=0;for(let d=1;d<=daysInMonth;d++){const date=new Date(year,selectedMonth,d),dayData=getScheduleForDate(date);if(dayData.morning.some(x=>x.name===ag.name)){csv+=`,Morning`;mc++}else if(dayData.night.some(x=>x.name===ag.name)){csv+=`,Night`;nc++}else{csv+=`,Off`;oc++}}csv+=`,${mc},${nc},${oc}\n`})});const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`roster_${months[selectedMonth]}_${year}.csv`;a.click();showNotification('Exported',`${months[selectedMonth]} roster downloaded`)}
 
-function exportMonthlyRoster(){
-    const year=new Date().getFullYear();
-    const daysInMonth=new Date(year,selectedMonth+1,0).getDate();
-    let csv=`Agent,Group`;
-    for(let d=1;d<=daysInMonth;d++){
-        const date=new Date(year,selectedMonth,d);
-        csv+=`,${d} ${days[date.getDay()]}`;
+// ═══════════════════════════════════════════════════════════
+//  YEARLY CALENDAR
+// ═══════════════════════════════════════════════════════════
+function renderYearlyCalendar(){const select=document.getElementById('yearlyCalAgentSelect');if(!select)return;const prevVal=select.value;select.innerHTML='<option value="__overview">All Agents (Overview)</option>'+agents.map(a=>`<option value="${a.name}">${a.name}</option>`).join('');if(prevVal&&[...select.options].some(o=>o.value===prevVal))select.value=prevVal;const selectedAgent=select.value;const grid=document.getElementById('yearlyCalGrid');grid.innerHTML='';const year=new Date().getFullYear(),today=new Date();for(let m=0;m<12;m++){const monthDiv=document.createElement('div');monthDiv.className='yearly-cal-month';monthDiv.innerHTML=`<div class="yearly-cal-month-header">${months[m]} ${year}</div>`;const wdDiv=document.createElement('div');wdDiv.className='yearly-cal-weekdays';['S','M','T','W','T','F','S'].forEach(d=>{const s=document.createElement('div');s.className='yearly-cal-weekday';s.textContent=d;wdDiv.appendChild(s)});monthDiv.appendChild(wdDiv);const daysDiv=document.createElement('div');daysDiv.className='yearly-cal-days';const daysInMonth=new Date(year,m+1,0).getDate(),firstDay=new Date(year,m,1).getDay();for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='yearly-cal-day empty';daysDiv.appendChild(e)}for(let d=1;d<=daysInMonth;d++){const date=new Date(year,m,d),dow=date.getDay(),wkNum=getWeekNumForDate(date),wk=`week_${wkNum}`,wkData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]};let shiftType='off';if(selectedAgent==='__overview'){shiftType=wkData.morning.length>=wkData.night.length?'morning':'night';if(!wkData.morning.length&&!wkData.night.length)shiftType='off'}else{if(wkData.morning.some(x=>x.name===selectedAgent))shiftType='morning';else if(wkData.night.some(x=>x.name===selectedAgent))shiftType='night'}const isToday=d===today.getDate()&&m===today.getMonth()&&year===today.getFullYear();const cell=document.createElement('div');cell.className=`yearly-cal-day ${shiftType}${isToday?' today':''}`;cell.textContent=d;cell.title=selectedAgent==='__overview'?`${d} ${months[m]}: ☀️${wkData.morning.length} 🌙${wkData.night.length} 😴${wkData.off.length}`:`${d} ${months[m]}: ${shiftType==='morning'?'☀️ Morning':shiftType==='night'?'🌙 Night':'😴 Off'}`;cell.onclick=()=>{selectedMonth=m;renderMonthSelector();renderSchedule();window.scrollTo({top:document.getElementById('scheduleGrid').offsetTop-100,behavior:'smooth'})};daysDiv.appendChild(cell)}monthDiv.appendChild(daysDiv);grid.appendChild(monthDiv)}}
+
+function renderAgentRoster(){const roster=document.getElementById('agentRoster');roster.innerHTML='';const sorted=[...agents].sort((a,b)=>(b.total_work_days||0)-(a.total_work_days||0));const firstDate=new Date(new Date().getFullYear(),selectedMonth,1);const wkNum=getWeekNumForDate(firstDate);const wkData=scheduleData[`week_${wkNum}`]||{};
+sorted.forEach(agent=>{const shifts=[];for(let d=0;d<7;d++){const dd=wkData[d];if(!dd){shifts.push('off');continue}if(dd.morning.some(x=>x.name===agent.name))shifts.push('morning');else if(dd.night.some(x=>x.name===agent.name))shifts.push('night');else shifts.push('off')}const card=document.createElement('div');card.className=`agent-card${agent.tasks_assigned>0?' auto-assigned':''}`;const g=(agent.group_name||'A').toLowerCase();const isCampaign=campaignAgentIds.includes(agent.id);card.innerHTML=`<div class="agent-header"><div><div class="agent-name">${agent.name}${isCampaign?' <span style="background:rgba(225,29,72,0.15);color:var(--campaign);padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:700">📢 CAMPAIGN</span>':''}</div><div class="agent-id">Seniority: ${agent.seniority}y · Perf: ${agent.performance}%</div></div><span class="agent-group-badge ${g}">Group ${agent.group_name}</span></div><div class="agent-stats"><span class="stat-pill" style="color:var(--morning)">☀️ ${agent.morning_shifts||0}</span><span class="stat-pill" style="color:var(--night)">🌙 ${agent.night_shifts||0}</span><span class="stat-pill" style="color:var(--success)">Tasks: ${agent.tasks_assigned||0}</span></div><div class="week-grid">${shifts.map((s,i)=>`<div class="week-day ${s}">${['S','M','T','W','T','F','S'][i]}</div>`).join('')}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(((agent.total_work_days||0)/260)*100,100)}%"></div></div><div style="font-size:.8rem;color:var(--text-muted);margin-top:5px">Yearly: ${agent.total_work_days||0} days</div><button class="btn btn-secondary" style="width:100%;margin-top:12px;padding:8px;font-size:.85rem" onclick="manageAgent(${agent.id})">⚙️ Manage</button>`;roster.appendChild(card)})}
+
+// ═══════════════════════════════════════════════════════════
+//  ★ TASKS — NOW USES TODAY'S ROTA + CAMPAIGNS
+// ═══════════════════════════════════════════════════════════
+async function autoDistributeTasks(){
+    const maxT=parseInt(document.getElementById('maxTasksPerAgent').value);
+    const weight=document.getElementById('priorityWeight').value;
+    const shiftP=document.getElementById('shiftPreference').value;
+
+    // Clear old auto tasks
+    await sb.from('tasks').delete().eq('auto_assigned',true);
+    tasks=tasks.filter(t=>!t.auto_assigned);
+
+    // ★ Get today's available agents from the rota (excluding campaign agents)
+    const availableAgents=getTodayAvailableAgents(shiftP);
+    if(!availableAgents.length){
+        showNotification('No Agents','No agents are on shift today (from the yearly rota) or all are on campaigns','warning');
+        return;
     }
-    csv+=`,Morning,Night,Off\n`;
-    ['A','B','C'].forEach(g=>{
-        agents.filter(a=>a.group_name===g).sort((a,b)=>a.name.localeCompare(b.name)).forEach(ag=>{
-            csv+=`"${ag.name}","Group ${g}"`;
-            let mc=0,nc=0,oc=0;
-            for(let d=1;d<=daysInMonth;d++){
-                const date=new Date(year,selectedMonth,d);
-                const dayData=getScheduleForDate(date);
-                if(dayData.morning.some(x=>x.name===ag.name)){csv+=`,Morning`;mc++}
-                else if(dayData.night.some(x=>x.name===ag.name)){csv+=`,Night`;nc++}
-                else{csv+=`,Off`;oc++}
-            }
-            csv+=`,${mc},${nc},${oc}\n`;
+
+    // Reset task counts for available agents
+    availableAgents.forEach(a=>a.tasks_assigned=tasks.filter(t=>(t.assignees||[]).includes(a.name)).length);
+
+    const newTasks=[];
+    taskTypes.forEach(type=>{
+        const priority=['Calls','Support Calls'].includes(type)?'high':['Facebook','Respond','Forms'].includes(type)?'medium':'low';
+        const needed=priority==='high'?4:priority==='medium'?3:2;
+        let avail=availableAgents.filter(a=>{
+            if(a.pip)return false;
+            if((a.tasks_assigned||0)>=maxT)return false;
+            return true;
         });
-    });
-    const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download=`roster_${months[selectedMonth]}_${year}.csv`;a.click();
-    showNotification('Exported',`${months[selectedMonth]} roster downloaded`);
-}
-
-// ═══════════════════════════════════════════════════════════
-//  YEARLY CALENDAR (unchanged)
-// ═══════════════════════════════════════════════════════════
-function renderYearlyCalendar(){
-    const select=document.getElementById('yearlyCalAgentSelect');if(!select)return;
-    const prevVal=select.value;
-    select.innerHTML='<option value="__overview">All Agents (Overview)</option>'+agents.map(a=>`<option value="${a.name}">${a.name}</option>`).join('');
-    if(prevVal&&[...select.options].some(o=>o.value===prevVal))select.value=prevVal;
-    const selectedAgent=select.value;
-    const grid=document.getElementById('yearlyCalGrid');grid.innerHTML='';
-    const year=new Date().getFullYear(),today=new Date();
-    for(let m=0;m<12;m++){
-        const monthDiv=document.createElement('div');monthDiv.className='yearly-cal-month';
-        monthDiv.innerHTML=`<div class="yearly-cal-month-header">${months[m]} ${year}</div>`;
-        const wdDiv=document.createElement('div');wdDiv.className='yearly-cal-weekdays';
-        ['S','M','T','W','T','F','S'].forEach(d=>{const s=document.createElement('div');s.className='yearly-cal-weekday';s.textContent=d;wdDiv.appendChild(s)});
-        monthDiv.appendChild(wdDiv);
-        const daysDiv=document.createElement('div');daysDiv.className='yearly-cal-days';
-        const daysInMonth=new Date(year,m+1,0).getDate();
-        const firstDay=new Date(year,m,1).getDay();
-        for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='yearly-cal-day empty';daysDiv.appendChild(e)}
-        for(let d=1;d<=daysInMonth;d++){
-            const date=new Date(year,m,d),dow=date.getDay();
-            const wkNum=getWeekNumForDate(date);
-            const wk=`week_${wkNum}`;
-            const wkData=(scheduleData[wk]||{})[dow]||{morning:[],night:[],off:[]};
-            let shiftType='off';
-            if(selectedAgent==='__overview'){
-                shiftType=wkData.morning.length>=wkData.night.length?'morning':'night';
-                if(!wkData.morning.length&&!wkData.night.length)shiftType='off';
-            }else{
-                if(wkData.morning.some(x=>x.name===selectedAgent))shiftType='morning';
-                else if(wkData.night.some(x=>x.name===selectedAgent))shiftType='night';
-            }
-            const isToday=d===today.getDate()&&m===today.getMonth()&&year===today.getFullYear();
-            const cell=document.createElement('div');
-            cell.className=`yearly-cal-day ${shiftType}${isToday?' today':''}`;
-            cell.textContent=d;
-            cell.title=selectedAgent==='__overview'?`${d} ${months[m]}: ☀️${wkData.morning.length} 🌙${wkData.night.length} 😴${wkData.off.length}`:`${d} ${months[m]}: ${shiftType==='morning'?'☀️ Morning':shiftType==='night'?'🌙 Night':'😴 Off'}`;
-            cell.onclick=()=>{selectedMonth=m;renderMonthSelector();renderSchedule();window.scrollTo({top:document.getElementById('scheduleGrid').offsetTop-100,behavior:'smooth'})};
-            daysDiv.appendChild(cell);
+        if(weight==='workload')avail.sort((a,b)=>a.tasks_assigned-b.tasks_assigned);
+        else if(weight==='skill')avail.sort((a,b)=>b.performance-a.performance);
+        else if(weight==='random')avail.sort(()=>Math.random()-0.5);
+        else avail.sort((a,b)=>(a.tasks_assigned-b.tasks_assigned)+((b.performance-a.performance)*0.1));
+        const selected=avail.slice(0,needed);
+        if(selected.length>0){
+            const t={type,priority,assignees:selected.map(a=>a.name),auto_assigned:true};
+            newTasks.push(t);
+            selected.forEach(a=>a.tasks_assigned=(a.tasks_assigned||0)+1);
         }
-        monthDiv.appendChild(daysDiv);grid.appendChild(monthDiv);
+    });
+
+    // ★ Also create the Campaigns task for campaign agents who are on shift today
+    const campaignOnShift=getTodayOnShiftAgents(shiftP).filter(a=>campaignAgentIds.includes(a.id));
+    if(campaignOnShift.length>0){
+        newTasks.push({type:'Campaigns',priority:'campaign',assignees:campaignOnShift.map(a=>a.name),auto_assigned:true});
     }
+
+    if(newTasks.length>0){
+        const{data}=await sb.from('tasks').insert(newTasks.map(t=>({type:t.type,priority:t.priority,assignees:t.assignees,auto_assigned:true}))).select();
+        if(data)tasks.push(...data);
+    }
+    await saveAgents();
+    renderTasks();renderAgentRoster();
+    showNotification('Distributed',`${newTasks.length} tasks assigned to today's on-shift agents ✓`);
 }
 
-function renderAgentRoster(){const roster=document.getElementById('agentRoster');roster.innerHTML='';const sorted=[...agents].sort((a,b)=>(b.total_work_days||0)-(a.total_work_days||0));
-// Use first week of selected month for the mini week view
-const firstDate=new Date(new Date().getFullYear(),selectedMonth,1);
-const wkNum=getWeekNumForDate(firstDate);
-const wkData=scheduleData[`week_${wkNum}`]||{};
-sorted.forEach(agent=>{const shifts=[];for(let d=0;d<7;d++){const dd=wkData[d];if(!dd){shifts.push('off');continue}if(dd.morning.some(x=>x.name===agent.name))shifts.push('morning');else if(dd.night.some(x=>x.name===agent.name))shifts.push('night');else shifts.push('off')}const card=document.createElement('div');card.className=`agent-card${agent.tasks_assigned>0?' auto-assigned':''}`;const g=(agent.group_name||'A').toLowerCase();card.innerHTML=`<div class="agent-header"><div><div class="agent-name">${agent.name}</div><div class="agent-id">Seniority: ${agent.seniority}y · Perf: ${agent.performance}%</div></div><span class="agent-group-badge ${g}">Group ${agent.group_name}</span></div><div class="agent-stats"><span class="stat-pill" style="color:var(--morning)">☀️ ${agent.morning_shifts||0}</span><span class="stat-pill" style="color:var(--night)">🌙 ${agent.night_shifts||0}</span><span class="stat-pill" style="color:var(--success)">Tasks: ${agent.tasks_assigned||0}</span></div><div class="week-grid">${shifts.map((s,i)=>`<div class="week-day ${s}">${['S','M','T','W','T','F','S'][i]}</div>`).join('')}</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(((agent.total_work_days||0)/260)*100,100)}%"></div></div><div style="font-size:.8rem;color:var(--text-muted);margin-top:5px">Yearly: ${agent.total_work_days||0} days</div><button class="btn btn-secondary" style="width:100%;margin-top:12px;padding:8px;font-size:.85rem" onclick="manageAgent(${agent.id})">⚙️ Manage</button>`;roster.appendChild(card)})}
+function renderTasks(){
+    const grid=document.getElementById('tasksGrid');grid.innerHTML='';
 
-// ═══════════════════════════════════════════════════════════
-//  TASKS, WARNINGS, PORTAL
-// ═══════════════════════════════════════════════════════════
-async function autoDistributeTasks(){const maxT=parseInt(document.getElementById('maxTasksPerAgent').value),weight=document.getElementById('priorityWeight').value,shiftP=document.getElementById('shiftPreference').value;await sb.from('tasks').delete().eq('auto_assigned',true);tasks=tasks.filter(t=>!t.auto_assigned);agents.forEach(a=>a.tasks_assigned=tasks.filter(t=>(t.assignees||[]).includes(a.name)).length);const today=new Date();const todayData=getScheduleForDate(today);const newTasks=[];taskTypes.forEach(type=>{const priority=['Calls','Support Calls'].includes(type)?'high':['Facebook','Respond','Forms'].includes(type)?'medium':'low';const needed=priority==='high'?4:priority==='medium'?3:2;let avail=agents.filter(a=>{if(a.pip)return false;if((a.tasks_assigned||0)>=maxT)return false;return true});if(weight==='workload')avail.sort((a,b)=>a.tasks_assigned-b.tasks_assigned);else if(weight==='skill')avail.sort((a,b)=>b.performance-a.performance);else if(weight==='random')avail.sort(()=>Math.random()-0.5);else avail.sort((a,b)=>(a.tasks_assigned-b.tasks_assigned)+((b.performance-a.performance)*0.1));const selected=avail.slice(0,needed);if(selected.length>0){const t={type,priority,assignees:selected.map(a=>a.name),auto_assigned:true};newTasks.push(t);selected.forEach(a=>a.tasks_assigned=(a.tasks_assigned||0)+1)}});if(newTasks.length>0){const{data}=await sb.from('tasks').insert(newTasks.map(t=>({type:t.type,priority:t.priority,assignees:t.assignees,auto_assigned:true}))).select();if(data)tasks.push(...data)}await saveAgents();renderTasks();renderAgentRoster();showNotification('Distributed',`${newTasks.length} tasks assigned ✓`)}
-function renderTasks(){const grid=document.getElementById('tasksGrid');grid.innerHTML='';taskTypes.forEach(type=>{const assigned=tasks.filter(t=>t.type===type),assignees=[...new Set(assigned.flatMap(t=>t.assignees||[]))],isAuto=assigned.some(t=>t.auto_assigned),priority=assigned[0]?.priority||'medium';const card=document.createElement('div');card.className=`task-card${isAuto?' auto-distributed':''}`;card.innerHTML=`<div class="task-header"><div><div class="task-title">${type}</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:5px">${assignees.length} agents</div></div><div class="task-meta">${isAuto?'<div class="auto-indicator">⚡ AUTO</div>':''}<span class="priority-badge priority-${priority}">${priority}</span></div></div><div class="task-assignees">${assignees.slice(0,6).map((n,i)=>`<div class="avatar${assigned.some(t=>t.auto_assigned&&(t.assignees||[]).includes(n))?' auto-assigned':''}" title="${n}" style="z-index:${6-i}">${n.split(' ')[0]}</div>`).join('')}${assignees.length>6?`<div class="avatar" style="background:var(--border)">+${assignees.length-6}</div>`:''}${!assignees.length?'<span style="color:var(--text-muted);font-size:.9rem">No agents</span>':''}</div><div style="margin-top:15px"><button class="btn btn-danger" style="width:100%;padding:8px;font-size:.85rem" onclick="clearTask('${type}')">Clear</button></div>`;grid.appendChild(card)})}
-function openTaskModal(){document.getElementById('manualAgentSelect').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.name}"><span>${a.name}</span></label>`).join('');document.getElementById('taskModal').classList.add('active')}
+    // ★ Show Campaigns card first if there are campaign agents
+    const campaignTasks=tasks.filter(t=>t.type==='Campaigns');
+    const campaignOnShift=getTodayOnShiftAgents('any').filter(a=>campaignAgentIds.includes(a.id));
+    const campaignNames=[...new Set([...campaignOnShift.map(a=>a.name),...campaignTasks.flatMap(t=>t.assignees||[])])];
+
+    if(campaignAgentIds.length>0){
+        const card=document.createElement('div');card.className='task-card campaign-card';
+        card.innerHTML=`<div class="task-header"><div><div class="task-title">📢 Campaigns</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:5px">${campaignNames.length} agents on shift today</div></div><div class="task-meta"><div class="campaign-indicator">🎯 DEDICATED</div><span class="priority-badge priority-campaign">campaign</span></div></div><div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:10px">These agents only work on Campaigns — no other tasks assigned</div><div class="task-assignees">${campaignNames.map(n=>`<div class="avatar campaign-assigned" title="${n}">${n.split(' ')[0]}</div>`).join('')}${!campaignNames.length?'<span style="color:var(--text-muted);font-size:.9rem">No campaign agents on shift today</span>':''}</div>`;
+        grid.appendChild(card);
+    }
+
+    // Regular tasks
+    taskTypes.forEach(type=>{
+        const assigned=tasks.filter(t=>t.type===type),assignees=[...new Set(assigned.flatMap(t=>t.assignees||[]))],isAuto=assigned.some(t=>t.auto_assigned),priority=assigned[0]?.priority||'medium';
+        const card=document.createElement('div');card.className=`task-card${isAuto?' auto-distributed':''}`;
+        card.innerHTML=`<div class="task-header"><div><div class="task-title">${type}</div><div style="font-size:.85rem;color:var(--text-muted);margin-top:5px">${assignees.length} agents</div></div><div class="task-meta">${isAuto?'<div class="auto-indicator">⚡ AUTO</div>':''}<span class="priority-badge priority-${priority}">${priority}</span></div></div><div class="task-assignees">${assignees.slice(0,6).map((n,i)=>`<div class="avatar${assigned.some(t=>t.auto_assigned&&(t.assignees||[]).includes(n))?' auto-assigned':''}" title="${n}" style="z-index:${6-i}">${n.split(' ')[0]}</div>`).join('')}${assignees.length>6?`<div class="avatar" style="background:var(--border)">+${assignees.length-6}</div>`:''}${!assignees.length?'<span style="color:var(--text-muted);font-size:.9rem">No agents</span>':''}</div><div style="margin-top:15px"><button class="btn btn-danger" style="width:100%;padding:8px;font-size:.85rem" onclick="clearTask('${type}')">Clear</button></div>`;
+        grid.appendChild(card);
+    });
+}
+
+function openTaskModal(){
+    // ★ Only show today's on-shift agents (from rota), excluding campaign agents
+    const available=getTodayAvailableAgents('any');
+    document.getElementById('manualAgentSelect').innerHTML=available.length
+        ?available.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.name}"><span>${a.name} (${getTodayOnShiftAgents('morning').some(x=>x.id===a.id)?'☀️ Morning':'🌙 Night'})</span></label>`).join('')
+        :'<div style="padding:20px;text-align:center;color:var(--text-muted)">No agents on shift today (from rota) or all are on campaigns</div>';
+    document.getElementById('taskModal').classList.add('active');
+}
 async function saveManualTask(){const type=document.getElementById('taskType').value,priority=document.getElementById('taskPriority').value,assignees=Array.from(document.querySelectorAll('#manualAgentSelect input:checked')).map(c=>c.value);if(!assignees.length){showNotification('Error','Select agents','error');return}const{data}=await sb.from('tasks').insert({type,priority,assignees,auto_assigned:false}).select().single();if(data)tasks.push(data);closeModal('taskModal');renderTasks();showNotification('Assigned',`${assignees.length} agents`)}
 async function clearTask(type){await sb.from('tasks').delete().eq('type',type);tasks=tasks.filter(t=>t.type!==type);renderTasks();showNotification('Cleared',type)}
 async function clearAllTasks(){if(!confirm('Clear all?'))return;await sb.from('tasks').delete().neq('id',0);tasks=[];agents.forEach(a=>a.tasks_assigned=0);await saveAgents();renderTasks();renderAgentRoster();showNotification('Cleared','All tasks removed')}
 function updateSliderLabel(s){document.getElementById('sliderValue').textContent=s.value}
+
+// ═══════════════════════════════════════════════════════════
+//  WARNINGS
+// ═══════════════════════════════════════════════════════════
 function openWarningModal(){document.getElementById('warningAgentSelect').innerHTML=agents.map(a=>`<option value="${a.id}">${a.name} — ${a.warnings||0} warning(s)</option>`).join('');document.getElementById('warningReason').value='';document.getElementById('warningModal').classList.add('active')}
 async function saveWarning(){const agentId=parseInt(document.getElementById('warningAgentSelect').value),reason=document.getElementById('warningReason').value.trim();if(!reason){showNotification('Error','Enter a reason','error');return}const ag=agents.find(a=>a.id===agentId);if(!ag)return;ag.warnings=(ag.warnings||0)+1;if(ag.warnings>=3)ag.pip=true;await sb.from('warning_logs').insert({agent_id:agentId,reason,level:ag.warnings});await saveAgents();closeModal('warningModal');renderWarnings();showNotification('Warning Added',`${ag.name}: ${ag.warnings} warning(s)`,'warning')}
 function renderWarnings(){const list=document.getElementById('warningList');list.innerHTML='';const prob=agents.filter(a=>(a.warnings||0)>0||a.pip);if(!prob.length){list.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:60px;background:rgba(16,185,129,.05);border-radius:16px;border:1px dashed var(--success)"><div style="font-size:3rem;margin-bottom:10px">🎉</div><div style="font-weight:700;color:var(--success)">All Clear!</div></div>';return}prob.forEach(ag=>{const w=ag.warnings||0,lvl=w>=3?'level-3':w===2?'level-2':'level-1';const card=document.createElement('div');card.className='warning-card';card.innerHTML=`<div class="warning-level ${lvl}">${w}</div><div style="flex:1"><div style="font-weight:700;font-size:1.1rem;margin-bottom:5px">${ag.name}${ag.pip?'<span class="pip-badge" style="margin-left:10px">PIP</span>':''}</div><div style="color:var(--text-muted);font-size:.9rem">${w} warning(s)</div></div><button class="btn btn-secondary" onclick="manageAgent(${ag.id})">Manage</button>`;list.appendChild(card)})}
 async function manageAgent(id){const ag=agents.find(a=>a.id===id);if(!ag)return;const action=prompt(`${ag.name} (Group ${ag.group_name})\nWarnings: ${ag.warnings||0} | PIP: ${ag.pip?'Y':'N'}\n\n1.Add Warning 2.Clear Warning 3.Toggle PIP 4.Reset Tasks 5.Change Group\n\nEnter number:`);if(!action)return;switch(action.trim()){case'1':ag.warnings=(ag.warnings||0)+1;if(ag.warnings>=3)ag.pip=true;break;case'2':if(ag.warnings>0)ag.warnings--;if(ag.warnings<3)ag.pip=false;break;case'3':ag.pip=!ag.pip;break;case'4':ag.tasks_assigned=0;break;case'5':const ng=prompt('New group (A/B/C):');if(['A','B','C'].includes(ng?.toUpperCase()))ag.group_name=ng.toUpperCase();break}await saveAgents();renderAll();showNotification('Updated',ag.name)}
 function exportSchedule(){let csv='Week,Day,Group,Morning,Night,Off,Auto\n';Object.keys(scheduleData).forEach(wk=>{const week=scheduleData[wk];days.forEach((day,i)=>{const d=week[i];if(!d)return;['A','B','C'].forEach(g=>{csv+=`${wk},${day},${g},"${(d.morning||[]).filter(a=>a.group===g).map(a=>a.name).join('; ')}","${(d.night||[]).filter(a=>a.group===g).map(a=>a.name).join('; ')}","${(d.off||[]).filter(a=>a.group===g).map(a=>a.name).join('; ')}",${d.auto?'Yes':'No'}\n`})})});const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`schedule_${new Date().toISOString().split('T')[0]}.csv`;a.click();showNotification('Exported','CSV downloaded')}
 
-// Portal, Breaks, etc.
+// ═══════════════════════════════════════════════════════════
+//  PORTAL, BREAKS, ADMIN
+// ═══════════════════════════════════════════════════════════
 let selectedPortalAgent=null,currentBreakFilter='morning';
 function renderAgentSelectGrid(){const grid=document.getElementById('agentSelectGrid');grid.innerHTML='';[...agents].sort((a,b)=>a.name.localeCompare(b.name)).forEach(ag=>{const btn=document.createElement('button');btn.className='agent-select-btn';btn.innerHTML=`<div>${ag.name.split(' ')[0]}</div><div style="font-size:0.8rem;color:var(--text-muted)">${ag.name.split(' ').slice(1).join(' ')}</div><div class="agent-group-dot" style="color:${ag.group_name==='A'?'var(--group-a)':ag.group_name==='B'?'var(--group-b)':'var(--group-c)'}">Group ${ag.group_name}</div>`;btn.onclick=()=>selectPortalAgent(ag);grid.appendChild(btn)})}
 function selectPortalAgent(ag){selectedPortalAgent=ag;document.getElementById('agentSelectPanel').style.display='none';document.getElementById('agentDashboard').style.display='block';document.getElementById('portalAgentName').textContent=`👤 ${ag.name}`;updatePortalDashboard()}
@@ -1171,7 +1115,6 @@ function addMin(t,m){const[h,mn]=t.split(':').map(Number),total=h*60+mn+m;return
 async function saveAllBreaks(){const todayStr=new Date().toISOString().split('T')[0],rows=Object.entries(breaksData).map(([id,b])=>({agent_id:parseInt(id),agent_name:agents.find(a=>a.id===parseInt(id))?.name||'',date:todayStr,break1_time:b.b1||null,break2_time:b.b2||null,break3_time:b.b3||null}));if(!rows.length)return;setSyncStatus('syncing');const{error}=await sb.from('agent_breaks').upsert(rows,{onConflict:'agent_id,date'});setSyncStatus(error?'error':'live');showNotification('Saved','Breaks saved ✓')}
 function clearAllBreaks(){if(!confirm('Clear all breaks?'))return;breaksData={};renderBreaksTable();showNotification('Cleared','Breaks cleared')}
 
-// Modals / Utils
 function closeModal(id){document.getElementById(id).classList.remove('active')}
 window.onclick=e=>{if(e.target.classList.contains('modal'))e.target.classList.remove('active')}
 function openForgotPassword(){closeModal('adminLoginModal');document.getElementById('resetEmail').value='';document.getElementById('resetMsg').style.display='none';document.getElementById('forgotPasswordModal').classList.add('active')}
