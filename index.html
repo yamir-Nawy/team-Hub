@@ -961,8 +961,6 @@ async function regenerateScheduleFromCurrentGroups(){
     }
 
     scheduleData=yearSched;
-    importedRotaActive=false;
-    document.getElementById('importStatusPanel').style.display='none';
     lastAutoDistribution=new Date().toLocaleString();
     const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
     await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);
