@@ -888,24 +888,83 @@ async function applyGroupConfig(){
 
 async function regenerateScheduleFromCurrentGroups(){
     const method=document.getElementById('scheduleMethod')?.value||'fair';
-    const groupRot=document.getElementById('groupRotation')?.value||'monthly';
-    let avail=[...agents];avail.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
+
+    // Reset counters
+    agents.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
+
+    // Group off-days and working-day order
+    // Working days listed in order (the 5 consecutive days after the 2 off days)
+    const groupWorkDays={
+        A:[0,1,2,3,4], // Sun Mon Tue Wed Thu (off Fri+Sat)
+        B:[2,3,4,5,6], // Tue Wed Thu Fri Sat (off Sun+Mon)
+        C:[4,5,6,0,1]  // Thu Fri Sat Sun Mon (off Tue+Wed)
+    };
+
     const yearSched={};
+
     for(let week=0;week<52;week++){
-        const wk=`week_${week}`;yearSched[wk]={};
-        let offset=0;if(groupRot==='monthly')offset=Math.floor(week/4.33)%3;else if(groupRot==='biweekly')offset=Math.floor(week/2)%3;else offset=Math.floor(week/13)%3;
-        const rotate=(g)=>{const gs=['A','B','C'];return gs[(gs.indexOf(g)+offset)%3]};
-        avail.forEach(a=>a._effGroup=rotate(a.group_name));
-        for(let day=0;day<7;day++){
-            const offA=avail.filter(a=>groupConfig[a._effGroup].offDays.includes(day));
-            let working=avail.filter(a=>!offA.includes(a));
-            if(method==='performance')working.sort((a,b)=>b.performance-a.performance);else if(method==='seniority')working.sort((a,b)=>b.seniority-a.seniority);else if(method==='random')working.sort(()=>Math.random()-0.5);else working.sort((a,b)=>(a.morning_shifts-a.night_shifts)-(b.morning_shifts-b.night_shifts));
-            const half=Math.ceil(working.length/2),morning=working.slice(0,half),night=working.slice(half);
-            morning.forEach(a=>{a.morning_shifts++;a.total_work_days++});night.forEach(a=>{a.night_shifts++;a.total_work_days++});
-            yearSched[wk][day]={morning:morning.map(a=>({name:a.name,group:a._effGroup})),night:night.map(a=>({name:a.name,group:a._effGroup})),off:offA.map(a=>({name:a.name,group:a._effGroup})),auto:true}
+        const wk=`week_${week}`;
+        yearSched[wk]={};
+
+        // Odd week = 2M+3N, Even week = 3M+2N
+        // Position 0,1 = morning on both; position 2 = morning only on even week
+        // position 2,3,4 = night on odd; position 3,4 = night on both
+        const isEvenWeek=(week%2===0);
+        // morningCount per agent this week
+        const mCount=isEvenWeek?3:2;
+
+        // Build per-day slots: for each DOW, which agents are morning/night/off
+        const daySlots={}; // dow -> {morning:[], night:[], off:[]}
+        for(let d=0;d<7;d++) daySlots[d]={morning:[],night:[],off:[]};
+
+        ['A','B','C'].forEach(gk=>{
+            const gAgents=[...agents.filter(a=>a.group_name===gk)];
+            if(!gAgents.length)return;
+
+            // Sort agents for stable ordering
+            if(method==='performance') gAgents.sort((a,b)=>b.performance-a.performance);
+            else if(method==='seniority') gAgents.sort((a,b)=>b.seniority-a.seniority);
+            else if(method==='random'&&week===0) gAgents.sort(()=>Math.random()-0.5);
+            else gAgents.sort((a,b)=>a.id-b.id);
+
+            const workDays=groupWorkDays[gk]; // ordered list of 5 working DOWs
+            const offDays=groupConfig[gk].offDays;
+
+            // Mark off days for all agents in group
+            offDays.forEach(dow=>{
+                gAgents.forEach(ag=>daySlots[dow].off.push({name:ag.name,group:gk}));
+            });
+
+            // Assign morning/night per working day position
+            // Position 0..mCount-1 = morning, rest = night
+            workDays.forEach((dow,pos)=>{
+                const shift=pos<mCount?'morning':'night';
+                gAgents.forEach(ag=>{
+                    daySlots[dow][shift].push({name:ag.name,group:gk});
+                    if(shift==='morning') ag.morning_shifts++;
+                    else ag.night_shifts++;
+                    ag.total_work_days++;
+                });
+            });
+        });
+
+        // Write into scheduleData format
+        for(let d=0;d<7;d++){
+            yearSched[wk][d]={
+                morning:daySlots[d].morning,
+                night:daySlots[d].night,
+                off:daySlots[d].off,
+                auto:true,
+                imported:false
+            };
         }
     }
-    scheduleData=yearSched;lastAutoDistribution=new Date().toLocaleString();const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
+
+    scheduleData=yearSched;
+    importedRotaActive=false;
+    document.getElementById('importStatusPanel').style.display='none';
+    lastAutoDistribution=new Date().toLocaleString();
+    const el=document.getElementById('autoStatus');if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
     await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);
 }
 
