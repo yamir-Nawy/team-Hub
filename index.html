@@ -983,7 +983,98 @@ function renderGroupDistribution(){const container=document.getElementById('grou
 function openAddAgentModal(){document.getElementById('newAgentName').value='';document.getElementById('addAgentModal').classList.add('active')}
 async function saveNewAgent(){const name=document.getElementById('newAgentName').value.trim();if(!name){showNotification('Error','Enter a name','error');return}const ag={name,group_name:document.getElementById('newAgentGroup').value,shift:'morning',preferred_shift:document.getElementById('newAgentShift').value,seniority:parseInt(document.getElementById('newAgentSeniority').value)||1,performance:parseInt(document.getElementById('newAgentPerf').value)||80,warnings:0,pip:false,tasks_assigned:0,morning_shifts:0,night_shifts:0,total_work_days:0};setSyncStatus('syncing');const{data,error}=await sb.from('agents').insert(ag).select().single();if(error){showNotification('Error',error.message,'error');setSyncStatus('error');return}agents.push(data);setSyncStatus('live');closeModal('addAgentModal');renderAll();showNotification('Agent Added',`${name} added to Group ${ag.group_name}`)}
 function openAutoScheduleModal(){document.getElementById('excludeAgents').innerHTML=agents.map(a=>`<label class="checkbox-item"><input type="checkbox" value="${a.id}"><span>${a.name} (Group ${a.group_name})</span></label>`).join('');document.getElementById('autoScheduleModal').classList.add('active')}
-async function executeAutoSchedule(){const excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));const origAgents=[...agents];agents=agents.filter(a=>!excluded.includes(a.id));showLoading('Generating 52-week schedule...');closeModal('autoScheduleModal');await regenerateScheduleFromCurrentGroups();agents=origAgents;await loadAllData();hideLoading();renderAll();showNotification('Schedule Generated','52-week schedule saved ✓')}
+async function executeAutoSchedule(){const excluded=Array.from(document.querySelectorAll('#excludeAgents input:checked')).map(c=>parseInt(c.value));const origAgents=[...agents];agents=agents.filter(a=>!excluded.includes(a.id));showLoading('Generating 52-week schedule...');closeModal('autoScheduleModal');await async function regenerateScheduleFromCurrentGroups(){
+    const method=document.getElementById('scheduleMethod')?.value||'fair';
+
+    agents.forEach(a=>{a.morning_shifts=0;a.night_shifts=0;a.total_work_days=0});
+
+    const groupWorkDays={
+        A:[0,1,2,3,4], // Sun Mon Tue Wed Thu
+        B:[2,3,4,5,6], // Tue Wed Thu Fri Sat
+        C:[4,5,6,0,1]  // Thu Fri Sat Sun Mon
+    };
+
+    const yearSched={};
+
+    for(let week=0;week<52;week++){
+        const wk=`week_${week}`;
+        yearSched[wk]={};
+
+        const isEvenWeek=(week%2===0);
+        const daySlots={};
+        for(let d=0;d<7;d++) daySlots[d]={morning:[],night:[],off:[]};
+
+        ['A','B','C'].forEach(gk=>{
+            const gAgents=[...agents.filter(a=>a.group_name===gk)];
+            if(!gAgents.length)return;
+
+            if(method==='performance') gAgents.sort((a,b)=>b.performance-a.performance);
+            else if(method==='seniority') gAgents.sort((a,b)=>b.seniority-a.seniority);
+            else gAgents.sort((a,b)=>a.id-b.id);
+
+            const workDays=groupWorkDays[gk];
+            const offDays=groupConfig[gk].offDays;
+
+            offDays.forEach(dow=>{
+                gAgents.forEach(ag=>daySlots[dow].off.push({name:ag.name,group:gk}));
+            });
+
+            // Split group into two halves
+            const half=Math.ceil(gAgents.length/2);
+            const halfA=gAgents.slice(0,half);   // first half
+            const halfB=gAgents.slice(half);      // second half
+
+            // Each working day: one half gets morning, other gets night
+            // Even week: day positions 0,1,2 → halfA=morning; positions 3,4 → halfA=night
+            // Odd  week: swapped
+            // BUT also: halfA and halfB swap roles on alternate weeks
+            // This guarantees EVERY day has both morning AND night agents
+
+            workDays.forEach((dow, pos)=>{
+                // Which half leads morning this week?
+                // Even week + first 3 days: halfA=morning, halfB=night
+                // Even week + last 2 days:  halfA=night,   halfB=morning
+                // Odd week: fully swapped
+                let halfAShift, halfBShift;
+                if(isEvenWeek){
+                    halfAShift = pos < 3 ? 'morning' : 'night';
+                    halfBShift = pos < 3 ? 'night'   : 'morning';
+                } else {
+                    halfAShift = pos < 2 ? 'morning' : 'night';
+                    halfBShift = pos < 2 ? 'night'   : 'morning';
+                }
+
+                halfA.forEach(ag=>{
+                    daySlots[dow][halfAShift].push({name:ag.name,group:gk});
+                    if(halfAShift==='morning') ag.morning_shifts++;
+                    else ag.night_shifts++;
+                    ag.total_work_days++;
+                });
+                halfB.forEach(ag=>{
+                    daySlots[dow][halfBShift].push({name:ag.name,group:gk});
+                    if(halfBShift==='morning') ag.morning_shifts++;
+                    else ag.night_shifts++;
+                    ag.total_work_days++;
+                });
+            });
+        });
+
+        for(let d=0;d<7;d++){
+            yearSched[wk][d]={
+                morning:daySlots[d].morning,
+                night:daySlots[d].night,
+                off:daySlots[d].off,
+                auto:true
+            };
+        }
+    }
+
+    scheduleData=yearSched;
+    lastAutoDistribution=new Date().toLocaleString();
+    const el=document.getElementById('autoStatus');
+    if(el)el.textContent=`Last distribution: ${lastAutoDistribution}`;
+    await Promise.all([saveScheduleToDB(yearSched),saveAgents()]);
+}();agents=origAgents;await loadAllData();hideLoading();renderAll();showNotification('Schedule Generated','52-week schedule saved ✓')}
 function generateSchedule(){openAutoScheduleModal()}
 function renderMonthSelector(){const sel=document.getElementById('monthSelector');sel.innerHTML='';months.forEach((m,i)=>{const btn=document.createElement('button');btn.className=`month-btn${i===selectedMonth?' active':''}`;btn.textContent=m;btn.onclick=()=>{selectedMonth=i;renderMonthSelector();renderSchedule();renderMonthlyRoster()};sel.appendChild(btn)})}
 
